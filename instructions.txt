@@ -1,0 +1,3 @@
+run local server with "watch.bat"
+run ngrok with "ngrok start my-static-domain"
+connect to "https://anchovy-relaxing-gnat.ngrok-free.app/" by opening B to Z app
