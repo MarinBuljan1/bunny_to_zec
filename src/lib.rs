@@ -1,4 +1,5 @@
 use yew::prelude::*;
+use yew::context::ContextProvider;
 use wasm_bindgen::prelude::wasm_bindgen;
 use web_sys::{TouchEvent, window};
 use js_sys::{Date, Reflect};
@@ -43,6 +44,26 @@ struct ScoreData {
     last_review: i32,
 }
 
+#[derive(Clone, PartialEq)]
+struct FlashcardContext {
+    start_x: UseStateHandle<f64>,
+    start_y: UseStateHandle<f64>,
+    pos_x: UseStateHandle<f64>,
+    pos_y: UseStateHandle<f64>,
+    is_moving: UseStateHandle<bool>,
+    swipe_direction: UseStateHandle<SwipeDirection>,
+    drag_direction: UseStateHandle<SwipeDirection>,
+    fast_move: UseStateHandle<bool>,
+    delta_xy: UseStateHandle<f64>,
+    cards: UseStateHandle<Vec<Card>>,
+    scores: UseStateHandle<HashMap<String, ScoreData>>,
+    last_data_update: UseStateHandle<i32>,
+    current_card: UseStateHandle<Card>,
+    time_start: UseStateHandle<i64>,
+    time_end: UseStateHandle<i64>,
+    progress_sum: UseStateHandle<i64>,
+}
+
 #[function_component(Flashcard)]
 fn flashcard(props: &FlashcardProps) -> Html {
     let style = format!("--pos_x: {}; --pos_y: {};", props.pos_x, props.pos_y);
@@ -79,32 +100,24 @@ fn flashcard(props: &FlashcardProps) -> Html {
 
 #[function_component(FlashcardView)]
 fn flashcard_view() -> Html {
-    let start_x = use_state(|| 0.0);
-    let start_y = use_state(|| 0.0);
-    let pos_x = use_state(|| 0.0);
-    let pos_y = use_state(|| 0.0);
-    let is_moving = use_state(|| false);
-    let swipe_direction = use_state(|| SwipeDirection::None);
-    let drag_direction = use_state(|| SwipeDirection::None);
-    let fast_move = use_state(|| false);
-    let delta_xy = use_state(|| 0.0);
-    let cards = use_state(|| vec![]);
-    let scores = use_state(|| HashMap::new());
-    let last_data_update = use_state(|| get_timestamp_s());
-    let current_card = use_state(|| Card {
-        front: "Swipe to Begin".to_string(),
-        back: "Swipe Up or Down".to_string(),
-        sentence_front: "".to_string(),
-        sentence_back: "".to_string(),
-    });
-    let time_start = use_state(|| Date::now() as i64);
-    let time_end = use_state(|| Date::now() as i64);
-    let progress_sum = use_state(|| 0);
+    let flashcard_context = use_context::<FlashcardContext>().expect("FlashcardContext not found");
+    let pos_x = flashcard_context.pos_x.clone();
+    let pos_y = flashcard_context.pos_y.clone();
+    let is_moving = flashcard_context.is_moving.clone();
+    let swipe_direction = flashcard_context.swipe_direction.clone();
+    let drag_direction = flashcard_context.drag_direction.clone();
+    let fast_move = flashcard_context.fast_move.clone();
+    let delta_xy = flashcard_context.delta_xy.clone();
+    let current_card = flashcard_context.current_card.clone();
+    let progress_sum = flashcard_context.progress_sum.clone();
+
 
     {
-        let cards = cards.clone();
-        let scores = scores.clone();
-        let last_data_update = last_data_update.clone();
+        let flashcard_context = use_context::<FlashcardContext>().expect("FlashcardContext not found");
+        let cards = flashcard_context.cards.clone();
+        let scores = flashcard_context.scores.clone();
+        let last_data_update = flashcard_context.last_data_update.clone();
+
         use_effect_with_deps(move |_| {
             wasm_bindgen_futures::spawn_local(async move {
                 let fetched_cards: Vec<Card> = match Request::get("/assets/croatian.json")
@@ -144,22 +157,10 @@ fn flashcard_view() -> Html {
     }
 
     let on_touch_event = {
-        let start_x = start_x.clone();
-        let start_y = start_y.clone();
-        let pos_x = pos_x.clone();
-        let pos_y = pos_y.clone();
-        let is_moving = is_moving.clone();
-        let swipe_direction = swipe_direction.clone();
-        let drag_direction = drag_direction.clone();
-        let fast_move = fast_move.clone();
-        let delta_xy = delta_xy.clone();
-        let cards = cards.clone();
-        let scores = scores.clone();
-        let last_data_update = last_data_update.clone();
-        let current_card = current_card.clone();
-        let time_start = time_start.clone();
-        let time_end = time_end.clone();
-        let progress_sum = progress_sum.clone();
+        let flashcard_context = use_context::<FlashcardContext>().expect("FlashcardContext not found");
+        let start_x = flashcard_context.start_x.clone();
+        let start_y = flashcard_context.start_y.clone();
+        let is_moving = flashcard_context.is_moving.clone();
 
         Callback::from(move |e: TouchEvent| {
             match e.type_().as_str() {
@@ -174,7 +175,7 @@ fn flashcard_view() -> Html {
                     let current_y = touch.client_y() as f64;
                     let current_x = touch.client_x() as f64;
 
-                    drag_move(pos_x.clone(), pos_y.clone(), delta_xy.clone(), drag_direction.clone(), *start_x, *start_y, current_x, current_y);
+                    drag_move(&flashcard_context, current_x, current_y);
                 }
                 "touchend" => {
                     let touch = get_first_touch(&e, "changedTouches");
@@ -182,20 +183,8 @@ fn flashcard_view() -> Html {
                     let end_y = touch.client_y() as f64;
 
                     calculate_swipe(
-                        *start_x, *start_y, 
-                        end_x, end_y, 
-                        swipe_direction.clone(), 
-                        is_moving.clone(), 
-                        pos_x.clone(), pos_y.clone(), 
-                        fast_move.clone(), 
-                        delta_xy.clone(),
-                        cards.clone(),
-                        scores.clone(),
-                        last_data_update.clone(),
-                        current_card.clone(),
-                        time_start.clone(),
-                        time_end.clone(),
-                        progress_sum.clone(),
+                        &flashcard_context,
+                        end_x, end_y,
                     );
                 }
                 _ => {}
@@ -204,21 +193,10 @@ fn flashcard_view() -> Html {
     };
 
     let on_mouse_event = {
-        let start_x = start_x.clone();
-        let start_y = start_y.clone();
-        let pos_x = pos_x.clone();
-        let pos_y = pos_y.clone();
-        let is_moving = is_moving.clone();
-        let swipe_direction = swipe_direction.clone();
-        let drag_direction = drag_direction.clone();
-        let fast_move = fast_move.clone();
-        let delta_xy = delta_xy.clone();
-        let cards = cards.clone();
-        let scores = scores.clone();
-        let current_card = current_card.clone();
-        let time_start = time_start.clone();
-        let time_end = time_end.clone();
-        let progress_sum = progress_sum.clone();
+        let flashcard_context = use_context::<FlashcardContext>().expect("FlashcardContext not found");
+        let start_x = flashcard_context.start_x.clone();
+        let start_y = flashcard_context.start_y.clone();
+        let is_moving = flashcard_context.is_moving.clone();
 
         Callback::from(move |e: MouseEvent| {
             e.prevent_default();
@@ -234,7 +212,7 @@ fn flashcard_view() -> Html {
                         let current_y = e.client_y() as f64;
                         let current_x = e.client_x() as f64;
 
-                        drag_move(pos_x.clone(), pos_y.clone(), delta_xy.clone(), drag_direction.clone(), *start_x, *start_y, current_x, current_y);
+                        drag_move(&flashcard_context, current_x, current_y);
                     }
                 }
                 "mouseup" => {
@@ -242,20 +220,8 @@ fn flashcard_view() -> Html {
                     let end_y = e.client_y() as f64;
 
                     calculate_swipe(
-                        *start_x, *start_y, 
-                        end_x, end_y, 
-                        swipe_direction.clone(), 
-                        is_moving.clone(), 
-                        pos_x.clone(), pos_y.clone(), 
-                        fast_move.clone(), 
-                        delta_xy.clone(),
-                        cards.clone(),
-                        scores.clone(),
-                        last_data_update.clone(),
-                        current_card.clone(),
-                        time_start.clone(),
-                        time_end.clone(),
-                        progress_sum.clone(),
+                        &flashcard_context,
+                        end_x, end_y,
                     );
                 }
                 _ => {}
@@ -279,9 +245,7 @@ fn flashcard_view() -> Html {
     }.to_string();
     let style = format!("--bg-rgba: {}, {}; --bg-direction: {}", bg_color, *delta_xy, bg_direction);
 
-    // update_progress(&scores.clone(), progress_sum.clone());
-
-    let progress_card_number = *progress_sum as f64 / 864000.0;
+    let progress_card_number = *progress_sum as f64 / calculate_seconds(10, 0, 0, 0) as f64;
 
     let skill_levels = [
         (100.0, "Beginner"),
@@ -341,10 +305,52 @@ fn flashcard_view() -> Html {
 
 #[function_component(App)]
 fn app() -> Html {
+    let start_x = use_state(|| 0.0);
+    let start_y = use_state(|| 0.0);
+    let pos_x = use_state(|| 0.0);
+    let pos_y = use_state(|| 0.0);
+    let is_moving = use_state(|| false);
+    let swipe_direction = use_state(|| SwipeDirection::None);
+    let drag_direction = use_state(|| SwipeDirection::None);
+    let fast_move = use_state(|| false);
+    let delta_xy = use_state(|| 0.0);
+    let cards = use_state(|| vec![]);
+    let scores = use_state(|| HashMap::new());
+    let last_data_update = use_state(|| get_timestamp_s());
+    let current_card = use_state(|| Card {
+        front: "Swipe to Begin".to_string(),
+        back: "Swipe Up or Down".to_string(),
+        sentence_front: "".to_string(),
+        sentence_back: "".to_string(),
+    });
+    let time_start = use_state(|| Date::now() as i64);
+    let time_end = use_state(|| Date::now() as i64);
+    let progress_sum = use_state(|| 0);
+
     html! {
-        <div class="app-container">
-            <FlashcardView />
-        </div>
+        <ContextProvider<FlashcardContext> context={
+            FlashcardContext { 
+                start_x: start_x.clone(), 
+                start_y: start_y.clone(), 
+                pos_x: pos_x.clone(), 
+                pos_y: pos_y.clone(),
+                is_moving: is_moving.clone(),
+                swipe_direction: swipe_direction.clone(),
+                drag_direction: drag_direction.clone(),
+                fast_move: fast_move.clone(),
+                delta_xy: delta_xy.clone(),
+                cards: cards.clone(),
+                scores: scores.clone(),
+                last_data_update: last_data_update.clone(),
+                current_card: current_card.clone(),
+                time_start: time_start.clone(),
+                time_end: time_end.clone(),
+                progress_sum: progress_sum.clone(),
+            }}>
+            <div class="app-container">
+                <FlashcardView />
+            </div>
+        </ContextProvider<FlashcardContext>>
     }
 }
 
@@ -361,13 +367,16 @@ fn get_first_touch(event: &TouchEvent, property: &str) -> web_sys::Touch {
 }
 
 fn drag_move(
-    pos_x: UseStateHandle<f64>, 
-    pos_y: UseStateHandle<f64>, 
-    delta_xy: UseStateHandle<f64>,
-    drag_direction: UseStateHandle<SwipeDirection>,
-    start_x: f64, start_y: f64, 
+    flashcard_context: &FlashcardContext, 
     current_x: f64, current_y: f64
 ) {
+    let start_x = *flashcard_context.start_x.clone();
+    let start_y = *flashcard_context.start_y.clone();
+    let pos_x = flashcard_context.pos_x.clone();
+    let pos_y = flashcard_context.pos_y.clone();
+    let delta_xy = flashcard_context.delta_xy.clone();
+    let drag_direction = flashcard_context.drag_direction.clone();
+
     let window = web_sys::window().unwrap();
     let window_width = window.inner_width().unwrap().as_f64().unwrap();
 
@@ -375,41 +384,27 @@ fn drag_move(
     pos_x.set((current_x - start_x)/window_width * 90.0);
     delta_xy.set(calc_delta_xy(current_x - start_x, current_y - start_y));
 
-    set_direction(start_x, start_y, current_x, current_y, drag_direction.clone(), true, true);
+    set_direction(flashcard_context, current_x, current_y, drag_direction.clone(), true, true);
 }
 
 fn calculate_swipe(
-    start_x: f64, start_y: f64, 
+    flashcard_context: &FlashcardContext, 
     end_x: f64, end_y: f64,
-    set_swipe_direction: UseStateHandle<SwipeDirection>,
-    is_moving: UseStateHandle<bool>,
-    pos_x: UseStateHandle<f64>,
-    pos_y: UseStateHandle<f64>,
-    fast_move: UseStateHandle<bool>,
-    delta_xy: UseStateHandle<f64>,
-    cards: UseStateHandle<Vec<Card>>,
-    scores: UseStateHandle<HashMap<String, ScoreData>>,
-    last_data_update: UseStateHandle<i32>,
-    current_card: UseStateHandle<Card>,
-    time_start: UseStateHandle<i64>,
-    time_end: UseStateHandle<i64>,
-    progress_sum: UseStateHandle<i64>,
 ) {
-    let new_direction = set_direction(start_x, start_y, end_x, end_y, set_swipe_direction.clone(), false, false);
+    let set_swipe_direction = flashcard_context.swipe_direction.clone();
+    let is_moving = flashcard_context.is_moving.clone();
+    let pos_x = flashcard_context.pos_x.clone();
+    let pos_y = flashcard_context.pos_y.clone();
+    let delta_xy = flashcard_context.delta_xy.clone();
+    let time_start = flashcard_context.time_start.clone();
+    let time_end = flashcard_context.time_end.clone();
+
+    let new_direction = set_direction(flashcard_context, end_x, end_y, set_swipe_direction.clone(), false, false);
 
     if new_direction == Some(SwipeDirection::Up) || new_direction == Some(SwipeDirection::Down) {
-        
         reset_card(
+            flashcard_context,
             new_direction.clone(),
-            set_swipe_direction.clone(),
-            fast_move.clone(),
-            cards.clone(),
-            scores.clone(),
-            last_data_update.clone(),
-            current_card.clone(),
-            time_start.clone(),
-            time_end.clone(),
-            progress_sum.clone(),
         );
     } else if new_direction == Some(SwipeDirection::Right) || new_direction == Some(SwipeDirection::Left) {
         if *time_start == *time_end {
@@ -424,12 +419,14 @@ fn calculate_swipe(
 }
 
 fn set_direction(
-    start_x: f64, start_y: f64, 
+    flashcard_context: &FlashcardContext,
     end_x: f64, end_y: f64,
     set_variable: UseStateHandle<SwipeDirection>,
     ignore_none: bool,
     ignore_min_distance: bool,
 ) -> Option <SwipeDirection> {
+    let start_x = *flashcard_context.start_x.clone();
+    let start_y = *flashcard_context.start_y.clone();
     let delta_x = end_x - start_x;
     let delta_y = end_y - start_y;
     let delta_xy = calc_delta_xy(delta_x, delta_y);
@@ -469,17 +466,19 @@ fn calc_delta_xy(delta_x: f64, delta_y: f64) -> f64 {
 }
 
 fn reset_card(
+    flashcard_context: &FlashcardContext,
     new_direction: Option<SwipeDirection>,
-    set_swipe_direction: UseStateHandle<SwipeDirection>, 
-    fast_move: UseStateHandle<bool>,
-    cards: UseStateHandle<Vec<Card>>,
-    scores: UseStateHandle<HashMap<String, ScoreData>>,
-    last_data_update: UseStateHandle<i32>,
-    current_card: UseStateHandle<Card>,
-    time_start: UseStateHandle<i64>,
-    time_end: UseStateHandle<i64>,
-    progress_sum: UseStateHandle<i64>,
 ) {
+    let set_swipe_direction = flashcard_context.swipe_direction.clone();
+    let fast_move = flashcard_context.fast_move.clone();
+    let cards = flashcard_context.cards.clone();
+    let scores = flashcard_context.scores.clone();
+    let last_data_update = flashcard_context.last_data_update.clone();
+    let current_card = flashcard_context.current_card.clone();
+    let time_start = flashcard_context.time_start.clone();
+    let time_end = flashcard_context.time_end.clone();
+    let progress_sum = flashcard_context.progress_sum.clone();
+
     let duration = *time_end - *time_start;
 
     let mut updated_scores = (*scores).clone();
@@ -596,7 +595,7 @@ fn calculate_raw_score(
 
     if last_review == 0 {
         new_score = 0;
-        seconds_since_last_review = 864000.0;
+        seconds_since_last_review = calculate_seconds(10, 0, 0, 0) as f32;
     }
 
     if calculated_divisor < 0.1 {
@@ -619,10 +618,10 @@ fn calculate_final_score(
     score: i32,
     last_review: i32,
 ) -> i32 {
-    let mut new_score = 864000;
+    let mut new_score = calculate_seconds(10, 0, 0, 0);
 
     if last_review != 0 {
-        new_score = score + max(last_review + 864060 - get_timestamp_s(), 0);
+        new_score = score + max(last_review + calculate_seconds(10, 0, 2, 0) - get_timestamp_s(), 0);
     }
 
     new_score
@@ -684,7 +683,11 @@ fn get_timestamp_ms() -> i64 {
 fn update_progress(updated_scores: &HashMap<String, ScoreData>, progress_sum: UseStateHandle<i64>) {
     let mut score_sum = 0;
     for (_, score_data) in updated_scores.iter() {
-        score_sum += score_data.score.min(864000);
+        score_sum += score_data.score.min(calculate_seconds(10, 0, 0, 0));
     }
     progress_sum.set(score_sum.into());
+}
+
+fn calculate_seconds(days: i32, hours: i32, minutes: i32, seconds: i32) -> i32 {
+    days * 86400 + hours * 3600 + minutes * 60 + seconds
 }
