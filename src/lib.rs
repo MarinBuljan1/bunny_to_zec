@@ -1,15 +1,16 @@
-use yew::prelude::*;
-use yew::context::ContextProvider;
-use wasm_bindgen::prelude::wasm_bindgen;
-use web_sys::{TouchEvent, window};
-use js_sys::{Date, Reflect};
-use wasm_bindgen::JsCast;
-use wasm_bindgen::closure::Closure;
-use serde::{Serialize, Deserialize};
+use js_sys::{Date, Math, Reflect};
 use gloo_net::http::Request;
 use gloo_storage::{LocalStorage, Storage};
-use std::collections::HashMap;
+use serde::{Serialize, Deserialize};
+use regex::Regex;
 use std::cmp::max;
+use std::collections::HashMap;
+use wasm_bindgen::closure::Closure;
+use wasm_bindgen::JsCast;
+use wasm_bindgen::prelude::wasm_bindgen;
+use web_sys::{TouchEvent, window};
+use yew::context::ContextProvider;
+use yew::prelude::*;
 
 #[derive(Clone, PartialEq, Debug)]
 enum SwipeDirection {
@@ -38,6 +39,19 @@ struct Card {
     sentence_back: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+struct CardList {
+    front: String,
+    back: String,
+    sentence_indexes: Vec<i32>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+struct CardSentences {
+    sentence_front: String,
+    sentence_back: String,
+}
+
 #[derive(Serialize, Deserialize, Clone, PartialEq, Debug)]
 struct ScoreData {
     score: i32,
@@ -55,7 +69,8 @@ struct FlashcardContext {
     drag_direction: UseStateHandle<SwipeDirection>,
     fast_move: UseStateHandle<bool>,
     delta_xy: UseStateHandle<f64>,
-    cards: UseStateHandle<Vec<Card>>,
+    cards: UseStateHandle<Vec<CardList>>,
+    sentences: UseStateHandle<Vec<CardSentences>>,
     scores: UseStateHandle<HashMap<String, ScoreData>>,
     last_data_update: UseStateHandle<i32>,
     current_card: UseStateHandle<Card>,
@@ -115,17 +130,18 @@ fn flashcard_view() -> Html {
     {
         let flashcard_context = use_context::<FlashcardContext>().expect("FlashcardContext not found");
         let cards = flashcard_context.cards.clone();
+        let sentences = flashcard_context.sentences.clone();
         let scores = flashcard_context.scores.clone();
         let last_data_update = flashcard_context.last_data_update.clone();
 
         use_effect_with_deps(move |_| {
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_cards: Vec<Card> = match Request::get("/assets/croatian.json")
+                let fetched_cards: Vec<CardList> = match Request::get("/assets/croatian.json")
                     .send()
                     .await
                 {
                     Ok(response) => {
-                        let cards: Vec<Card> = response
+                        let cards: Vec<CardList> = response
                             .json()
                             .await
                             .expect("Failed to parse JSON");
@@ -134,7 +150,25 @@ fn flashcard_view() -> Html {
                         cards
                     }
                     Err(_) => {
-                        LocalStorage::get::<Vec<Card>>("cards").unwrap_or_else(|_| vec![])  // Default to empty vector if no cards found
+                        LocalStorage::get::<Vec<CardList>>("cards").unwrap_or_else(|_| vec![])
+                    }
+                };
+
+                let card_sentences: Vec<CardSentences> = match Request::get("/assets/croatian_sentences.json")
+                    .send()
+                    .await
+                {
+                    Ok(response) => {
+                        let sentences: Vec<CardSentences> = response
+                            .json()
+                            .await
+                            .expect("Failed to parse JSON");
+
+                        LocalStorage::set("sentences", &sentences).expect("Failed to store sentences");
+                        sentences
+                    }
+                    Err(_) => {
+                        LocalStorage::get::<Vec<CardSentences>>("sentences").unwrap_or_else(|_| vec![])
                     }
                 };
     
@@ -150,6 +184,7 @@ fn flashcard_view() -> Html {
                 }
     
                 cards.set(fetched_cards);
+                sentences.set(card_sentences);
             });
 
             || ()
@@ -315,6 +350,7 @@ fn app() -> Html {
     let fast_move = use_state(|| false);
     let delta_xy = use_state(|| 0.0);
     let cards = use_state(|| vec![]);
+    let sentences = use_state(|| vec![]);
     let scores = use_state(|| HashMap::new());
     let last_data_update = use_state(|| get_timestamp_s());
     let current_card = use_state(|| Card {
@@ -340,6 +376,7 @@ fn app() -> Html {
                 fast_move: fast_move.clone(),
                 delta_xy: delta_xy.clone(),
                 cards: cards.clone(),
+                sentences: sentences.clone(),
                 scores: scores.clone(),
                 last_data_update: last_data_update.clone(),
                 current_card: current_card.clone(),
@@ -472,6 +509,7 @@ fn reset_card(
     let set_swipe_direction = flashcard_context.swipe_direction.clone();
     let fast_move = flashcard_context.fast_move.clone();
     let cards = flashcard_context.cards.clone();
+    let sentences = flashcard_context.sentences.clone();
     let scores = flashcard_context.scores.clone();
     let last_data_update = flashcard_context.last_data_update.clone();
     let current_card = flashcard_context.current_card.clone();
@@ -506,7 +544,26 @@ fn reset_card(
 
         let next_index = find_index_of_lowest_score(&cards, &updated_scores, &*current_card);
         if let Some(index) = next_index {
-            current_card.set(cards[index].clone());
+            // current_card.set(cards[index].clone());
+            if let Some(sentence_index) = get_random_sentence_index(&cards[index].sentence_indexes) {
+                let original_sentence = sentences[sentence_index as usize].sentence_front.clone();
+                let replaced_sentence = replace_with_blanks(&original_sentence, &cards[index].back);            
+
+                current_card.set(Card {
+                    front: cards[index].front.clone(),
+                    back: cards[index].back.clone(),
+                    sentence_front: replaced_sentence,
+                    sentence_back: sentences[sentence_index as usize].sentence_back.clone(),
+                });
+            } else {
+                // Handle the case where no sentence index is available
+                current_card.set(Card {
+                    front: cards[index].front.clone(),
+                    back: cards[index].back.clone(),
+                    sentence_front: "No sentence available".to_string(),
+                    sentence_back: "No sentence available".to_string(),
+                });
+            }
         } else {
             // Handle the case where no valid index was found (e.g., fallback behavior)
             web_sys::console::log_1(&"No valid card found with the lowest score".into());
@@ -637,11 +694,19 @@ fn get_raw_info_for_card(card: &Card, scores: &UseStateHandle<HashMap<String, Sc
 }
 
 fn get_scorecard_name(card: &Card) -> String {
-    format!("{}{}", card.front, card.back)
+    scorecard_name(&card.front, &card.back)
 }
 
-fn get_score_for_card(card: &Card, scores: HashMap<String, ScoreData>) -> i32 {
-    let score_name = get_scorecard_name(card);
+fn get_scorecard_name_from_card_list(card: &CardList) -> String {
+    scorecard_name(&card.front, &card.back)
+}
+
+fn scorecard_name(front: &str, back: &str) -> String {
+    format!("{}{}", front, back)
+}
+
+fn get_score_for_card(card: &CardList, scores: HashMap<String, ScoreData>) -> i32 {
+    let score_name = get_scorecard_name_from_card_list(card);
     if let Some(score_data) = scores.get(&score_name) {
         calculate_final_score(score_data.score, score_data.last_review)
     } else {
@@ -649,12 +714,12 @@ fn get_score_for_card(card: &Card, scores: HashMap<String, ScoreData>) -> i32 {
     }
 }
 
-fn find_index_of_lowest_score(cards: &[Card], scores: &HashMap<String, ScoreData>, current_card: &Card) -> Option<usize> {
+fn find_index_of_lowest_score(cards: &[CardList], scores: &HashMap<String, ScoreData>, current_card: &Card) -> Option<usize> {
     let mut lowest_index = None;
     let mut lowest_score = None;
 
     for (index, card) in cards.iter().enumerate() {
-        if get_scorecard_name(card) == get_scorecard_name(current_card) {
+        if get_scorecard_name_from_card_list(card) == get_scorecard_name(current_card) {
             continue;
         }
 
@@ -690,4 +755,25 @@ fn update_progress(updated_scores: &HashMap<String, ScoreData>, progress_sum: Us
 
 fn calculate_seconds(days: i32, hours: i32, minutes: i32, seconds: i32) -> i32 {
     days * 86400 + hours * 3600 + minutes * 60 + seconds
+}
+
+fn get_random_sentence_index(sentence_indexes: &Vec<i32>) -> Option<i32> {
+    if sentence_indexes.is_empty() {
+        return None; // Return None if the list is empty
+    }
+
+    let random_index = (Math::random() * sentence_indexes.len() as f64).floor() as usize;
+    Some(sentence_indexes[random_index])
+}
+
+pub fn replace_with_blanks(sentence: &str, back_word: &str) -> String {
+    // Create a regex pattern for the back word as a whole word
+    let pattern = format!(r"(?i)\b{}\b", regex::escape(back_word));
+    let re = Regex::new(&pattern).unwrap();
+
+    // Replace matches of the back word with "__"
+    re.replace_all(sentence, |_: &regex::Captures| {
+        "_".to_string()
+    })
+    .to_string()
 }
