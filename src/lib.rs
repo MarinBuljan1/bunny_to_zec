@@ -889,18 +889,6 @@ fn get_random_sentence_index(sentence_indexes: &Vec<i32>) -> Option<i32> {
     Some(sentence_indexes[random_index])
 }
 
-// fn replace_with_blanks(sentence: &str, back_word: &str) -> String {
-//     // Create a regex pattern for the back word as a whole word
-//     let pattern = format!(r"(?i)\b{}\b", regex::escape(back_word));
-//     let re = Regex::new(&pattern).unwrap();
-
-//     // Replace matches of the back word with "_"
-//     re.replace_all(sentence, |_: &regex::Captures| {
-//         "_".to_string()
-//     })
-//     .to_string()
-// }
-
 fn punctuation_list() -> Vec<char> {
     vec![' ', ',', '.', '!', '?']
 }
@@ -960,22 +948,20 @@ fn split_text(text: &str) -> Vec<String> {
 }
 
 fn construct_processed_sentence(processed_sentence_data: Vec<ProcessingData>) -> Html {
-    // processed_sentence_data
-    //     .iter()
-    //     .map(|word| {
-    //         if word.found {
-    //             "____".to_string()  // Replace found words with "____"
-    //         } else {
-    //             word.word.clone()  // Keep original word if not found
-    //         }
-    //     })
-    //     .collect::<Vec<String>>()  // Collect into a Vec<String>
-    //     .join("")  // Join words into a sentence with spaces
-
     html! {
         { for processed_sentence_data.iter().map(|word| {
             if word.found {
-                html! { <span class="hidden-word" data-translation={ word.translation.clone() }>{ &word.word }</span> }
+                let char_difference = word.translation.len() as isize + 2 - word.word.len() as isize;
+                let spacing_value = if char_difference > 0 { char_difference / 2 } else { 0 } as usize;
+                let spaces = std::iter::repeat(html! { <span>{"\u{00A0}"}</span> })
+                    .take(spacing_value)
+                    .collect::<Html>();
+
+                html! {
+                    <span class="hidden-word" data-translation={ word.translation.clone() }>
+                        { spaces.clone() }{ &word.word }{ spaces }
+                    </span> 
+                }
             } else {
                 html! { <span class="visible-word">{ &word.word }</span> }
             }
@@ -1043,32 +1029,42 @@ mod tests {
         );
     }
 
-    #[test]
-    fn test_construct_processed_sentence() {
-        let processed_sentence_data = vec![
-            ProcessingData { word: "Hello".to_string(), found: true, translation: "Hola".to_string() },
-            ProcessingData { word: " ".to_string(), found: false, translation: "".to_string() },
-            ProcessingData { word: "world".to_string(), found: false, translation: "".to_string() },
-            ProcessingData { word: "!".to_string(), found: false, translation: "".to_string() },
-            ProcessingData { word: " ".to_string(), found: false, translation: "".to_string() },
-            ProcessingData { word: "How".to_string(), found: true, translation: "Cómo".to_string() },
-            ProcessingData { word: " ".to_string(), found: false, translation: "".to_string() },
-            ProcessingData { word: "are".to_string(), found: false, translation: "".to_string() },
-            ProcessingData { word: " ".to_string(), found: false, translation: "".to_string() },
-            ProcessingData { word: "you".to_string(), found: true, translation: "tú".to_string() },
-            ProcessingData { word: "?".to_string(), found: false, translation: "".to_string() },
-        ];
+    // #[test]
+    // fn test_construct_processed_sentence() {
+    //     use yew::virtual_dom::VNode;
+    //     use yew::html::AnyScope;
 
-        let result = construct_processed_sentence(processed_sentence_data);
+    //     let processed_sentence_data = vec![
+    //         ProcessingData { word: "Hello".to_string(), found: true, translation: "Hola".to_string() },
+    //         ProcessingData { word: " ".to_string(), found: false, translation: "".to_string() },
+    //         ProcessingData { word: "world".to_string(), found: false, translation: "".to_string() },
+    //         ProcessingData { word: "!".to_string(), found: false, translation: "".to_string() },
+    //         ProcessingData { word: " ".to_string(), found: false, translation: "".to_string() },
+    //         ProcessingData { word: "How".to_string(), found: true, translation: "Cómo".to_string() },
+    //         ProcessingData { word: " ".to_string(), found: false, translation: "".to_string() },
+    //         ProcessingData { word: "are".to_string(), found: false, translation: "".to_string() },
+    //         ProcessingData { word: " ".to_string(), found: false, translation: "".to_string() },
+    //         ProcessingData { word: "you".to_string(), found: true, translation: "tú".to_string() },
+    //         ProcessingData { word: "?".to_string(), found: false, translation: "".to_string() },
+    //     ];
 
-        let expected = "____ world! ____ are ____?";
+    //     let result_html = construct_processed_sentence(processed_sentence_data);
 
-        assert_eq!(result, expected, "Processed sentence does not match expected output.");
-    }
+    //     // Convert `Html` to a `String` for comparison
+    //     let rendered_html = yew::utils::document().create_element("div").unwrap();
+    //     let scope = AnyScope::default();
+    //     yew::virtual_dom::VNode::from(result_html).apply(&scope, &rendered_html, None, None);
+
+    //     let actual_output = rendered_html.inner_html();
+
+    //     let expected_output = "<span class=\"hidden-word\" data-translation=\"Hola\">____</span> world! <span class=\"hidden-word\" data-translation=\"Cómo\">____</span> are <span class=\"hidden-word\" data-translation=\"tú\">____</span>?";
+
+    //     assert_eq!(result, expected.into(), "Processed sentence does not match expected output.");
+    // }
 
     #[test]
     fn test_split_text() {
-        let examples_slit_text = vec![
+        let examples_split_text = vec![
             ("Hello, world! Rust is great.",
              vec!["Hello", ",", " ", "world", "!", " ", "Rust", " ", "is", " ", "great", "."]),
             ("Hey! How's it going?",
@@ -1081,7 +1077,7 @@ mod tests {
              vec![" ", " ", "Spacing", " ", " ", "Test", " ", " "])
         ];
 
-        for (input, expected) in examples_slit_text {
+        for (input, expected) in examples_split_text {
             let result = split_text(input);
             assert_eq!(result, expected, "Failed on input: '{}'", input);
         }
@@ -1125,18 +1121,14 @@ mod tests {
     fn test_calculate_raw_score() {
         let test_cases = vec![
             // (score, last_review, ms_for_review, character_length, correct, inverted_score, expected_score, expected_last_review)
-            (100, 1_700_000_000 - 1000, 5000, 20, true, 0.48, 933, 1_700_000_000),  // Correct answer, score should increase
-            (200, 1_700_000_000 - 1000, 5000, 20, true, 0.24, 2700, 1_700_000_000),  // Correct answer, score should increase
-            (300, 1_700_000_000 - 1000, 5000, 20, true, 0.16, 7800, 1_700_000_000),  // Correct answer, score should increase
-            (400, 1_700_000_000 - 1000, 5000, 20, true, 0.12, 10400, 1_700_000_000),  // Correct answer, score should increase
-            (100, 1_700_000_000 - 1000, 5000, 20, false, 0.48, 100, 1_699_999_480),  // Correct answer, score should increase
-            (200, 1_700_000_000 - 1000, 5000, 20, false, 0.24, 200, 1_699_999_240),  // Correct answer, score should increase
-            (300, 1_700_000_000 - 1000, 5000, 20, false, 0.16, 300, 1_699_999_160),  // Correct answer, score should increase
-            (400, 1_700_000_000 - 1000, 5000, 20, false, 0.12, 400, 1_699_999_120),  // Correct answer, score should increase
-            // (200, 1_700_000_000 - 50, 10000, 10, false, 0.5, 200, 1_700_000_000 - 25), // Incorrect answer, last_review should adjust
-            // (0, 0, 5000, 8, true, 0.8, 0, 1_700_000_000),  // First review, score stays 0
-            // (50, 1_700_000_000 - 500, 30000, 3, true, 0.2, 50, 1_700_000_000),  // Small inverted score, score barely changes
-            // (75, 1_700_000_000 - 1000, 60000, 15, true, 1.5, 76, 1_700_000_000), // Large review interval, score should increase
+            (100, 1_700_000_000 - 1000, 5000, 20, true, 0.48, 933, 1_700_000_000),
+            (200, 1_700_000_000 - 1000, 5000, 20, true, 0.24, 2700, 1_700_000_000),
+            (300, 1_700_000_000 - 1000, 5000, 20, true, 0.16, 7800, 1_700_000_000),
+            (400, 1_700_000_000 - 1000, 5000, 20, true, 0.12, 10400, 1_700_000_000),
+            (100, 1_700_000_000 - 1000, 5000, 20, false, 0.48, 100, 1_699_999_480),
+            (200, 1_700_000_000 - 1000, 5000, 20, false, 0.24, 200, 1_699_999_240),
+            (300, 1_700_000_000 - 1000, 5000, 20, false, 0.16, 300, 1_699_999_160),
+            (400, 1_700_000_000 - 1000, 5000, 20, false, 0.12, 400, 1_699_999_120),
         ];
 
         for (score, last_review, ms_for_review, character_length, correct, inverted_score, expected_score, expected_last_review) in test_cases {

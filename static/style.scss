@@ -123,6 +123,7 @@ html, body {
         .hidden-word {
             color: transparent;
             position: relative;
+            white-space: nowrap;
 
             &::after {
                 content: "";

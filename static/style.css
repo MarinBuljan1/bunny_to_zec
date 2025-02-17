@@ -111,6 +111,7 @@ html, body {
 .flashcard-view .card .hidden-word {
   color: transparent;
   position: relative;
+  white-space: nowrap;
 }
 .flashcard-view .card .hidden-word::after {
   content: "";
