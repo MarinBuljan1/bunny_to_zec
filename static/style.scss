@@ -84,6 +84,10 @@ html, body {
     
         &.back-side {
             transform: rotateY(calc(180deg - var(--pos_x) * 1deg)) translateY(calc(var(--pos_y) * 1px));
+
+            .hidden-word {
+                color: black;
+            }
         }
         
         // Example SCSS feature: hover effect
@@ -110,6 +114,37 @@ html, body {
 
         & p {
             margin: 0;
+        }
+
+        .top {
+            line-height: 3em;
+        }
+
+        .hidden-word {
+            color: transparent;
+            position: relative;
+
+            &::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                bottom: 0px;
+                width: 100%;
+                height: 2px;
+                background-color: black;
+                opacity: 0.4;
+            }
+
+            &::before {
+                content: "(" attr(data-translation) ")";
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                color: black;
+                opacity: 0.8;
+                font-size: 0.8em;
+                transform: translate(-50%, 0);
+            }
         }
     }
 }

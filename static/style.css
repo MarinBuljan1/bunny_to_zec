@@ -81,6 +81,9 @@ html, body {
 .flashcard-view .card.back-side {
   transform: rotateY(calc(180deg - var(--pos_x) * 1deg)) translateY(calc(var(--pos_y) * 1px));
 }
+.flashcard-view .card.back-side .hidden-word {
+  color: black;
+}
 .flashcard-view .card.move-up {
   transform: translateY(calc(-50vh - 100%));
 }
@@ -101,6 +104,33 @@ html, body {
 }
 .flashcard-view .card p {
   margin: 0;
+}
+.flashcard-view .card .top {
+  line-height: 3em;
+}
+.flashcard-view .card .hidden-word {
+  color: transparent;
+  position: relative;
+}
+.flashcard-view .card .hidden-word::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0px;
+  width: 100%;
+  height: 2px;
+  background-color: black;
+  opacity: 0.4;
+}
+.flashcard-view .card .hidden-word::before {
+  content: "(" attr(data-translation) ")";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  color: black;
+  opacity: 0.8;
+  font-size: 0.8em;
+  transform: translate(-50%, 0);
 }
 
 .management-table {
