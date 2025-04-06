@@ -106,7 +106,8 @@ html, body {
   margin: 0;
 }
 .flashcard-view .card .top {
-  line-height: 3em;
+  line-height: 2em;
+  margin-bottom: 1em;
 }
 .flashcard-view .card .hidden-word {
   color: transparent;
@@ -126,12 +127,12 @@ html, body {
 .flashcard-view .card .hidden-word::before {
   content: "(" attr(data-translation) ")";
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 50%;
   color: black;
   opacity: 0.8;
   font-size: 0.8em;
-  transform: translate(-50%, 0);
+  transform: translate(-50%, -65%);
 }
 
 .management-table {

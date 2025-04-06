@@ -117,7 +117,8 @@ html, body {
         }
 
         .top {
-            line-height: 3em;
+            line-height: 2em;
+            margin-bottom: 1em;
         }
 
         .hidden-word {
@@ -139,12 +140,12 @@ html, body {
             &::before {
                 content: "(" attr(data-translation) ")";
                 position: absolute;
-                bottom: 0;
+                top: 0;
                 left: 50%;
                 color: black;
                 opacity: 0.8;
                 font-size: 0.8em;
-                transform: translate(-50%, 0);
+                transform: translate(-50%, -65%);
             }
         }
     }

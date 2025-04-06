@@ -34,8 +34,8 @@ struct FlashcardProps {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 struct Card {
-    front: String,
-    back: String,
+    base_language: String,
+    target_language: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
@@ -45,15 +45,15 @@ struct CurrentTranslations {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 struct CardList {
-    front: String,
-    back: String,
+    target_language: String,
+    base_language: String,
     sentence_indexes: Vec<i32>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 struct CardSentences {
-    front: String,
-    back: String,
+    target_language: String,
+    base_language: String,
 }
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, Debug)]
@@ -116,11 +116,11 @@ fn flashcard(props: &FlashcardProps) -> Html {
         <>
             <div class={class_name.clone()} style={style.clone()}>
                 <p class="top">{ props.processed_sentence.clone() }</p>
-                <p class="bottom">{ format!("( {} )", props.current_card.back.clone()) }</p>
+                <p class="bottom">{ format!("( {} )", props.current_card.base_language.clone()) }</p>
             </div>
             <div class={format!("{} back-side", class_name.clone())} style={style.clone()}>
                 <p class="top">{ props.processed_sentence.clone() }</p>
-                <p class="bottom">{ format!("( {} )", props.current_card.back.clone()) }</p>
+                <p class="bottom">{ format!("( {} )", props.current_card.base_language.clone()) }</p>
             </div>
         </>
     }
@@ -369,8 +369,8 @@ fn app() -> Html {
     let scores = use_state(|| HashMap::new());
     let last_data_update = use_state(|| get_timestamp_s());
     let current_card = use_state(|| Card {
-        front: "Swipe to Begin".to_string(),
-        back: "Swipe Up or Down".to_string(),
+        base_language: "Swipe to Begin".to_string(),
+        target_language: "Swipe Up or Down".to_string(),
     });
     let current_translations = use_state(|| CurrentTranslations { list: vec![] });
     let time_start = use_state(|| Date::now() as i64);
@@ -545,10 +545,10 @@ fn reset_card(
         let new_values = calculate_raw_scores(
             raw_values,
             duration,
-            (&current_card.front.len() + &current_card.back.len()) as i32,
+            (&current_card.base_language.len() + &current_card.target_language.len()) as i32,
             correct,
         );
-        if current_card.front != "Swipe to Begin" {
+        if current_card.base_language != "Swipe to Begin" {
             updated_scores = update_score(&current_translations, new_values, scores.clone(), last_data_update.clone());
         }
     }
@@ -565,19 +565,14 @@ fn reset_card(
             // current_card.set(cards[index].clone());
             if let Some(sentence_index) = get_random_sentence_index(&cards[index].sentence_indexes) {
                 let new_sentences = sentences[sentence_index as usize].clone();
-                web_sys::console::log_1(&format!("Step 1 - Retrieved sentence: {:?}", new_sentences).into());
-                let split_text = split_text(&new_sentences.front);
-                web_sys::console::log_1(&format!("Step 2 - Split text result: {:?}", split_text).into());
+                let split_text = split_text(&new_sentences.target_language);
                 let (related_cards, processed_sentence_values) = find_related_cards(&updated_scores, &cards, split_text, &cards[index]);
-                web_sys::console::log_1(&format!("Step 3 - Related cards: {:?}", related_cards).into());
-                web_sys::console::log_1(&format!("Step 3 - Processed sentence values: {:?}", processed_sentence_values).into());
                 current_translations.set(CurrentTranslations { list: related_cards });
                 
                 let processed_sentence_final = construct_processed_sentence(processed_sentence_values);
-                web_sys::console::log_1(&format!("Step 4 - Constructed processed sentence: {:?}", processed_sentence_final).into());
                 current_card.set(Card {
-                    front: new_sentences.front.clone(),
-                    back: new_sentences.back.clone()
+                    base_language: new_sentences.base_language.clone(),
+                    target_language: new_sentences.target_language.clone()
                 });
 
                 processed_sentence.set(processed_sentence_final);
@@ -585,11 +580,11 @@ fn reset_card(
             } else {
                 // Handle the case where no sentence index is available
                 current_card.set(Card {
-                    front: cards[index].front.clone(),
-                    back: cards[index].back.clone(),
+                    base_language: cards[index].base_language.clone(),
+                    target_language: cards[index].target_language.clone(),
                 });
 
-                processed_sentence.set(html! { <span>{ cards[index].front.clone() }</span> });
+                processed_sentence.set(html! { <span>{ cards[index].base_language.clone() }</span> });
             }
             
         } else {
@@ -808,15 +803,15 @@ fn get_raw_info_for_card(card: &Card, scores: &UseStateHandle<HashMap<String, Sc
 }
 
 fn get_scorecard_name(card: &Card) -> String {
-    scorecard_name(&card.back)
+    scorecard_name(&card.target_language)
 }
 
 fn get_scorecard_name_from_card_list(card: &CardList) -> String {
-    scorecard_name(&card.back)
+    scorecard_name(&card.target_language)
 }
 
-fn scorecard_name(back: &str) -> String {
-    back.to_string()
+fn scorecard_name(target_language: &str) -> String {
+    target_language.to_string()
 }
 
 fn get_score_for_card(card: &CardList, scores: HashMap<String, ScoreData>) -> i32 {
@@ -907,18 +902,18 @@ fn find_related_cards(updated_scores: &HashMap<String, ScoreData>, cards: &[Card
 
     for processed_word in processed_sentence_data.iter_mut() {
         
-        if updated_scores.contains_key(&scorecard_name(&processed_word.word)) || processed_word.word == current_card.back {
+        if updated_scores.contains_key(&scorecard_name(&processed_word.word)) || processed_word.word == current_card.target_language {
             // Add the related card only once
-            if !related_cards.iter().any(|c: &Card| c.back == processed_word.word) {
+            if !related_cards.iter().any(|c: &Card| c.target_language == processed_word.word) {
 
-                if let Some(matching_card) = cards.iter().find(|card| card.back == processed_word.word) {
+                if let Some(matching_card) = cards.iter().find(|card| card.target_language == processed_word.word) {
                     // Update the existing word entry instead of adding a new one
                     processed_word.found = true;
-                    processed_word.translation = matching_card.front.clone();
+                    processed_word.translation = matching_card.base_language.clone();
 
                     related_cards.push(Card {
-                        front: matching_card.front.clone(),
-                        back: matching_card.back.clone(),
+                        base_language: matching_card.base_language.clone(),
+                        target_language: matching_card.target_language.clone(),
                     });
                 }
             }
@@ -991,14 +986,14 @@ mod tests {
         let words = vec!["hola".to_string(), "óxido".to_string(), "mundo".to_string()];
 
         let cards = vec![
-            CardList { front: "hello".to_string(), back: "hola".to_string(), sentence_indexes: vec![0] },
-            CardList { front: "world".to_string(), back: "mundo".to_string(), sentence_indexes: vec![0] },
-            CardList { front: "rust".to_string(), back: "óxido".to_string(), sentence_indexes: vec![0] },
+            CardList { base_language: "hello".to_string(), target_language: "hola".to_string(), sentence_indexes: vec![0] },
+            CardList { base_language: "world".to_string(), target_language: "mundo".to_string(), sentence_indexes: vec![0] },
+            CardList { base_language: "rust".to_string(), target_language: "óxido".to_string(), sentence_indexes: vec![0] },
         ];
 
         let current_card = CardList {
-            front: "world".to_string(),
-            back: "mundo".to_string(),
+            base_language: "world".to_string(),
+            target_language: "mundo".to_string(),
             sentence_indexes: vec![0]
         };
 
@@ -1007,8 +1002,8 @@ mod tests {
 
         // Expected related cards (must match words in `cards`)
         let expected_related_cards = vec![
-            Card { front: "hello".to_string(), back: "hola".to_string() },
-            Card { front: "world".to_string(), back: "mundo".to_string() }
+            Card { base_language: "hello".to_string(), target_language: "hola".to_string() },
+            Card { base_language: "world".to_string(), target_language: "mundo".to_string() }
         ];
 
         // Expected processed sentence data
