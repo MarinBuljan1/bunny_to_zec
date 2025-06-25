@@ -1,3 +1,4 @@
+use indexmap::IndexMap;
 use js_sys::{Date, Math, Reflect};
 use gloo_net::http::Request;
 use gloo_storage::{LocalStorage, Storage};
@@ -45,7 +46,6 @@ struct CurrentTranslations {
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 struct CardList {
-    target_language: String,
     base_language: String,
     sentence_indexes: Vec<i32>,
 }
@@ -80,7 +80,7 @@ struct FlashcardContext {
     drag_direction: UseStateHandle<SwipeDirection>,
     fast_move: UseStateHandle<bool>,
     delta_xy: UseStateHandle<f64>,
-    cards: UseStateHandle<Vec<CardList>>,
+    cards: UseStateHandle<IndexMap<String, CardList>>,
     sentences: UseStateHandle<Vec<CardSentences>>,
     scores: UseStateHandle<HashMap<String, ScoreData>>,
     last_data_update: UseStateHandle<i32>,
@@ -150,12 +150,12 @@ fn flashcard_view() -> Html {
 
         use_effect_with_deps(move |_| {
             wasm_bindgen_futures::spawn_local(async move {
-                let fetched_cards: Vec<CardList> = match Request::get("/assets/croatian.json")
+                let fetched_cards: IndexMap<String, CardList> = match Request::get("/assets/croatian.json")
                     .send()
                     .await
                 {
                     Ok(response) => {
-                        let cards: Vec<CardList> = response
+                        let cards: IndexMap<String, CardList> = response
                             .json()
                             .await
                             .expect("Failed to parse JSON");
@@ -164,7 +164,7 @@ fn flashcard_view() -> Html {
                         cards
                     }
                     Err(_) => {
-                        LocalStorage::get::<Vec<CardList>>("cards").unwrap_or_else(|_| vec![])
+                        LocalStorage::get::<IndexMap<String, CardList>>("cards").unwrap_or_else(|_| IndexMap::new())
                     }
                 };
 
@@ -364,7 +364,7 @@ fn app() -> Html {
     let drag_direction = use_state(|| SwipeDirection::None);
     let fast_move = use_state(|| false);
     let delta_xy = use_state(|| 0.0);
-    let cards = use_state(|| vec![]);
+    let cards = use_state(|| IndexMap::new());
     let sentences = use_state(|| vec![]);
     let scores = use_state(|| HashMap::new());
     let last_data_update = use_state(|| get_timestamp_s());
@@ -560,13 +560,13 @@ fn reset_card(
         fast_move.set(true);
         set_swipe_direction.set(SwipeDirection::Down);
 
-        let next_index = find_index_of_lowest_score(&cards, &updated_scores, &current_translations);
-        if let Some(index) = next_index {
+        let next_key = find_key_of_lowest_score(&cards, &updated_scores, &current_translations);
+        if let Some(key) = next_key {
             // current_card.set(cards[index].clone());
-            if let Some(sentence_index) = get_random_sentence_index(&cards[index].sentence_indexes) {
+            if let Some(sentence_index) = get_random_sentence_index(&cards[&key].sentence_indexes) {
                 let new_sentences = sentences[sentence_index as usize].clone();
                 let split_text = split_text(&new_sentences.target_language);
-                let (related_cards, processed_sentence_values) = find_related_cards(&updated_scores, &cards, split_text, &cards[index]);
+                let (related_cards, processed_sentence_values) = find_related_cards(&updated_scores, &cards, split_text, &key);
                 current_translations.set(CurrentTranslations { list: related_cards });
                 
                 let processed_sentence_final = construct_processed_sentence(processed_sentence_values);
@@ -580,11 +580,11 @@ fn reset_card(
             } else {
                 // Handle the case where no sentence index is available
                 current_card.set(Card {
-                    base_language: cards[index].base_language.clone(),
-                    target_language: cards[index].target_language.clone(),
+                    base_language: cards[&key].base_language.clone(),
+                    target_language: key.clone(),
                 });
 
-                processed_sentence.set(html! { <span>{ cards[index].base_language.clone() }</span> });
+                processed_sentence.set(html! { <span>{ cards[&key].base_language.clone() }</span> });
             }
             
         } else {
@@ -806,50 +806,34 @@ fn get_scorecard_name(card: &Card) -> String {
     scorecard_name(&card.target_language)
 }
 
-fn get_scorecard_name_from_card_list(card: &CardList) -> String {
-    scorecard_name(&card.target_language)
-}
-
 fn scorecard_name(target_language: &str) -> String {
     target_language.to_string()
 }
 
-fn get_score_for_card(card: &CardList, scores: HashMap<String, ScoreData>) -> i32 {
-    let score_name = get_scorecard_name_from_card_list(card);
-    if let Some(score_data) = scores.get(&score_name) {
+fn get_score_for_key(key: &str, scores: HashMap<String, ScoreData>) -> i32 {
+    if let Some(score_data) = scores.get(key) {
         calculate_final_score(score_data.score, score_data.last_review)
     } else {
         calculate_final_score(0, 0)
     }
 }
 
-fn find_index_of_lowest_score(cards: &[CardList], scores: &HashMap<String, ScoreData>, current_translations: &UseStateHandle<CurrentTranslations>) -> Option<usize> {
-    let mut lowest_index = None;
-    let mut lowest_score = None;
-
-    // Convert all current_translations to their scorecard names
-    let current_translation_names: Vec<String> = current_translations
+fn find_key_of_lowest_score(
+    cards: &IndexMap<String, CardList>,
+    scores: &HashMap<String, ScoreData>,
+    current_translations: &UseStateHandle<CurrentTranslations>,
+) -> Option<String> {
+    let current_keys: Vec<&String> = current_translations
         .list
         .iter()
-        .map(|card| get_scorecard_name(card))
+        .map(|card| &card.target_language)
         .collect();
 
-    for (index, card) in cards.iter().enumerate() {
-       let card_score_name = get_scorecard_name_from_card_list(card);
-
-       if current_translation_names.contains(&card_score_name) {
-           continue;
-       }
-
-        let score = get_score_for_card(card, scores.clone());
-
-        if lowest_score.is_none() || score < lowest_score.unwrap() {
-            lowest_index = Some(index);
-            lowest_score = Some(score);
-        }
-    }
-
-    lowest_index
+    cards
+        .iter()
+        .filter(|(key, _)| !current_keys.contains(key))
+        .min_by_key(|(key, _)| get_score_for_key(key, scores.clone()))
+        .map(|(key, _)| key.clone())
 }
 
 fn get_timestamp_s() -> i32 {
@@ -888,7 +872,12 @@ fn punctuation_list() -> Vec<char> {
     vec![' ', ',', '.', '!', '?']
 }
 
-fn find_related_cards(updated_scores: &HashMap<String, ScoreData>, cards: &[CardList], words: Vec<String>, current_card: &CardList) -> (Vec<Card>, Vec<ProcessingData>) {
+fn find_related_cards(
+    updated_scores: &HashMap<String, ScoreData>,
+    cards: &IndexMap<String, CardList>,
+    words: Vec<String>,
+    current_key: &String,
+) -> (Vec<Card>, Vec<ProcessingData>) {
     let mut related_cards = Vec::new();
 
     let mut processed_sentence_data: Vec<ProcessingData> = words
@@ -901,19 +890,18 @@ fn find_related_cards(updated_scores: &HashMap<String, ScoreData>, cards: &[Card
         .collect();
 
     for processed_word in processed_sentence_data.iter_mut() {
-        
-        if updated_scores.contains_key(&scorecard_name(&processed_word.word)) || processed_word.word == current_card.target_language {
-            // Add the related card only once
-            if !related_cards.iter().any(|c: &Card| c.target_language == processed_word.word) {
+        let word_key = &processed_word.word;
 
-                if let Some(matching_card) = cards.iter().find(|card| card.target_language == processed_word.word) {
-                    // Update the existing word entry instead of adding a new one
+        if updated_scores.contains_key(&scorecard_name(word_key)) || word_key == current_key {
+            // Only add if not already in the related_cards list
+            if !related_cards.iter().any(|c: &Card| &c.target_language == word_key) {
+                if let Some(matching_card) = cards.get(word_key) {
                     processed_word.found = true;
                     processed_word.translation = matching_card.base_language.clone();
 
                     related_cards.push(Card {
                         base_language: matching_card.base_language.clone(),
-                        target_language: matching_card.target_language.clone(),
+                        target_language: word_key.clone(),
                     });
                 }
             }
@@ -973,6 +961,7 @@ fn construct_processed_sentence(processed_sentence_data: Vec<ProcessingData>) ->
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indexmap::indexmap;
 
     #[test]
     fn test_find_related_cards() {
@@ -985,17 +974,13 @@ mod tests {
 
         let words = vec!["hola".to_string(), "óxido".to_string(), "mundo".to_string()];
 
-        let cards = vec![
-            CardList { base_language: "hello".to_string(), target_language: "hola".to_string(), sentence_indexes: vec![0] },
-            CardList { base_language: "world".to_string(), target_language: "mundo".to_string(), sentence_indexes: vec![0] },
-            CardList { base_language: "rust".to_string(), target_language: "óxido".to_string(), sentence_indexes: vec![0] },
-        ];
-
-        let current_card = CardList {
-            base_language: "world".to_string(),
-            target_language: "mundo".to_string(),
-            sentence_indexes: vec![0]
+        let cards = indexmap! {
+            "hola".to_string() => CardList { base_language: "hello".to_string(), sentence_indexes: vec![0], },
+            "mundo".to_string() => CardList { base_language: "world".to_string(), sentence_indexes: vec![0], },
+            "óxido".to_string() => CardList { base_language: "rust".to_string(), sentence_indexes: vec![0], },
         };
+
+        let current_card = "mundo".to_string();
 
         let (related_cards, processed_sentence_data) =
             find_related_cards(&updated_scores, &cards, words, &current_card);
@@ -1023,39 +1008,6 @@ mod tests {
             "Processed sentence data is incorrect."
         );
     }
-
-    // #[test]
-    // fn test_construct_processed_sentence() {
-    //     use yew::virtual_dom::VNode;
-    //     use yew::html::AnyScope;
-
-    //     let processed_sentence_data = vec![
-    //         ProcessingData { word: "Hello".to_string(), found: true, translation: "Hola".to_string() },
-    //         ProcessingData { word: " ".to_string(), found: false, translation: "".to_string() },
-    //         ProcessingData { word: "world".to_string(), found: false, translation: "".to_string() },
-    //         ProcessingData { word: "!".to_string(), found: false, translation: "".to_string() },
-    //         ProcessingData { word: " ".to_string(), found: false, translation: "".to_string() },
-    //         ProcessingData { word: "How".to_string(), found: true, translation: "Cómo".to_string() },
-    //         ProcessingData { word: " ".to_string(), found: false, translation: "".to_string() },
-    //         ProcessingData { word: "are".to_string(), found: false, translation: "".to_string() },
-    //         ProcessingData { word: " ".to_string(), found: false, translation: "".to_string() },
-    //         ProcessingData { word: "you".to_string(), found: true, translation: "tú".to_string() },
-    //         ProcessingData { word: "?".to_string(), found: false, translation: "".to_string() },
-    //     ];
-
-    //     let result_html = construct_processed_sentence(processed_sentence_data);
-
-    //     // Convert `Html` to a `String` for comparison
-    //     let rendered_html = yew::utils::document().create_element("div").unwrap();
-    //     let scope = AnyScope::default();
-    //     yew::virtual_dom::VNode::from(result_html).apply(&scope, &rendered_html, None, None);
-
-    //     let actual_output = rendered_html.inner_html();
-
-    //     let expected_output = "<span class=\"hidden-word\" data-translation=\"Hola\">____</span> world! <span class=\"hidden-word\" data-translation=\"Cómo\">____</span> are <span class=\"hidden-word\" data-translation=\"tú\">____</span>?";
-
-    //     assert_eq!(result, expected.into(), "Processed sentence does not match expected output.");
-    // }
 
     #[test]
     fn test_split_text() {

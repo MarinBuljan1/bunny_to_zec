@@ -1,5 +1,905 @@
 [
   {
+    "target_language": "zdravo / bok",
+    "base_language": "hello"
+  },
+  {
+    "target_language": "dobro jutro",
+    "base_language": "good morning"
+  },
+  {
+    "target_language": "dobra večer",
+    "base_language": "good evening"
+  },
+  {
+    "target_language": "vidimo se kasnije",
+    "base_language": "see you later"
+  },
+  {
+    "target_language": "nema na čemu",
+    "base_language": "you're welcome"
+  },
+  {
+    "target_language": "žao mi je",
+    "base_language": "i'm sorry"
+  },
+  {
+    "target_language": "ne razumijem",
+    "base_language": "i don’t understand"
+  },
+  {
+    "target_language": "možete li mi pomoći?",
+    "base_language": "can you help me?"
+  },
+  {
+    "target_language": "učim hrvatski",
+    "base_language": "i’m learning croatian"
+  },
+  {
+    "target_language": "kako se zovete?",
+    "base_language": "what’s your name?"
+  },
+  {
+    "target_language": "gdje je wc?",
+    "base_language": "where is the bathroom?"
+  },
+  {
+    "target_language": "gdje je željeznički kolodvor?",
+    "base_language": "where is the train station?"
+  },
+  {
+    "target_language": "kako doći do centra grada?",
+    "base_language": "how do i get to the city center?"
+  },
+  {
+    "target_language": "je li daleko?",
+    "base_language": "is it far?"
+  },
+  {
+    "target_language": "mogu li pješke?",
+    "base_language": "can i walk there?"
+  },
+  {
+    "target_language": "izgubio / izgubila sam se",
+    "base_language": "i’m lost"
+  },
+  {
+    "target_language": "skrenite lijevo",
+    "base_language": "turn left"
+  },
+  {
+    "target_language": "skrenite desno",
+    "base_language": "turn right"
+  },
+  {
+    "target_language": "idite ravno",
+    "base_language": "go straight"
+  },
+  {
+    "target_language": "je li ovo pravi put?",
+    "base_language": "is this the right way?"
+  },
+  {
+    "target_language": "tražim ovu adresu",
+    "base_language": "i’m looking for this address"
+  },
+  {
+    "target_language": "koji autobus ide do splita?",
+    "base_language": "which bus goes to split?"
+  },
+  {
+    "target_language": "gdje mogu kupiti kartu?",
+    "base_language": "where can i buy a ticket?"
+  },
+  {
+    "target_language": "koliko košta karta?",
+    "base_language": "how much is the ticket?"
+  },
+  {
+    "target_language": "kada polazi?",
+    "base_language": "what time does it leave?"
+  },
+  {
+    "target_language": "ide li za split?",
+    "base_language": "is it going to split?"
+  },
+  {
+    "target_language": "želim ići na aerodrom",
+    "base_language": "i want to go to the airport"
+  },
+  {
+    "target_language": "zaustavite ovdje, molim",
+    "base_language": "stop here, please"
+  },
+  {
+    "target_language": "htio / htjela bih stol za dvoje",
+    "base_language": "i’d like a table for two"
+  },
+  {
+    "target_language": "mogu li vidjeti jelovnik, molim?",
+    "base_language": "can i see the menu, please?"
+  },
+  {
+    "target_language": "što preporučujete?",
+    "base_language": "what do you recommend?"
+  },
+  {
+    "target_language": "htio / htjela bih ovo, molim",
+    "base_language": "i’d like this, please"
+  },
+  {
+    "target_language": "jednu kavu, molim",
+    "base_language": "one coffee, please"
+  },
+  {
+    "target_language": "ja sam vegetarijanac / vegetarijanka",
+    "base_language": "i’m vegetarian"
+  },
+  {
+    "target_language": "ne jedem meso",
+    "base_language": "i don’t eat meat"
+  },
+  {
+    "target_language": "alergičan / alergična sam na orahe",
+    "base_language": "i have an allergy to nuts"
+  },
+  {
+    "target_language": "je li ovo ljuto?",
+    "base_language": "is this spicy?"
+  },
+  {
+    "target_language": "ne previše ljuto, molim",
+    "base_language": "not too spicy, please"
+  },
+  {
+    "target_language": "bilo je ukusno!",
+    "base_language": "it was delicious!"
+  },
+  {
+    "target_language": "sit / sita sam",
+    "base_language": "i’m full"
+  },
+  {
+    "target_language": "mogu li dobiti vodu?",
+    "base_language": "can i have some water?"
+  },
+  {
+    "target_language": "obična ili gazirana voda?",
+    "base_language": "still or sparkling water?"
+  },
+  {
+    "target_language": "jedno pivo, molim",
+    "base_language": "a beer, please"
+  },
+  {
+    "target_language": "račun, molim",
+    "base_language": "the bill, please"
+  },
+  {
+    "target_language": "možemo li platiti odvojeno?",
+    "base_language": "can we pay separately?"
+  },
+  {
+    "target_language": "je li usluga uključena?",
+    "base_language": "is service included?"
+  },
+  {
+    "target_language": "zadržite ostatak",
+    "base_language": "keep the change"
+  },
+  {
+    "target_language": "koliko ovo košta?",
+    "base_language": "how much does this cost?"
+  },
+  {
+    "target_language": "to je preskupo",
+    "base_language": "that’s too expensive"
+  },
+  {
+    "target_language": "mogu li dobiti popust?",
+    "base_language": "can i get a discount?"
+  },
+  {
+    "target_language": "uzet ću to",
+    "base_language": "i’ll take it"
+  },
+  {
+    "target_language": "samo gledam",
+    "base_language": "i’m just looking"
+  },
+  {
+    "target_language": "primate li kartice?",
+    "base_language": "do you accept credit cards?"
+  },
+  {
+    "target_language": "imate li ovo u drugoj veličini?",
+    "base_language": "do you have this in another size?"
+  },
+  {
+    "target_language": "tražim poklon",
+    "base_language": "i’m looking for a gift"
+  },
+  {
+    "target_language": "imate li nešto jeftinije?",
+    "base_language": "do you have something cheaper?"
+  },
+  {
+    "target_language": "gdje mogu to isprobati?",
+    "base_language": "where can i try this on?"
+  },
+  {
+    "target_language": "ne odgovara mi",
+    "base_language": "it doesn’t fit"
+  },
+  {
+    "target_language": "imate li to u plavoj boji?",
+    "base_language": "do you have it in blue?"
+  },
+  {
+    "target_language": "trebam vrećicu",
+    "base_language": "i need a bag"
+  },
+  {
+    "target_language": "ovo je poklon",
+    "base_language": "this is a gift"
+  },
+  {
+    "target_language": "mogu li to vratiti?",
+    "base_language": "can i return it?"
+  },
+  {
+    "target_language": "gdje je kabina za presvlačenje?",
+    "base_language": "where is the changing room?"
+  },
+  {
+    "target_language": "premalo je",
+    "base_language": "it’s too small"
+  },
+  {
+    "target_language": "preveliko je",
+    "base_language": "it’s too big"
+  },
+  {
+    "target_language": "sviđa mi se",
+    "base_language": "i like it"
+  },
+  {
+    "target_language": "ne sviđa mi se",
+    "base_language": "i don’t like it"
+  },
+  {
+    "target_language": "rezervirao / rezervirala sam online",
+    "base_language": "i booked online"
+  },
+  {
+    "target_language": "želio / željela bih se prijaviti",
+    "base_language": "i’d like to check in"
+  },
+  {
+    "target_language": "želio / željela bih se odjaviti",
+    "base_language": "i’d like to check out"
+  },
+  {
+    "target_language": "u koliko sati je prijava?",
+    "base_language": "what time is check-in?"
+  },
+  {
+    "target_language": "u koliko sati je odjava?",
+    "base_language": "what time is check-out?"
+  },
+  {
+    "target_language": "imate li slobodnih soba?",
+    "base_language": "do you have any rooms available?"
+  },
+  {
+    "target_language": "trebam jednokrevetnu sobu",
+    "base_language": "i need a single room"
+  },
+  {
+    "target_language": "trebam dvokrevetnu sobu",
+    "base_language": "i need a double room"
+  },
+  {
+    "target_language": "je li doručak uključen?",
+    "base_language": "is breakfast included?"
+  },
+  {
+    "target_language": "gdje je dizalo?",
+    "base_language": "where is the elevator?"
+  },
+  {
+    "target_language": "mogu li ostaviti prtljagu ovdje?",
+    "base_language": "can i leave my luggage here?"
+  },
+  {
+    "target_language": "soba je prevruća",
+    "base_language": "the room is too hot"
+  },
+  {
+    "target_language": "soba je prehladna",
+    "base_language": "the room is too cold"
+  },
+  {
+    "target_language": "tuš ne radi",
+    "base_language": "the shower isn’t working"
+  },
+  {
+    "target_language": "nema tople vode",
+    "base_language": "there’s no hot water"
+  },
+  {
+    "target_language": "mogu li dobiti dodatne ručnike?",
+    "base_language": "can i get extra towels?"
+  },
+  {
+    "target_language": "hvala na svemu",
+    "base_language": "thank you for everything"
+  },
+  {
+    "target_language": "koliko je sati?",
+    "base_language": "what time is it?"
+  },
+  {
+    "target_language": "tri je sata",
+    "base_language": "it’s 3 o’clock"
+  },
+  {
+    "target_language": "u koliko sati?",
+    "base_language": "at what time?"
+  },
+  {
+    "target_language": "ovaj tjedan",
+    "base_language": "this week"
+  },
+  {
+    "target_language": "sljedeći tjedan",
+    "base_language": "next week"
+  },
+  {
+    "target_language": "koji je danas dan?",
+    "base_language": "what day is it?"
+  },
+  {
+    "target_language": "koji je danas datum?",
+    "base_language": "what’s the date today?"
+  },
+  {
+    "target_language": "slobodan / slobodna sam u 15 sati",
+    "base_language": "i’m free at 3 pm"
+  },
+  {
+    "target_language": "zovite policiju!",
+    "base_language": "call the police!"
+  },
+  {
+    "target_language": "trebam pomoć",
+    "base_language": "i need help"
+  },
+  {
+    "target_language": "hitno je",
+    "base_language": "it’s an emergency"
+  },
+  {
+    "target_language": "zovite hitnu pomoć!",
+    "base_language": "call an ambulance!"
+  },
+  {
+    "target_language": "ozlijeđen / ozlijeđena sam",
+    "base_language": "i’m injured"
+  },
+  {
+    "target_language": "ima li bolnica u blizini?",
+    "base_language": "is there a hospital nearby?"
+  },
+  {
+    "target_language": "opljačkan / opljačkana sam",
+    "base_language": "i’ve been robbed"
+  },
+  {
+    "target_language": "izgubio / izgubila sam putovnicu",
+    "base_language": "i’ve lost my passport"
+  },
+  {
+    "target_language": "trebam ljekarnu",
+    "base_language": "i need a pharmacy"
+  },
+  {
+    "target_language": "govorite li engleski?",
+    "base_language": "do you speak english?"
+  },
+  {
+    "target_language": "moj prijatelj je bez svijesti",
+    "base_language": "my friend is unconscious"
+  },
+  {
+    "target_language": "trebam policijsko izvješće",
+    "base_language": "i need a police report"
+  },
+  {
+    "target_language": "gdje je najbliža bolnica?",
+    "base_language": "where is the nearest hospital?"
+  },
+  {
+    "target_language": "imao / imala sam nesreću",
+    "base_language": "i’ve been in an accident"
+  },
+  {
+    "target_language": "izgubio / izgubila sam mobitel",
+    "base_language": "i lost my phone"
+  },
+  {
+    "target_language": "kako si / ste? (informal / formal)",
+    "base_language": "how are you?"
+  },
+  {
+    "target_language": "dobro sam, hvala",
+    "base_language": "i’m good, thanks"
+  },
+  {
+    "target_language": "kako se zoveš / zovete? (informal / formal)",
+    "base_language": "what’s your name?"
+  },
+  {
+    "target_language": "zovem se marko",
+    "base_language": "my name is marko"
+  },
+  {
+    "target_language": "odakle si / ste? (informal / formal)",
+    "base_language": "where are you from?"
+  },
+  {
+    "target_language": "ja sam iz australije",
+    "base_language": "i’m from australia"
+  },
+  {
+    "target_language": "drago mi je",
+    "base_language": "nice to meet you"
+  },
+  {
+    "target_language": "koliko imaš / imate godina? (informal / formal)",
+    "base_language": "how old are you?"
+  },
+  {
+    "target_language": "čime se baviš / bavite?",
+    "base_language": "what do you do?"
+  },
+  {
+    "target_language": "student sam",
+    "base_language": "i’m a student"
+  },
+  {
+    "target_language": "na odmoru sam",
+    "base_language": "i’m on holiday"
+  },
+  {
+    "target_language": "živim u splitu",
+    "base_language": "i live in split"
+  },
+  {
+    "target_language": "sviđa ti / vam se ovdje?",
+    "base_language": "do you like it here?"
+  },
+  {
+    "target_language": "da, jako mi se sviđa",
+    "base_language": "yes, i love it"
+  },
+  {
+    "target_language": "prvi put sam ovdje",
+    "base_language": "it’s my first time here"
+  },
+  {
+    "target_language": "bio / bila sam ovdje prije",
+    "base_language": "i’ve been here before"
+  },
+  {
+    "target_language": "govoriš / govorite li hrvatski?",
+    "base_language": "do you speak croatian?"
+  },
+  {
+    "target_language": "volim učiti jezike",
+    "base_language": "i like learning languages"
+  },
+  {
+    "target_language": "ne osjećam se dobro",
+    "base_language": "i don’t feel well"
+  },
+  {
+    "target_language": "bolestan / bolesna sam",
+    "base_language": "i’m sick"
+  },
+  {
+    "target_language": "imam temperaturu",
+    "base_language": "i have a fever"
+  },
+  {
+    "target_language": "boli me glava",
+    "base_language": "i have a headache"
+  },
+  {
+    "target_language": "boli me trbuh",
+    "base_language": "i have a stomach ache"
+  },
+  {
+    "target_language": "boli me grlo",
+    "base_language": "i have a sore throat"
+  },
+  {
+    "target_language": "imam kašalj",
+    "base_language": "i have a cough"
+  },
+  {
+    "target_language": "prehlađen / prehlađena sam",
+    "base_language": "i have a cold"
+  },
+  {
+    "target_language": "imam alergiju",
+    "base_language": "i have an allergy"
+  },
+  {
+    "target_language": "alergičan / alergična sam na penicilin",
+    "base_language": "i’m allergic to penicillin"
+  },
+  {
+    "target_language": "trebam lijek",
+    "base_language": "i need medicine"
+  },
+  {
+    "target_language": "mogu li ovo kupiti bez recepta?",
+    "base_language": "can i buy this without a prescription?"
+  },
+  {
+    "target_language": "trebam nešto protiv boli",
+    "base_language": "i need something for pain"
+  },
+  {
+    "target_language": "trebam nešto za kašalj",
+    "base_language": "i need something for a cough"
+  },
+  {
+    "target_language": "trebam zavoj",
+    "base_language": "i need a bandage"
+  },
+  {
+    "target_language": "trebam doktora",
+    "base_language": "i need a doctor"
+  },
+  {
+    "target_language": "gdje je najbliža ljekarna?",
+    "base_language": "where is the nearest pharmacy?"
+  },
+  {
+    "target_language": "imam recept",
+    "base_language": "i have a prescription"
+  },
+  {
+    "target_language": "mogu li razgovarati s doktorom?",
+    "base_language": "can i speak to a doctor?"
+  },
+  {
+    "target_language": "ovdje boli",
+    "base_language": "it hurts here"
+  },
+  {
+    "target_language": "imate li wi-fi?",
+    "base_language": "do you have wi-fi?"
+  },
+  {
+    "target_language": "koja je lozinka za wi-fi?",
+    "base_language": "what’s the wi-fi password?"
+  },
+  {
+    "target_language": "ima li ovdje besplatan wi-fi?",
+    "base_language": "is there free wi-fi here?"
+  },
+  {
+    "target_language": "internet ne radi",
+    "base_language": "the internet is not working"
+  },
+  {
+    "target_language": "ne mogu se spojiti",
+    "base_language": "i can’t connect"
+  },
+  {
+    "target_language": "imate li punjač?",
+    "base_language": "do you have a charger?"
+  },
+  {
+    "target_language": "mogu li ovdje napuniti mobitel?",
+    "base_language": "can i charge my phone here?"
+  },
+  {
+    "target_language": "baterija mi je pri kraju",
+    "base_language": "my battery is low"
+  },
+  {
+    "target_language": "trebam sim karticu",
+    "base_language": "i need a sim card"
+  },
+  {
+    "target_language": "gdje mogu kupiti sim karticu?",
+    "base_language": "where can i buy a sim card?"
+  },
+  {
+    "target_language": "imate li mobilne podatke?",
+    "base_language": "do you have mobile data?"
+  },
+  {
+    "target_language": "trebam mobilne podatke",
+    "base_language": "i need mobile data"
+  },
+  {
+    "target_language": "mobitel mi ne radi",
+    "base_language": "my phone isn’t working"
+  },
+  {
+    "target_language": "mogu li nazvati?",
+    "base_language": "can i make a call?"
+  },
+  {
+    "target_language": "želim poslati poruku",
+    "base_language": "i want to send a message"
+  },
+  {
+    "target_language": "želim poslati e-mail",
+    "base_language": "i want to send an email"
+  },
+  {
+    "target_language": "imate li računalo koje mogu koristiti?",
+    "base_language": "do you have a computer i can use?"
+  },
+  {
+    "target_language": "mogu li koristiti vaš mobitel?",
+    "base_language": "can i use your phone?"
+  },
+  {
+    "target_language": "ima li ovdje signala?",
+    "base_language": "is there a signal here?"
+  },
+  {
+    "target_language": "trebam pomoć s ovom aplikacijom",
+    "base_language": "i need help with this app"
+  },
+  {
+    "target_language": "koji je ovo praznik?",
+    "base_language": "what holiday is this?"
+  },
+  {
+    "target_language": "je li danas poseban dan?",
+    "base_language": "is this a special day?"
+  },
+  {
+    "target_language": "što slavite?",
+    "base_language": "what are you celebrating?"
+  },
+  {
+    "target_language": "sretan rođendan!",
+    "base_language": "happy birthday!"
+  },
+  {
+    "target_language": "sretan božić!",
+    "base_language": "merry christmas!"
+  },
+  {
+    "target_language": "sretan uskrs!",
+    "base_language": "happy easter!"
+  },
+  {
+    "target_language": "sretna nova godina!",
+    "base_language": "happy new year!"
+  },
+  {
+    "target_language": "sve najbolje!",
+    "base_language": "best wishes!"
+  },
+  {
+    "target_language": "je li pristojno to napraviti?",
+    "base_language": "is it polite to do this?"
+  },
+  {
+    "target_language": "koja je lokalna tradicija?",
+    "base_language": "what’s the local tradition?"
+  },
+  {
+    "target_language": "ljudi to obično rade?",
+    "base_language": "do people usually do that?"
+  },
+  {
+    "target_language": "postoji li pravilo odijevanja?",
+    "base_language": "is there a dress code?"
+  },
+  {
+    "target_language": "poštujem to",
+    "base_language": "i respect that"
+  },
+  {
+    "target_language": "to je zanimljivo",
+    "base_language": "that’s interesting"
+  },
+  {
+    "target_language": "želim naučiti više",
+    "base_language": "i’d like to learn more"
+  },
+  {
+    "target_language": "mogu li slikati?",
+    "base_language": "can i take a photo?"
+  },
+  {
+    "target_language": "smijem li ovdje slikati?",
+    "base_language": "is it okay to take pictures here?"
+  },
+  {
+    "target_language": "kakvo je vrijeme?",
+    "base_language": "what’s the weather like?"
+  },
+  {
+    "target_language": "sunčano je",
+    "base_language": "it’s sunny"
+  },
+  {
+    "target_language": "oblačno je",
+    "base_language": "it’s cloudy"
+  },
+  {
+    "target_language": "pada kiša",
+    "base_language": "it’s raining"
+  },
+  {
+    "target_language": "pada snijeg",
+    "base_language": "it’s snowing"
+  },
+  {
+    "target_language": "puše vjetar",
+    "base_language": "it’s windy"
+  },
+  {
+    "target_language": "vruće je",
+    "base_language": "it’s hot"
+  },
+  {
+    "target_language": "hladno je",
+    "base_language": "it’s cold"
+  },
+  {
+    "target_language": "vlažno je",
+    "base_language": "it’s humid"
+  },
+  {
+    "target_language": "ledi / smrzava se",
+    "base_language": "it’s freezing"
+  },
+  {
+    "target_language": "kolika je temperatura?",
+    "base_language": "what’s the temperature?"
+  },
+  {
+    "target_language": "ima dvadeset stupnjeva",
+    "base_language": "it’s 20 degrees"
+  },
+  {
+    "target_language": "hoće li padati kiša?",
+    "base_language": "is it going to rain?"
+  },
+  {
+    "target_language": "danas je lijepo vrijeme",
+    "base_language": "the weather is nice today"
+  },
+  {
+    "target_language": "prekrasan je dan",
+    "base_language": "it’s a beautiful day"
+  },
+  {
+    "target_language": "idemo van",
+    "base_language": "let’s go outside"
+  },
+  {
+    "target_language": "idemo u šetnju",
+    "base_language": "let’s go for a walk"
+  },
+  {
+    "target_language": "idemo na plažu",
+    "base_language": "let’s go to the beach"
+  },
+  {
+    "target_language": "volim prirodu",
+    "base_language": "i love nature"
+  },
+  {
+    "target_language": "pogled je prekrasan",
+    "base_language": "the view is beautiful"
+  },
+  {
+    "target_language": "trebam dva",
+    "base_language": "i need two"
+  },
+  {
+    "target_language": "želim samo jedan",
+    "base_language": "i only want one"
+  },
+  {
+    "target_language": "samo malo",
+    "base_language": "just a little"
+  },
+  {
+    "target_language": "putujem u split",
+    "base_language": "i’m traveling to split"
+  },
+  {
+    "target_language": "imam rezervaciju",
+    "base_language": "i have a reservation"
+  },
+  {
+    "target_language": "ovdje sam kao turist",
+    "base_language": "i’m here for tourism"
+  },
+  {
+    "target_language": "ovdje sam poslovno",
+    "base_language": "i’m here for work"
+  },
+  {
+    "target_language": "gdje je zračna luka?",
+    "base_language": "where is the airport?"
+  },
+  {
+    "target_language": "gdje je željeznički kolodvor?",
+    "base_language": "where is the train station?"
+  },
+  {
+    "target_language": "trebam taksi",
+    "base_language": "i need a taxi"
+  },
+  {
+    "target_language": "htio / htjela bih unajmiti auto",
+    "base_language": "i’d like to rent a car"
+  },
+  {
+    "target_language": "koliko košta karta za zagreb?",
+    "base_language": "how much is a ticket to zagreb?"
+  },
+  {
+    "target_language": "kada polazi autobus/vlak?",
+    "base_language": "when does the bus/train leave?"
+  },
+  {
+    "target_language": "kada dolazi?",
+    "base_language": "when does it arrive?"
+  },
+  {
+    "target_language": "je li ovo mjesto zauzeto?",
+    "base_language": "is this seat taken?"
+  },
+  {
+    "target_language": "želio / željela bih mjesto do prozora",
+    "base_language": "i’d like a window seat"
+  },
+  {
+    "target_language": "izgubio / izgubila sam se",
+    "base_language": "i’m lost"
+  },
+  {
+    "target_language": "možete li mi pokazati na karti?",
+    "base_language": "can you show me on the map?"
+  },
+  {
+    "target_language": "trebam li vizu?",
+    "base_language": "do i need a visa?"
+  },
+  {
+    "target_language": "gdje mogu uzeti taksi?",
+    "base_language": "where can i get a taxi?"
+  },
+  {
+    "target_language": "ima li autobus do grada?",
+    "base_language": "is there a bus to the city?"
+  },
+  {
+    "target_language": "propustio / propustila sam let",
+    "base_language": "i missed my flight"
+  },
+  {
+    "target_language": "trebam promijeniti kartu",
+    "base_language": "i need to change my ticket"
+  },
+  {
     "target_language": "on je došao kasno.",
     "base_language": "he came late."
   },
