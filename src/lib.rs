@@ -563,7 +563,7 @@ fn reset_card(
         let next_key = find_key_of_lowest_score(&cards, &updated_scores, &current_translations);
         if let Some(key) = next_key {
             // current_card.set(cards[index].clone());
-            if let Some(sentence_index) = get_random_sentence_index(&cards[&key].sentence_indexes) {
+            if let Some(sentence_index) = get_random_sentence_index(&cards[&key].sentence_indexes, (*progress_sum) as i32) {
                 let new_sentences = sentences[sentence_index as usize].clone();
                 let split_text = split_text(&new_sentences.target_language);
                 let (related_cards, processed_sentence_values) = find_related_cards(&updated_scores, &cards, split_text, &key);
@@ -859,13 +859,27 @@ fn calculate_seconds(days: i32, hours: i32, minutes: i32, seconds: i32) -> i32 {
     days * 86400 + hours * 3600 + minutes * 60 + seconds
 }
 
-fn get_random_sentence_index(sentence_indexes: &Vec<i32>) -> Option<i32> {
+fn get_random_sentence_index(sentence_indexes: &Vec<i32>, max_index: i32) -> Option<i32> {
     if sentence_indexes.is_empty() {
         return None; // Return None if the list is empty
     }
 
-    let random_index = (Math::random() * sentence_indexes.len() as f64).floor() as usize;
-    Some(sentence_indexes[random_index])
+    let effective_max = max_index.max(225);
+
+    let valid_sentence_indexes: Vec<i32> = sentence_indexes
+        .iter()
+        .take_while(|&&val| val < effective_max)
+        .cloned()
+        .collect();
+    
+    let valid_len = valid_sentence_indexes.len();
+    
+    if valid_len == 0 {
+        return Some(sentence_indexes[0]);
+    }
+
+    let random_index = (Math::random() * valid_len as f64).floor() as usize;
+    Some(valid_sentence_indexes[random_index])
 }
 
 fn punctuation_list() -> Vec<char> {
