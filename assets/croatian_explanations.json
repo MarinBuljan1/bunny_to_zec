@@ -1,0 +1,782 @@
+{
+  "is": {
+    "je": "the standard word for \"is\" used in normal statements",
+    "jeste": "an emphatic form used to stress that something really is true",
+    "jel": "a shortened question form (from je li) used to ask yes/no questions like “Is he…?”."
+  },
+  "that": {
+    "da": "used to link two clauses (like “I know that…”)",
+    "taj": "a demonstrative for “that” when pointing to something nearby and masculine",
+    "tog": "the genitive form of taj used for possession or after prepositions",
+    "onaj": "used for something more distant or specific (“that one over there”)",
+    "onoga": "the genitive of onaj when the object is being affected."
+  },
+  "are": {
+    "su": "the actual word for “are” used in plural subjects like “they are”",
+    "se": "a reflexive marker that changes the verb’s meaning to reflexive or passive, not a direct translation of “are” but often paired with it."
+  },
+  "and": {
+    "i": "the basic word for “and” that connects similar things",
+    "a": "a contrastive version used like “but” or “while” to show difference",
+    "pa": "used to show consequence or continuation, like “and then” or “so”."
+  },
+  "in": {
+    "u": "the standard preposition used before a noun to say “in” (like “in the house”)",
+    "unutra": "an adverb meaning “inside”, typically used to describe location or motion (“go inside”)."
+  },
+  "it": {
+    "to": "the most common neutral word for \"it\" when referring to something general or previously mentioned",
+    "ono": "also means “it” but refers to a more distant or abstract thing, often something already known or obvious in context."
+  },
+  "alone": {
+    "sam": "masculine form meaning \"alone\" or \"by myself\"",
+    "sama": "feminine equivalent of sam",
+    "same": "plural feminine or neuter form",
+    "samog": "genitive or accusative masculine form used when the subject is being acted upon (e.g. “vidim samog čovjeka”)",
+    "samu": "accusative feminine form (e.g. “vidim samu ženu”)",
+    "samoga": "a formal or emphatic variant of samog, used more in writing or emphasis."
+  },
+  "what": {
+    "što": "standard word for \"what\" in both questions and statements",
+    "šta": "more colloquial and common in speech (especially in Bosnia and Serbia)",
+    "sto": "means \"hundred\", not a synonym",
+    "kakav": "means “what kind of” or “what type”, used for descriptions",
+    "čega": "genitive of što, meaning “of what”",
+    "sta": "variant spelling of šta (often dialectal or typographic)",
+    "če": "not standard Croatian (likely typo or regional/dialectal)",
+    "kaj": "regional (Zagorje, Northern Croatia) word for “what” used instead of što or šta."
+  },
+  "on": {
+    "na": "means “on” in the physical sense (e.g. “on the table”)",
+    "o": "means “about” or “concerning” (e.g. “pričamo o tebi” = “we’re talking about you”)."
+  },
+  "you": {
+    "ti": "informal singular subject pronoun (“you are”)",
+    "te": "informal singular object pronoun (“I see you”)",
+    "vi": "formal or plural subject pronoun",
+    "tebe": "emphatic or accusative form of “you” (e.g. “volim tebe”)",
+    "tobom": "instrumental form meaning “with you” (e.g. “idem s tobom”)",
+    "vama": "dative or instrumental plural/formal form of “you” (e.g. “dajem vama poklon”)."
+  },
+  "me": {
+    "mi": "dative form meaning “to me” (e.g. “daj mi knjigu” = “give me the book”)",
+    "mene": "emphatic or accusative form used when “me” is the object (e.g. “voli mene, ne nju”)",
+    "mnom": "instrumental form meaning “with me” (e.g. “idi sa mnom” = “go with me”)."
+  },
+  "you are": {
+    "si": "informal singular form (e.g. “ti si moj prijatelj”)",
+    "ste": "formal or plural form (e.g. “vi ste iz Zagreba”)",
+    "jesi": "emphatic or interrogative form of si (e.g. “jesi li gladan?” = “are you hungry?”)."
+  },
+  "but": {
+    "ali": "the standard word for “but”, used in all kinds of contrastive sentences",
+    "no": "a slightly more formal or softer alternative, often used at the start of a sentence or as a transition (e.g. “No, to nije istina”)."
+  },
+  "with": {
+    "s": "means “with” and is used before words that don’t start with “s” or “š”",
+    "sa": "also means “with” but is used before words starting with “s” or “š” to make pronunciation easier (e.g. “s tobom” but “sa svima”)",
+    "uz": "means “along with” or “next to” and is used when expressing physical closeness or accompaniment in motion."
+  },
+  "only": {
+    "samo": "the most common word for “only”, meaning “just” or “merely” in most situations (e.g. “samo gledam”)",
+    "jedini": "means “the only one” as in “sole” or “unique” (e.g. “on je jedini prijatelj”)",
+    "tek": "means “only” in the sense of “not until” or “just now” (e.g. “tek sam došao” = “I just arrived”)."
+  },
+  "him": {
+    "ga": "accusative form meaning “him” (e.g. “vidim ga” = “I see him”)",
+    "mu": "dative form meaning “to him” (e.g. “daj mu knjigu” = “give him the book”)",
+    "njega": "emphatic form of ga, used for contrast or emphasis (e.g. “ne njega, nego tebe”)",
+    "njim": "instrumental form meaning “with him” (e.g. “pričam s njim”)",
+    "njemu": "dative emphatic form (e.g. “njemu to ne smeta” = “he doesn’t mind that”)."
+  },
+  "this": {
+    "ovo": "neutral form meaning “this thing” or “this here”",
+    "ovaj": "masculine form used before masculine nouns (e.g. “ovaj auto”)",
+    "ta": "feminine demonstrative that can mean “that” or “this” depending on context (often older or poetic usage)",
+    "ova": "feminine form of “this” (e.g. “ova knjiga”)",
+    "ovim": "instrumental form used when “by this” or “with this” is meant (e.g. “ovim putem” = “by this way”)."
+  },
+  "will": {
+    "će": "the auxiliary verb used to form the future tense (e.g. “on će doći” = “he will come”)",
+    "hoće": "full verb form of “will/wants” that can be used alone or in questions (e.g. “hoće li doći?”)",
+    "ce": "incorrect spelling or unaccented form of će",
+    "volje": "genitive or plural form of volja, which means “will” as in personal willpower",
+    "volja": "the noun for “will” in the sense of desire or intent (e.g. “imam volju za to” = “I have the will for it”)."
+  },
+  "good": {
+    "dobro": "neutral form, used for general statements or as an adverb (e.g. “to je dobro” = “that’s good”)",
+    "dobar": "masculine form used with masculine nouns (e.g. “dobar čovjek” = “a good man”)",
+    "dobra": "feminine form (e.g. “dobra knjiga” = “a good book”)",
+    "dobrog": "genitive or accusative masculine form (e.g. “vidim dobrog psa” = “I see the good dog”)",
+    "dobrim": "instrumental masculine form (e.g. “s dobrim prijateljem” = “with a good friend”)",
+    "dobroj": "dative or locative feminine form (e.g. “pričam dobroj osobi” = “I’m talking to a good person”)."
+  },
+  "if": {
+    "ako": "the standard word for “if”, used in most conditional sentences (e.g. “ako dođeš, javim se” = “if you come, I’ll let you know”)",
+    "ukoliko": "a more formal or conditional version of ako, often used in writing or polite speech (e.g. “ukoliko bude problema, javite se”)."
+  },
+  "we are": {
+    "smo": "standard form for “we are”, placed after the subject (e.g. “mi smo spremni”)",
+    "jesmo": "emphatic version of smo used to affirm or contrast (e.g. “Jesmo, stigli smo!” = “Yes, we did arrive!”)."
+  },
+  "all": {
+    "sve": "neuter form or used as a general “everything” (e.g. “sve je gotovo” = “everything is done”)",
+    "svi": "masculine plural meaning “everyone” or “all people” (e.g. “svi su tu”)",
+    "sva": "feminine or neuter plural for “all things” depending on gender (e.g. “sva djeca” = “all children”)",
+    "sav": "masculine singular meaning “all of” (e.g. “sav trud” = “all the effort”)",
+    "svu": "accusative feminine singular (e.g. “vidim svu vodu” = “I see all the water”)."
+  },
+  "i will": {
+    "ću": "the auxiliary form meaning “I will”, used after the verb goes first (e.g. “napisat ću” = “I will write”)",
+    "hoću": "full form meaning both “I want” and “I will” (e.g. “hoću jesti” = “I want to eat” or “I will eat”), cu and hocu: incorrect/unaccented spellings of ću and hoću, often used in informal writing like texting but not correct in standard usage."
+  },
+  "be": {
+    "biti": "the infinitive form “to be”, used in general or future constructions (e.g. “želim biti učitelj” = “I want to be a teacher”)",
+    "bude": "third-person singular present or subjunctive form meaning “that it be” or “let it be” (e.g. “neka bude tako” = “let it be so”)",
+    "budi": "imperative singular form meaning “be!” used for commands (e.g. “budi miran!” = “be quiet!”)",
+    "budite": "formal or plural version of budi (e.g. “budite spremni” = “be ready”)."
+  },
+  "i know": {
+    "znam": "the most common form meaning “I know” (facts, skills, people casually)",
+    "poznajem": "used when you are familiar with someone/something personally, especially people or places (e.g. “poznajem tog čovjeka” = “I know that man”)",
+    "poznám": "an alternative (more common in some dialects or Serbian), used like poznajem, though in Croatian poznajem is preferred."
+  },
+  "here": {
+    "ovdje": "standard, precise word for “here” (e.g. “on je ovdje” = “he is here”)",
+    "tu": "more casual or general version of “here”, often interchangeable with ovdje but slightly more vague (e.g. “sjedni tu”)",
+    "evo": "used to introduce or present something (e.g. “evo ga!” = “here it is!”)",
+    "ovamo": "means “toward here” or “come this way” (e.g. “dođi ovamo”)",
+    "ovde": "regional form used in Serbia and parts of Bosnia, equivalent to ovdje in standard Croatian."
+  },
+  "was": {
+    "bio": "masculine singular past tense of “to be” (e.g. “on je bio tamo” = “he was there”)",
+    "bila": "feminine singular past (e.g. “ona je bila sretna”)",
+    "bile": "feminine plural past (e.g. “one su bile gladne”)",
+    "biio": "misspelling or typo of bio — not standard."
+  },
+  "i can": {
+    "mogu": "standard present tense form meaning “I can” (e.g. “mogu ti pomoći” = “I can help you”)",
+    "moga": "a past or conditional form meaning “could” or “might have” (e.g. “moga sam doći” = “I could have come”), although the full form is typically mogao in standard masculine singular."
+  },
+  "why": {
+    "zašto": "the standard and most commonly used word for “why” in questions (e.g. “zašto kasniš?” = “why are you late?”)",
+    "čemu": "literally means “to what purpose” or “for what”, used in more formal or rhetorical questions (e.g. “čemu to vodi?” = “what’s the point of that?”)",
+    "zasto": "a misspelling or unaccented version of zašto, often seen in casual texting but not correct in standard Croatian."
+  },
+  "more": {
+    "još": "means “more” in the sense of “still” or “additional” (e.g. “želim još vode” = “I want more water”)",
+    "više": "comparative form meaning “more” as in greater quantity or degree (e.g. “više vremena” = “more time”)",
+    "vise": "misspelling of više or the verb “to hang” depending on context — not interchangeable with više when meaning “more”."
+  },
+  "something": {
+    "nešto": "the standard and most common word for “something” (e.g. “želim nešto slatko” = “I want something sweet”)",
+    "nesto": "misspelling or unaccented form of nešto, often seen in texts",
+    "nečega": "genitive form of “something” (e.g. “bojim se nečega” = “I’m afraid of something”)",
+    "nečemu": "dative form, “to something” (e.g. “pristupiti nečemu” = “to approach something”)",
+    "nečim": "instrumental form, “with something” (e.g. “bavi se nečim čudnim” = “he’s involved in something strange”), nečeg and nečem: shortened genitive/dative forms (used mostly in speech or poetry)",
+    "ponešto": "means “somewhat” or “a bit of something” (e.g. “znam ponešto o tome” = “I know a bit about that”)."
+  },
+  "when": {
+    "kad": "informal or shortened form of kada, often used in speech (e.g. “kad dolaziš?”)",
+    "kada": "the full and slightly more formal version of “when” used interchangeably with kad, especially in writing or careful speech."
+  },
+  "who": {
+    "koji": "means “who” or “which” when selecting from a group or specifying (e.g. “koji čovjek?” = “which man?”)",
+    "tko": "the standard Croatian word for “who” (e.g. “tko je to?” = “who is that?”)",
+    "koja": "feminine form of koji, meaning “which” or “who” when referring to a feminine noun (e.g. “koja djevojka?”)",
+    "ko": "a common colloquial or regional form of tko (used more in speech or outside standard grammar)",
+    "kog": "genitive/accusative form of tko or koji, meaning “whom” or “of whom” (e.g. “kog si vidio?” = “whom did you see?”)."
+  },
+  "your": {
+    "vas": "accusative form of the plural/formal “you” (used as object, e.g. “čekam vas” = “I’m waiting for you”)",
+    "tvoj": "masculine singular informal form of “your” (e.g. “tvoj auto”)",
+    "tvoja": "feminine form of tvoj (e.g. “tvoja knjiga”)",
+    "tvoje": "neuter form (e.g. “tvoje dijete”)",
+    "vaš": "masculine singular formal or plural “your” (e.g. “vaš prijatelj”)",
+    "vaše": "neuter or plural form (e.g. “vaše dijete” or “vaše stvari”)",
+    "vaša": "feminine form (e.g. “vaša kuća”)."
+  },
+  "i think": {
+    "mislim": "most commonly used verb for “I think” in the sense of “I believe” or “I suppose” (e.g. “mislim da je dobro”)",
+    "smatram": "more formal, meaning “I consider” or “I deem” (e.g. “smatram to važnim”)",
+    "razmislim": "means “I think it over” or “I reflect” — used for deliberate, thoughtful consideration (e.g. “moram razmisliti”)",
+    "pomislim": "used for a sudden or brief thought (e.g. “pomislim na njega” = “I suddenly think of him”)."
+  },
+  "thanks": {
+    "hvala": "the standard and universally used word for “thanks” or “thank you” in any context (e.g. “hvala puno”)",
+    "zahvaljujući": "a preposition meaning “thanks to” (e.g. “zahvaljujući tebi, uspjeli smo” = “thanks to you, we succeeded”) — not used as a stand-alone thank-you."
+  },
+  "them": {
+    "ih": "accusative form meaning “them” (e.g. “vidim ih” = “I see them”)",
+    "im": "dative form meaning “to them” (e.g. “daj im knjige” = “give them the books”)",
+    "njih": "emphatic version of ih, used for emphasis or contrast (e.g. “vidim njih, ne vas”)",
+    "njima": "emphatic or prepositional dative form meaning “to them” or “for them” (e.g. “govorim njima”)."
+  },
+  "where": {
+    "gdje": "the standard Croatian word for “where” in neutral contexts (e.g. “gdje si?” = “where are you?”)",
+    "gde": "Serbian spelling/pronunciation of gdje, not standard in Croatian",
+    "kamo": "means “to where” or “in what direction” (e.g. “kamo ideš?” = “where are you going?”)",
+    "odakle": "means “from where” (e.g. “odakle dolaziš?” = “where do you come from?”)",
+    "kuda": "used similarly to kamo but often implies a more general route or path (e.g. “kuda prolaziš?”)",
+    "gđe": "an abbreviation for gospođa (Mrs.) and not related to location, often confused due to similar appearance."
+  },
+  "there is": {
+    "ima": "commonly used to express “there is” or “there are” in spoken Croatian (e.g. “ima vode” = “there is water”)",
+    "postoji": "a more formal or literal word meaning “exists” (e.g. “postoji rješenje” = “a solution exists”)."
+  },
+  "to you": {
+    "vam": "dative plural or formal singular meaning “to you” (e.g. “dajem vam knjigu” = “I’m giving the book to you”)",
+    "tebi": "informal singular dative form (e.g. “to je za tebi” = “that is for you”)."
+  },
+  "you know": {
+    "znaš": "informal singular present tense meaning “you know” (e.g. “znaš li ga?” = “do you know him?”)",
+    "znate": "formal or plural version (e.g. “znate li odgovor?”)",
+    "poznaješ": "informal singular for “you are familiar with” (e.g. “poznaješ li ovu osobu?” = “do you know this person personally?”)",
+    "znas": "incorrect/unaccented version of znaš (commonly seen in texting)",
+    "poznajete": "formal or plural version of poznaješ."
+  },
+  "said": {
+    "rekao": "masculine singular past tense of “to say” (e.g. “on je rekao” = “he said”)",
+    "rekli": "plural past form (e.g. “oni su rekli” = “they said”)",
+    "rečeno": "passive past participle meaning “it was said” (e.g. “to je rečeno”)",
+    "reklo": "neuter singular past form, typically used for abstract or impersonal subjects (e.g. “reklo se da dolazi” = “it was said he is coming”)."
+  },
+  "my": {
+    "moj": "standard masculine form meaning “my” (e.g. “moj auto”)",
+    "mog": "genitive or accusative masculine form used when “my” is the object or after certain prepositions (e.g. “vidim mog brata” = “I see my brother”)",
+    "mome": "dative or locative masculine form (e.g. “pričam mome prijatelju” = “I’m talking to my friend”)."
+  },
+  "then": {
+    "onda": "the most common word for “then”, meaning “at that time” or “next” (e.g. “onda smo otišli” = “then we left”)",
+    "tada": "formal or slightly more specific word meaning “at that moment” (e.g. “tada sam bio u školi”)",
+    "zatim": "often means “after that” or “and then” in sequences (e.g. “pojeli smo večeru, zatim desert”)",
+    "tad": "informal, shortened version of tada",
+    "potom": "a more literary or formal word for “thereafter” or “then” used in writing or speeches."
+  },
+  "we will": {
+    "ćemo": "future auxiliary for “we will” placed after the verb (e.g. “napisat ćemo pismo” = “we will write a letter”)",
+    "hoćemo": "full form meaning “we will” or “we want” (e.g. “hoćemo ići” = “we will go”), cemo and čemo: incorrect or unaccented forms of ćemo, commonly seen in casual typing or texting but not correct in standard Croatian."
+  },
+  "to": {
+    "do": "preposition meaning “to” in the sense of reaching a point or destination (e.g. “do kuće” = “to the house”)",
+    "ka": "used to indicate direction “towards” something (e.g. “ka jugu” = “toward the south”), more formal or poetic than prema which is often used instead in modern Croatian."
+  },
+  "nothing": {
+    "ništa": "the standard word for “nothing” (e.g. “ne vidim ništa” = “I see nothing”)",
+    "ničega": "genitive form meaning “of nothing” (e.g. “bojim se ničega” = “I’m afraid of nothing”)",
+    "nista": "unaccented or incorrect version of ništa",
+    "ničeg": "shortened or colloquial genitive form, often used in speech (e.g. “nema ničeg tamo” = “there’s nothing there”)."
+  },
+  "our": {
+    "nas": "accusative form of “us” (not possessive), used when “us” is the object (e.g. “zvali su nas” = “they called us”)",
+    "naš": "masculine singular form of “our” used before masculine nouns (e.g. “naš pas”)",
+    "naše": "neuter or plural form (e.g. “naše dijete” or “naše knjige”)",
+    "naša": "feminine singular form (e.g. “naša kuća”)",
+    "nase": "unaccented or informal form of naše, often seen in casual writing or typos."
+  },
+  "please": {
+    "molim": "the standard and most common way to say “please” or “you’re welcome” (e.g. “molim vas” = “please”)",
+    "molimo": "formal or plural imperative “we ask”/“please” (e.g. in shops: “izvolite",
+    "moli": "imperative singular “ask” or “please” directed at one person (e.g. “moli ga za pomoć”)",
+    "molio": "past tense masculine form of “asked” (e.g. “molio sam te”)",
+    "miloga": "a poetic or dated genitive form of mil (“dear”), not commonly used for “please” in modern speech, though occasionally seen in phrases like zbog miloga Boga (“for God’s sake”)."
+  },
+  "say": {
+    "reći": "infinitive form meaning “to say” or “to tell” (e.g. “želim ti nešto reći”)",
+    "reci": "imperative singular (“say!” or “tell!” used to one person)",
+    "recite": "formal or plural imperative (“say” addressed to a group or politely to one person)",
+    "reči": "either a typo of reći or an old spelling still used in Serbian (not standard in Croatian)",
+    "kaži": "synonym for reci, more common in Serbian or regional dialects but still understood in Croatia."
+  },
+  "because": {
+    "jer": "the standard word for “because”, used in most spoken and written Croatian (e.g. “kasnim jer je bila gužva”)",
+    "zato": "literally “because of that” or “that’s why”, often used with što (e.g. “zato što je kasnio” = “because he was late”) or alone for emphasis (e.g. “zato sam to učinio” = “that’s why I did it”)."
+  },
+  "hey": {
+    "hej": "the most common informal way to say “hey” in Croatian (e.g. “hej, što ima?”)",
+    "ej": "a softer or more casual version of hej, often used to get someone’s attention (e.g. “ej, čekaj!”)",
+    "haj": "less common, sometimes poetic or used regionally like “come on” (e.g. “haj’mo!” = “let’s go!”)."
+  },
+  "you can": {
+    "možeš": "informal singular form meaning “you can” (e.g. “možeš mi pomoći?” = “can you help me?”)",
+    "možete": "formal or plural version (e.g. “možete ući” = “you may enter”)",
+    "smijete": "means “you are allowed to” (e.g. “smijete li pušiti ovdje?” = “are you allowed to smoke here?”), used when asking about or giving permission."
+  },
+  "you will": {
+    "ćeš": "informal singular future tense auxiliary (e.g. “vidjet ćeš” = “you will see”)",
+    "hoćeš": "full form used for emphasis or in questions (e.g. “hoćeš li doći?” = “will you come?”)",
+    "ćete": "formal or plural version (e.g. “vi ćete to napraviti”)",
+    "hoćete": "formal/plural full form (e.g. “hoćete li večerati s nama?”), and ceš, ces",
+    "hocete": "unaccented or incorrectly spelled versions of ćeš, ćeš, ćete, and hoćete, often found in casual texting but not standard."
+  },
+  "us": {
+    "nam": "dative form meaning “to us” (e.g. “dao nam je knjigu” = “he gave us the book”)",
+    "nama": "emphatic or prepositional dative form (e.g. “dao je to nama, ne vama” = “he gave it to us, not to you”)."
+  },
+  "there": {
+    "tamo": "standard and most common word for “there” in terms of location (e.g. “on je tamo” = “he is there”)",
+    "ondje": "a slightly more formal or poetic synonym for tamo",
+    "eto": "used to point something out that’s nearby or just happened (e.g. “eto ga!” = “there it is!”)",
+    "eno": "used to point at something farther away (e.g. “eno ih!” = “there they are!”)",
+    "onamo": "means “toward there” or “in that direction” (e.g. “idemo onamo”)",
+    "tede": "not a standard Croatian word — likely a typo or dialect word."
+  },
+  "people": {
+    "ljudi": "the standard word for “people” (e.g. “dobri ljudi” = “good people”)",
+    "ljude": "accusative form (e.g. “vidim ljude na ulici”)",
+    "narod": "a more collective or national word for “the people” or “a people” (e.g. “hrvatski narod” = “the Croatian people”)",
+    "ijudi": "not a valid Croatian word — likely a typo for ljudi",
+    "narode": "vocative form used when addressing a people (e.g. “narode moj!” = “my people!”)",
+    "naroda": "genitive form of narod (e.g. “glas naroda” = “voice of the people”)",
+    "ijude": "another likely typo or OCR error for ljude."
+  },
+  "you didn't": {
+    "nisi": "informal singular past negative form of “you didn’t” (e.g. “nisi rekao” = “you didn’t say”)",
+    "niste": "formal or plural version (e.g. “niste ništa učinili” = “you didn’t do anything”)."
+  },
+  "i have to": {
+    "moram": "present tense form meaning “I have to” (e.g. “moram ići” = “I have to go”)",
+    "morat": "colloquial shortened future/conditional infinitive form (e.g. “morat ću to napraviti” = “I’ll have to do that”)."
+  },
+  "always": {
+    "uvijek": "the standard word for “always” (e.g. “uvijek kasniš”)",
+    "uvek": "Serbian spelling of uvijek, commonly seen but not standard in Croatian",
+    "uvjek": "a common misspelling of uvijek — not correct but often made by learners or in casual writing."
+  },
+  "really": {
+    "stvarno": "common and neutral way to say “really” or “truly” (e.g. “stvarno si dobar”)",
+    "zaista": "slightly more formal synonym (e.g. “zaista mi se sviđa”)",
+    "zbilja": "conversational and somewhat emotional version of “really” (e.g. “zbilja to misliš?” = “do you really think that?”)",
+    "doista": "formal or literary alternative for “indeed” or “truly”",
+    "itekako": "emphatic form meaning “very much so” or “definitely” (e.g. “itekako zna što radi”)",
+    "zbilo": "not an adverb — it’s the past form of the verb “zbiti se” (to occur), not used for “really”."
+  },
+  "come on": {
+    "hajde": "the standard form for “come on” or “let’s go” (e.g. “hajde",
+    "daj": "literally means “give” but often used as “come on” in frustration or urging (e.g. “daj, nemoj zezati!”)",
+    "ajde": "informal or regional variant of hajde (widely used in speech)",
+    "ajme": "an exclamation of shock, sympathy, or surprise (“oh no”, “oh dear” — e.g. “ajme meni!”), not really the same as “come on” but sometimes emotionally expressive in a similar tone."
+  },
+  "one": {
+    "jedan": "masculine nominative form meaning “one” or “a” (e.g. “jedan čovjek” = “one man”)",
+    "jedna": "feminine form (e.g. “jedna žena”)",
+    "jednu": "feminine accusative form (e.g. “vidim jednu knjigu”)",
+    "jedno": "neuter form (e.g. “jedno dijete”)",
+    "jednog": "genitive or accusative masculine form (e.g. “vidim jednog psa”)",
+    "jedne": "genitive feminine form or plural feminine nominative (e.g. “bez jedne greške” or “jedne djevojke”)",
+    "jedni": "masculine plural form meaning “some” or “certain ones” in contrast (e.g. “jedni dolaze, drugi odlaze”)",
+    "jednim": "instrumental masculine or neuter form (e.g. “s jednim prijateljem”)",
+    "jednoj": "dative/locative feminine form (e.g. “pri jednoj prilici”)",
+    "jednoga": "formal/genitive masculine form (e.g. “početak jednoga dana”)."
+  },
+  "already": {
+    "već": "the standard word for “already” (e.g. “već sam pojeo” = “I already ate”)",
+    "ionako": "means “anyway” or “in any case,” often implying inevitability (e.g. “ionako nema smisla” = “it doesn’t matter anyway”), not a direct synonym but related in usage tone."
+  },
+  "let's go": {
+    "idemo": "the most common phrase for “let’s go” (e.g. “idemo kući” = “let’s go home”)",
+    "hajdemo": "more formal or older version of idemo, still correct and used (especially in commands)",
+    "odemo": "subjunctive/potential form meaning “that we go” — not used as “let’s go”",
+    "krenemo": "means “let’s start” or “let’s set off” (e.g. “krenemo li sada?”)",
+    "ajmo": "very common informal/slangy version of idemo, used often in speech",
+    "krenimo": "imperative form meaning “let’s begin” or “let’s go” with a sense of initiating movement",
+    "pustimo": "means “let us release” or “let go of” — not used for movement",
+    "ldemo": "likely a typo for idemo",
+    "pođimo": "a more literary/formal way to say “let’s go” or “let us depart”."
+  },
+  "you think": {
+    "misliš": "informal singular present tense of “you think” (e.g. “što misliš?”)",
+    "mislite": "formal or plural form (e.g. “što mislite vi?”)",
+    "razmišljaš": "means “you are thinking” in a more reflective, deliberate way (e.g. “o čemu razmišljaš?” = “what are you thinking about?”)",
+    "razmisliš": "perfective form meaning “you think it over” (e.g. “razmisliš prije nego odgovoriš”)",
+    "pomisliš": "sudden or spontaneous thought, often fleeting or emotional (e.g. “što pomisliš kad ga vidiš?”)."
+  },
+  "won't": {
+    "neće": "the standard future negative form meaning “will not” (e.g. “neće doći” = “he won’t come”)",
+    "neče": "misspelling of neće, often seen in casual typing or due to keyboard limitations."
+  },
+  "things": {
+    "stvari": "the standard plural word for “things” (e.g. “važne stvari” = “important things”)",
+    "stvarima": "the dative/instrumental plural form used for “to the things” or “with the things” (e.g. “bavi se stvarima” = “deals with things”)."
+  },
+  "time": {
+    "vrijeme": "the standard word for “time” as a concept or weather (e.g. “vrijeme brzo prolazi” = “time goes fast” or “lijepo je vrijeme” = “the weather is nice”)",
+    "put": "means “time” as in “occasion” (e.g. “prvi put” = “the first time”)",
+    "vremena": "genitive form of vrijeme, used in phrases like “nema vremena” = “no time”",
+    "vreme": "Serbian spelling of vrijeme, not standard in Croatian",
+    "vremenu": "dative/locative form (e.g. “u tom vremenu” = “at that time”)",
+    "vremenski": "an adjective meaning “temporal” or “related to time” (e.g. “vremenski okvir” = “time frame”)."
+  },
+  "mine": {
+    "moja": "feminine singular form of “mine” (e.g. “to je moja torba”)",
+    "moje": "neuter singular or plural form (e.g. “moje dijete”, “moje stvari”)",
+    "moju": "accusative feminine (e.g. “vidim moju knjigu”)",
+    "mom": "dative/locative masculine (e.g. “pri mom stolu”)",
+    "mojoj": "dative/locative feminine (e.g. “mojoj sestri”)",
+    "moji": "masculine plural (e.g. “moji prijatelji”)",
+    "mojim": "dative/instrumental plural (e.g. “s mojim roditeljima”)",
+    "mojih": "genitive plural (e.g. “bez mojih stvari”)",
+    "mojom": "instrumental feminine (e.g. “s mojom prijateljicom”), mojem and mojeg: alternative genitive/dative masculine forms (e.g. “mojeg psa” = “of my dog”)",
+    "rudnik": "means “mine” in the sense of a mining site — not possessive, so unrelated meaning."
+  },
+  "we can": {
+    "možemo": "standard word for “we can” or “we are able to” (e.g. “možemo ići” = “we can go”)",
+    "smijemo": "means “we are allowed to” or “we may” (e.g. “smijemo li ovdje sjediti?” = “are we allowed to sit here?”)."
+  },
+  "which": {
+    "koje": "neuter or feminine plural form of “which” (e.g. “koje boje želiš?” = “which color do you want?”)",
+    "kojoj": "dative/locative feminine (e.g. “osobi kojoj vjerujem” = “the person whom I trust”)",
+    "kojem": "dative/locative masculine/neuter (e.g. “čovjeku kojem sam pisao”)",
+    "kojima": "dative/instrumental plural (e.g. “ljudima kojima pomažem” = “the people I help”)",
+    "kojim": "same as kojima but masculine/plural",
+    "kojom": "instrumental feminine (e.g. “s osobom kojom razgovaram” = “with the person I'm speaking to”)",
+    "kojih": "genitive plural (e.g. “stvari kojih se sjećam” = “things I remember”)."
+  },
+  "her": {
+    "joj": "dative form meaning “to her” (e.g. “daj joj knjigu” = “give her the book”)",
+    "ju": "short accusative form used after verbs (e.g. “vidim ju” = “I see her”)",
+    "nju": "emphatic accusative form used for contrast or emphasis (e.g. “nju sam vidio, ne tebe”)",
+    "njom": "instrumental form meaning “with her” (e.g. “pričam s njom”)",
+    "nje": "genitive form meaning “of her” (e.g. “bez nje ne mogu” = “I can’t without her”)",
+    "njoj": "emphatic or prepositional dative form (e.g. “dao je to njoj, ne meni”)",
+    "njen": "possessive form meaning “her” (e.g. “njen pas” = “her dog”)."
+  },
+  "they": {
+    "oni": "masculine or mixed-gender plural for “they” (e.g. “oni su došli” = “they came”)",
+    "one": "feminine plural form (e.g. “one su učiteljice” = “they are female teachers”)."
+  },
+  "you want": {
+    "želiš": "informal singular for “you want” (e.g. “što želiš?” = “what do you want?”)",
+    "želite": "likely a repeat, but formal/plural again",
+    "zelis": "unaccented/informal spelling of želiš",
+    "hoćeš": "full form of “you will” or “you want” depending on context (e.g. “hoćeš li ići?”)",
+    "hočeš": "incorrect spelling of hoćeš."
+  },
+  "evil": {
+    "žao": "does not mean “evil” — it means “sorry” or “sad” (e.g. “žao mi je”)",
+    "zlo": "the proper word for “evil” as a concept or noun (e.g. “boriti se protiv zla” = “fight against evil”)",
+    "zao": "masculine adjective meaning “evil” (e.g. “zao čovjek” = “an evil man”)",
+    "zla": "feminine form (e.g. “zla žena”)",
+    "zlu": "dative/locative form (e.g. “na zlu” = “at evil”)",
+    "zli": "masculine plural (e.g. “zli ljudi”)",
+    "zle": "feminine plural (e.g. “zle žene”)."
+  },
+  "you have": {
+    "imaš": "informal singular form of “you have” (e.g. “imaš li vremena?” = “do you have time?”)",
+    "imate": "formal or plural form",
+    "lmaš": "likely a typo for imaš — not a valid word."
+  },
+  "of course": {
+    "naravno": "the standard and most common way to say “of course” (e.g. “naravno da dolazim” = “of course I’m coming”)",
+    "dakako": "a slightly more formal or emphatic synonym, often found in writing or polite conversation (e.g. “Dakako, podržavam to”)."
+  },
+  "to that": {
+    "tome": "dative form of to, meaning “to that” or “for that” (e.g. “pripadam tome” = “I belong to that”)",
+    "tomu": "an alternative dative form, a bit more formal or poetic — both tome and tomu are correct and interchangeable in most cases."
+  },
+  "could": {
+    "mogao": "masculine singular past/future conditional of “can” (e.g. “mogao sam ići” = “I could have gone”)",
+    "mogla": "feminine form (e.g. “mogla sam pomoći”)",
+    "mogli": "masculine plural or mixed-gender plural (e.g. “mogli smo to učiniti”)",
+    "moglo": "neuter form (e.g. “to se moglo izbjeći” = “that could have been avoided”)",
+    "mogle": "feminine plural (e.g. “one su to mogle znati”)."
+  },
+  "job": {
+    "posao": "the standard noun meaning “job” or “work” (e.g. “imam novi posao”)",
+    "pošao": "NOT the same — it is the past tense of the verb poći meaning “he went” or “he set off” (e.g. “pošao je kući” = “he went home”), so it doesn’t mean “job” despite looking similar."
+  },
+  "sir": {
+    "gospodine": "vocative form used when addressing someone directly as “Sir” (e.g. “Izvolite, gospodine” = “Here you go",
+    "gospodin": "nominative form meaning “gentleman” or “Mr.” (e.g. “Gospodin Novak je stigao”)",
+    "gospodina": "accusative/genitive form (e.g. “čekam gospodina Novaka”)",
+    "ser": "not a Croatian word — might be a mix-up with the English “Sir” or the Serbian use in some translations",
+    "gospodinu": "dative form meaning “to the gentleman” (e.g. “dao sam gospodinu knjigu”)",
+    "gospod": "archaic or religious form meaning “Lord” (e.g. “Gospod Bog” = “Lord God”), not used for “sir” in daily speech."
+  },
+  "means": {
+    "znači": "the standard verb form meaning “means” or “it means” (e.g. “to znači da je gotovo” = “that means it’s over”)",
+    "znaci": "plural of znak meaning “signs” or “symbols” (e.g. “prometni znaci” = “traffic signs”) — not the same as znači",
+    "sredstva": "plural of sredstvo, meaning “means” in the sense of resources or tools (e.g. “prijevozna sredstva” = “means of transport”)."
+  },
+  "we have": {
+    "imamo": "standard form of “we have” (e.g. “imamo vremena” = “we have time”)",
+    "lmamo": "a typo or mistyped version of imamo (the “l” is likely a mistaken “i”)."
+  },
+  "days": {
+    "dana": "genitive plural form meaning “of days” or used to express quantities (e.g. “pet dana” = “five days”)",
+    "dani": "nominative plural meaning “days” as a subject (e.g. “dani su sve duži” = “the days are getting longer”)",
+    "dane": "accusative plural, used when “days” are the object (e.g. “volim sunčane dane” = “I love sunny days”)."
+  },
+  "never": {
+    "nikad": "informal and commonly used form of “never” (e.g. “nikad nisam bio tamo”)",
+    "nikada": "more formal or emphatic version — both mean the same and are interchangeable depending on tone or emphasis."
+  },
+  "day": {
+    "dan": "the standard word for “day” (e.g. “lijep dan”)",
+    "danu": "dative/locative form used in contexts like “on that day” or “to the day” (e.g. “na tom danu” = “on that day”)."
+  },
+  "were": {
+    "bili": "masculine or mixed-gender plural past tense of “to be” (e.g. “oni su bili sretni” = “they were happy”)",
+    "bile": "feminine plural past tense (e.g. “one su bile tamo” = “they were [feminine] there”)."
+  },
+  "works": {
+    "radi": "third person singular of “raditi” meaning “he/she/it works” or “is working” (e.g. “on radi svaki dan” = “he works every day”)",
+    "djela": "plural of djelo, meaning “works” in the sense of creations, deeds, or acts (e.g. “njegova djela su poznata” = “his works are well-known”) — not to be confused with the verb raditi."
+  },
+  "year": {
+    "godina": "the standard noun meaning “year” (e.g. “jedna godina”)",
+    "god": "a shortened or poetic form of godina (rarely used in modern Croatian except in expressions like “sto god”)",
+    "godine": "plural or genitive form (e.g. “tri godine” = “three years” or “kroz godine” = “over the years”)",
+    "godinu": "accusative singular (e.g. “čekam jednu godinu” = “I’ve been waiting one year”)."
+  },
+  "better": {
+    "bolje": "comparative adverb meaning “better” in the sense of “in a better way” or “more well” (e.g. “osjećam se bolje”)",
+    "bolji": "masculine comparative adjective (e.g. “bolji rezultat” = “a better result”)",
+    "bolja": "feminine form (e.g. “bolja ocjena” = “a better grade”)",
+    "boljim": "instrumental or dative masculine/neuter form (e.g. “s boljim timom” = “with a better team”)."
+  },
+  "own": {
+    "svoje": "reflexive possessive used with plural or neuter nouns (e.g. “uzmi svoje stvari” = “take your own things”)",
+    "vlastiti": "masculine singular adjective meaning “own” (e.g. “vlastiti stan” = “one’s own apartment”)",
+    "vlastitu": "feminine accusative (e.g. “vidim vlastitu sobu”)",
+    "vlastite": "feminine plural or accusative (e.g. “vlastite ideje” = “your own ideas”)",
+    "vlastitim": "dative/instrumental plural (e.g. “s vlastitim riječima” = “with your own words”)",
+    "vlastitog": "genitive masculine (e.g. “bez vlastitog mišljenja” = “without your own opinion”)",
+    "vlastitom": "dative/locative masculine (e.g. “o vlastitom iskustvu”)",
+    "svojem": "alternate dative/locative of svoj (e.g. “u svojem stilu”)",
+    "vlastito": "neuter singular (e.g. “vlastito dijete”)",
+    "vlastita": "feminine nominative (e.g. “vlastita odluka” = “one’s own decision”)."
+  },
+  "you have to": {
+    "moraš": "informal singular form meaning “you have to” or “you must” (e.g. “moraš učiti” = “you have to study”)",
+    "morate": "formal or plural version (e.g. “morate poštovati pravila” = “you must follow the rules”)",
+    "moras": "unaccented or misspelled form of moraš, common in casual texting but incorrect in standard Croatian."
+  },
+  "don't": {
+    "nemoj": "imperative singular form meaning “don’t” used to tell one person not to do something (e.g. “nemoj to raditi” = “don’t do that”)",
+    "nemojte": "formal or plural version used when addressing more than one person or politely (e.g. “nemojte zaboraviti” = “don’t forget”)."
+  },
+  "god": {
+    "bože": "vocative form used when calling out to God (e.g. “Bože, pomozi mi!” = “God, help me!”)",
+    "bog": "nominative form, the standard word for “God” or “god” (e.g. “Bog je stvorio svijet”)",
+    "boga": "accusative/genitive form (e.g. “vidim boga” or “strah od boga” = “fear of God”)",
+    "bogu": "dative form (e.g. “molim se bogu” = “I pray to God”)",
+    "božje": "neuter possessive form meaning “God’s” (e.g. “Božje ime” = “God’s name”)."
+  },
+  "i won't": {
+    "neću": "standard future negative of “I will not” (e.g. “neću to napraviti” = “I won’t do it”)",
+    "neču": "incorrect spelling of neću, often seen in casual typing but not correct in formal use."
+  },
+  "someone": {
+    "netko": "the standard word for “someone” (e.g. “netko kuca na vrata” = “someone is knocking”)",
+    "nekoga": "genitive/accusative form meaning “someone” as the object (e.g. “vidim nekoga”)",
+    "nekog": "shortened or informal genitive/accusative of netko, used in speech (e.g. “tražim nekog”)",
+    "nekom": "dative form meaning “to someone” (e.g. “pomažem nekom”)",
+    "nekoj": "dative feminine form (e.g. “pričam nekoj djevojci” = “I’m talking to some girl”)."
+  },
+  "code": {
+    "kod": "typically means “code” as in a password or symbol system, but also used as a preposition meaning “at someone’s place” (e.g. “kod kuće” = “at home”), so context matters; šifru: accusative form of šifra, meaning a secret code or password (e.g. “unesi šifru” = “enter the password”)."
+  },
+  "thought": {
+    "mislio": "masculine singular past tense of “thought” (e.g. “mislio sam da znaš” = “I thought you knew”)",
+    "mislila": "feminine form (e.g. “mislila sam da ideš”)",
+    "mislili": "plural form (e.g. “mislili smo na tebe”)",
+    "pomislio": "masculine form of “had a sudden thought” (e.g. “pomislio sam nešto čudno” = “I suddenly thought something odd”)",
+    "pomislili": "plural of pomislio, used when a group suddenly thought of something."
+  },
+  "see": {
+    "vidjeti": "the infinitive “to see” (e.g. “želim te vidjeti” = “I want to see you”)",
+    "vidjet": "shortened conversational form of vidjeti, used frequently in speech but not formal writing",
+    "vide": "third person plural form meaning “they see” (e.g. “oni te vide”)."
+  },
+  "mom": {
+    "mama": "standard word for “mom” (e.g. “moja mama je kod kuće”)",
+    "mamu": "accusative form, used when mom is the object (e.g. “vidim mamu” = “I see mom”)",
+    "mamom": "instrumental form, used for “with mom” (e.g. “idem s mamom” = “I’m going with mom”)."
+  },
+  "looks like": {
+    "izgleda": "the most common way to say “looks like” (e.g. “izgleda umorno” = “he/she looks tired”)",
+    "liči": "informal or colloquial for “resembles” (e.g. “liči na oca” = “looks like his dad”)",
+    "sliči": "more formal/literary synonym of liči, meaning “resembles” or “is similar to” (e.g. “sliči majci”)."
+  },
+  "two": {
+    "dva": "masculine form of “two” (e.g. “dva psa” = “two dogs”)",
+    "dvije": "feminine form (e.g. “dvije knjige” = “two books”)",
+    "dvoje": "collective or mixed-gender form used when referring to a pair or couple (e.g. “dvoje djece” = “two children”)",
+    "dvojica": "masculine collective, often used for two males acting together (e.g. “dvojica policajaca”)",
+    "dve": "Serbian or dialectal version of dvije — not standard in Croatian",
+    "dvojice": "genitive of dvojica (e.g. “jednog od dvojice” = “one of the two men”)."
+  },
+  "had": {
+    "imao": "masculine singular past tense of “to have” (e.g. “imao sam psa” = “I had a dog”)",
+    "imala": "feminine form (e.g. “imala sam sreće”)",
+    "imali": "masculine or mixed-gender plural (e.g. “imali smo vremena”)",
+    "imale": "feminine plural (e.g. “one su imale sastanak”)."
+  },
+  "life": {
+    "život": "nominative form, the base word meaning “life” (e.g. “život je lijep”)",
+    "života": "genitive form used for possession or after certain verbs (e.g. “kraj života” = “end of life”)",
+    "životu": "dative/locative form (e.g. “u životu” = “in life”)",
+    "zivot": "a typo or unaccented version of život."
+  },
+  "dad": {
+    "tata": "nominative form of “dad” (e.g. “tata je u kući”)",
+    "tatu": "accusative form (e.g. “vidim tatu”)",
+    "tati": "dative form (e.g. “daj tati” = “give it to dad”)",
+    "tate": "genitive or vocative (e.g. “bez tate” = “without dad”)",
+    "tatom": "instrumental (e.g. “s tatom” = “with dad”)",
+    "tatin": "possessive adjective meaning “dad’s” (e.g. “tatin auto” = “dad’s car”)."
+  },
+  "you work": {
+    "radiš": "informal singular present tense of “you work” (e.g. “gdje radiš?” = “where do you work?”)",
+    "radite": "formal or plural form (e.g. “što radite vi?”)",
+    "radis": "unaccented or misspelled form of radiš, often seen in casual typing."
+  },
+  "saw": {
+    "vidio": "masculine singular past tense of “saw” (e.g. “vidio sam te jučer” = “I saw you yesterday”)",
+    "vidjela": "feminine singular (e.g. “vidjela sam auto”)",
+    "vidjeli": "masculine or mixed-gender plural (e.g. “vidjeli smo film”)",
+    "videli": "Serbian spelling of vidjeli, not standard in Croatian",
+    "viđao": "masculine imperfect past tense meaning “used to see repeatedly” (e.g. “često sam ga viđao”)",
+    "ugledao": "masculine past tense of “caught sight of” or “spotted” (e.g. “ugledao sam pticu” = “I spotted a bird”)."
+  },
+  "very": {
+    "jako": "the most common and versatile word for “very” or “strongly” (e.g. “jako dobar” = “very good”)",
+    "vrlo": "a slightly more formal or literary synonym for “very” (e.g. “vrlo važan sastanak”)",
+    "veoma": "similar to vrlo, also formal and used more in writing or polite speech (e.g. “veoma lijep dan”)."
+  },
+  "help": {
+    "pomoći": "infinitive form “to help” (e.g. “želim ti pomoći” = “I want to help you”)",
+    "pomoć": "noun form meaning “help” as a concept (e.g. “trebam pomoć” = “I need help”)",
+    "pomozi": "imperative “help!” to one person (e.g. “pomozi mi!”)",
+    "pomogne": "third-person singular present/future subjunctive (e.g. “ako mi pomogne”)",
+    "upomoć": "a cry for help (“help!” like yelling in trouble)",
+    "pomoci": "unaccented/misspelled version of pomoći",
+    "pomogni": "alternate imperative form of “help!” (e.g. “pomogni mu!”)",
+    "pomagati": "imperfective form meaning “to be helping” or “to help regularly” (e.g. “voli pomagati drugima”)",
+    "pomognete": "formal/plural present/future subjunctive (e.g. “nadam se da pomognete”)",
+    "pomognu": "third-person plural (e.g. “ako mi pomognu”)",
+    "pomoči": "misspelling or dialectal of pomoći, not standard."
+  },
+  "go": {
+    "ići": "infinitive “to go” (e.g. “moram ići”)",
+    "idi": "informal imperative singular “go!” (e.g. “idi kući”)",
+    "idite": "formal/plural imperative (e.g. “idite odmah”)",
+    "kreni": "informal imperative meaning “start” or “set off” (e.g. “kreni već jednom!”)",
+    "poći": "infinitive meaning “to set off” or “to go” in a more formal/literary sense (e.g. “moramo poći”)",
+    "pođi": "imperative of poći (e.g. “pođi sa mnom”)",
+    "krenite": "plural/formal imperative of kreni",
+    "krene": "third person singular subjunctive (e.g. “kad krene, nema stajanja”)",
+    "pođite": "formal/plural imperative of pođi",
+    "krenu": "third person plural (e.g. “krenu zajedno” = “they start off”)",
+    "pođe": "third person singular (e.g. “pođe na put”)."
+  },
+  "i see": {
+    "vidim": "present tense, “I see” (e.g. “vidim te” = “I see you”)",
+    "viđam": "imperfective, meaning “I see (repeatedly, regularly)” (e.g. “viđam ga svaki tjedan” = “I see him every week”)."
+  },
+  "home": {
+    "kući": "locative form of kuća, used to mean “at home” (e.g. “sam kod kući” = “I’m at home”)",
+    "dom": "formal word meaning “home” as an institution or concept (e.g. “dom za starije” = “retirement home”)",
+    "domu": "dative/locative form of dom (e.g. “vraćam se domu”)",
+    "kućni": "adjective meaning “home” or “house-related” (e.g. “kućni ljubimac” = “house pet”)."
+  },
+  "knows": {
+    "zna": "present tense of “to know” in general or factual terms (e.g. “on zna istinu” = “he knows the truth”)",
+    "poznaje": "means “is familiar with” or “knows personally” (e.g. “poznaje tog čovjeka” = “he knows that man”)."
+  },
+  "should have": {
+    "trebao": "masculine form meaning “should have” (e.g. “trebao sam doći” = “I should have come”)",
+    "trebali": "plural masculine/mixed (e.g. “trebali smo pokušati”)",
+    "trebalo": "neuter form (e.g. “to se trebalo dogoditi” = “that should have happened”)",
+    "trebala": "feminine form (e.g. “trebala si reći”)",
+    "trebale": "feminine plural (e.g. “one su trebale znati”)."
+  },
+  "happened": {
+    "dogodilo": "neuter past form of “it happened” (e.g. “što se dogodilo?”)",
+    "desilo": "synonym for dogodilo, used more in Serbian or Bosnian speech",
+    "dogodila": "feminine form (e.g. “nesreća se dogodila”)",
+    "dogodio": "masculine form (e.g. “incident se dogodio jučer”)",
+    "događalo": "imperfect past tense meaning “was happening” (e.g. “to se događalo više puta”)."
+  },
+  "again": {
+    "opet": "the most common and informal word for “again” (e.g. “opet kasniš” = “you’re late again”)",
+    "ponovno": "more formal/literal synonym of opet",
+    "ponovo": "similar to ponovno, more common in Serbian but still understood in Croatian",
+    "iznova": "emphasizes starting from scratch or doing over completely (e.g. “počnimo iznova” = “let’s start over”)."
+  },
+  "just": {
+    "upravo": "means “just now” or “exactly” (e.g. “upravo sam stigao” = “I just arrived”)",
+    "maloprije": "means “a little earlier” or “just before now” (e.g. “bio je ovdje maloprije” = “he was here just a moment ago”)."
+  },
+  "make": {
+    "učiniti": "a formal or abstract verb meaning “to do” or “to make happen” (e.g. “želim učiniti nešto dobro” = “I want to do something good”)",
+    "napraviti": "common, practical verb for “to make” or “to build” something tangible (e.g. “napraviti kolač” = “make a cake”)",
+    "napravit": "informal/future-shortened form of napraviti, used in speech (e.g. “napravit ću to kasnije”)",
+    "natjerati": "means “to force” or “to make someone do something” (e.g. “natjerao me da priznam”)",
+    "praviti": "imperfective form meaning “to be making” or “to make regularly” (e.g. “pravim planove” = “I’m making plans”)."
+  },
+  "after": {
+    "nakon": "standard word for “after” followed by a noun (e.g. “nakon škole” = “after school”)",
+    "poslije": "interchangeable with nakon, used both with nouns and on its own (e.g. “vidimo se poslije” = “see you later”)",
+    "posle": "Serbian or dialectal variant of poslije, not standard in Croatian."
+  },
+  "immediately": {
+    "odmah": "the most common and neutral word for “immediately” (e.g. “odmah dolazim” = “I’m coming right away”)",
+    "smjesta": "a more urgent or forceful synonym meaning “right this instant” or “at once” (e.g. “napusti prostoriju smjesta!” = “leave the room immediately!”)."
+  },
+  "name": {
+    "ime": "the standard word for “name” (e.g. “moje ime je Ana”)",
+    "imenu": "dative/locative form (e.g. “posvećeno njegovom imenu” = “dedicated to his name”)",
+    "naziv": "means “name” in the sense of a title or label for things, not people (e.g. “naziv knjige” = “the title of the book”)."
+  },
+  "certainly": {
+    "sigurno": "commonly used to mean “certainly” or “surely,” often with a tone of confidence or reassurance (e.g. “sigurno će doći” = “he’ll certainly come”)",
+    "svakako": "means “certainly” or “by all means,” and is also used for agreement (e.g. “svakako, to je dobra ideja” = “certainly, that’s a good idea”)",
+    "zacijelo": "a slightly more formal or literary synonym of sigurno, meaning “undoubtedly” or “surely.”"
+  },
+  "three": {
+    "tri": "the standard number 3 (e.g. “tri knjige” = “three books”)",
+    "troje": "collective form used when referring to a group as a unit, especially when mixed-gender or when referring to children or people without specifying gender (e.g. “troje djece” = “three children”)",
+    "trojica": "masculine collective form, used specifically for groups of three men or masculine figures (e.g. “trojica prijatelja” = “three (male) friends”)."
+  },
+  "i'm going": {
+    "idem": "present tense “I’m going” in the sense of physically heading somewhere (e.g. “idem kući” = “I’m going home”)",
+    "krenem": "perfective form meaning “I set off” or “I begin to go,” often used in future or conditional phrases (e.g. “kad krenem, javit ću ti” = “when I go/set off, I’ll let you know”)."
+  },
+  "nobody": {
+    "nitko": "standard word for “nobody” (e.g. “nitko nije došao” = “nobody came”)",
+    "nikog": "genitive/accusative form of nitko (e.g. “ne vidim nikog” = “I don’t see anyone”)",
+    "nikom": "dative form of nitko, meaning “to nobody” (e.g. “nikom ne vjerujem” = “I trust no one”)."
+  },
+  "man": {
+    "čovjek": "the standard and most general word for “man” or “human being” (e.g. “dobar čovjek” = “a good man”)",
+    "čovječe": "vocative form, used like “man!” or “dude!” as an exclamation (e.g. “pa čovječe!” = “come on",
+    "muškarac": "refers specifically to a male, rather than a general “person” (e.g. “on je muškarac” = “he is a man”), čovek, čoveče, čoveka, covek",
+    "čovjeće": "all either Serbian spellings (čovek, čoveče, čoveka) or typos/misspellings of Croatian čovjek and čovječe."
+  },
+  "many": {
+    "mnogo": "general word for “many” or “a lot,” used with both countable and uncountable nouns (e.g. “mnogo ljudi” = “many people”)",
+    "mnogi": "masculine plural meaning “many” as a subject (e.g. “mnogi su došli” = “many came”)",
+    "mnoge": "feminine plural accusative/nominative (e.g. “mnoge žene” = “many women”)",
+    "mnogih": "genitive plural (e.g. “priče mnogih ljudi” = “the stories of many people”)."
+  },
+  "team": {
+    "tim": "the standard word for “team” (e.g. “naš tim je spreman” = “our team is ready”)",
+    "ekipa": "informal or casual synonym, can also mean “crew” or “group of friends” (e.g. “super ekipa!” = “great group!”)",
+    "tima": "genitive form of tim (e.g. “član tima” = “team member”)",
+    "momčad": "older or more formal term, commonly used in sports (e.g. “nogometna momčad” = “football team”)."
+  },
+  "which one": {
+    "koju": "accusative feminine singular of “which” (e.g. “koju knjigu želiš?” = “which book do you want?”)",
+    "kojeg": "genitive or accusative masculine singular (e.g. “kojeg čovjeka si vidio?” = “which man did you see?”)",
+    "kojega": "full, more formal version of kojeg — they’re interchangeable in meaning, with kojega more common in written or careful speech."
+  },
+  "hello": {
+    "zdravo": "a standard and friendly way to say “hello” (used similarly to “hi”), appropriate in both formal and informal settings, especially common in the Balkans."
+  },
+  "about": {
+    "oko": "means “about” when estimating or approximating (e.g. “oko deset sati” = “about ten o’clock”), but also means “around” in a spatial sense (e.g. “oko kuće” = “around the house”)",
+    "otprilike": "means “approximately” or “roughly” (e.g. “otprilike 20 ljudi” = “about 20 people”), used mainly with numbers and quantities."
+  }
+}

@@ -31,6 +31,8 @@ struct FlashcardProps {
     fast_move: bool,
     current_card: Card,
     processed_sentence: Html,
+    show_explanations: bool,
+    processed_explanation: Html,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
@@ -90,6 +92,9 @@ struct FlashcardContext {
     time_end: UseStateHandle<i64>,
     progress_sum: UseStateHandle<i64>,
     processed_sentence: UseStateHandle<Html>,
+    explanations: UseStateHandle<HashMap<String, HashMap<String, String>>>,
+    show_explanations: UseStateHandle<bool>,
+    processed_explanation: UseStateHandle<Html>,
 }
 
 #[function_component(Flashcard)]
@@ -114,9 +119,19 @@ fn flashcard(props: &FlashcardProps) -> Html {
 
     html! {
         <>
-            <div class={class_name.clone()} style={style.clone()}>
-                <p class="top">{ props.processed_sentence.clone() }</p>
-                <p class="bottom">{ format!("( {} )", props.current_card.base_language.clone()) }</p>
+            <div class={format!("{} front-side", class_name.clone())} style={style.clone()}>
+                {
+                    if props.show_explanations {
+                        html! { <>{ props.processed_explanation.clone() }</> }
+                    } else {
+                        html! {
+                            <>
+                                <p class="top">{ props.processed_sentence.clone() }</p>
+                                <p class="bottom">{ format!("( {} )", props.current_card.base_language.clone()) }</p>
+                            </>
+                        }
+                    }
+                }
             </div>
             <div class={format!("{} back-side", class_name.clone())} style={style.clone()}>
                 <p class="top">{ props.processed_sentence.clone() }</p>
@@ -139,6 +154,7 @@ fn flashcard_view() -> Html {
     let current_card = flashcard_context.current_card.clone();
     let progress_sum = flashcard_context.progress_sum.clone();
     let processed_sentence = flashcard_context.processed_sentence.clone();
+    let processed_explanation = flashcard_context.processed_explanation.clone();
 
 
     {
@@ -147,9 +163,11 @@ fn flashcard_view() -> Html {
         let sentences = flashcard_context.sentences.clone();
         let scores = flashcard_context.scores.clone();
         let last_data_update = flashcard_context.last_data_update.clone();
+        let explanations = flashcard_context.explanations.clone();
 
         use_effect_with_deps(move |_| {
             wasm_bindgen_futures::spawn_local(async move {
+                // Fetch cards
                 let fetched_cards: IndexMap<String, CardList> = match Request::get("/assets/croatian.json")
                     .send()
                     .await
@@ -168,6 +186,7 @@ fn flashcard_view() -> Html {
                     }
                 };
 
+                // Fetch sentences
                 let card_sentences: Vec<CardSentences> = match Request::get("/assets/croatian_sentences.json")
                     .send()
                     .await
@@ -185,6 +204,28 @@ fn flashcard_view() -> Html {
                         LocalStorage::get::<Vec<CardSentences>>("sentences").unwrap_or_else(|_| vec![])
                     }
                 };
+
+                // Fetch explanations
+                let fetched_explanations: HashMap<String, HashMap<String, String>> =
+                    match Request::get("/assets/croatian_explanations.json")
+                    .send()
+                    .await 
+                {
+                    Ok(response) => {
+                        let explanations: HashMap<String, HashMap<String, String>> = response
+                            .json()
+                            .await
+                            .expect("Failed to parse explanations JSON");
+
+                        LocalStorage::set("explanations", &explanations)
+                            .expect("Failed to store explanations");
+                        explanations
+                    }
+                    Err(_) => {
+                        LocalStorage::get("explanations")
+                            .unwrap_or_else(|_| HashMap::new())
+                    }
+                };
     
                 if let Ok(stored_scores) = LocalStorage::get::<HashMap<String, ScoreData>>("card_scores") {
                     scores.set(stored_scores);
@@ -199,6 +240,7 @@ fn flashcard_view() -> Html {
     
                 cards.set(fetched_cards);
                 sentences.set(card_sentences);
+                explanations.set(fetched_explanations);
             });
 
             || ()
@@ -268,10 +310,12 @@ fn flashcard_view() -> Html {
                     let end_x = e.client_x() as f64;
                     let end_y = e.client_y() as f64;
 
-                    calculate_swipe(
-                        &flashcard_context,
-                        end_x, end_y,
-                    );
+                    if *is_moving {
+                        calculate_swipe(
+                            &flashcard_context,
+                            end_x, end_y,
+                        );
+                    }
                 }
                 _ => {}
             }
@@ -347,6 +391,8 @@ fn flashcard_view() -> Html {
                     fast_move={*fast_move} 
                     current_card={(*current_card).clone()}
                     processed_sentence={(*processed_sentence).to_owned()}
+                    show_explanations={*flashcard_context.show_explanations}
+                    processed_explanation={(*processed_explanation).to_owned()}
                 />
             </div>
         </>
@@ -377,6 +423,9 @@ fn app() -> Html {
     let time_end = use_state(|| Date::now() as i64);
     let progress_sum = use_state(|| 0);
     let processed_sentence = use_state(|| html! { "Swipe to Begin" });
+    let explanations = use_state(|| HashMap::new());
+    let show_explanations = use_state(|| false);
+    let processed_explanation = use_state(|| html! { "Swipe Up or Down" });
 
     html! {
         <ContextProvider<FlashcardContext> context={
@@ -400,6 +449,9 @@ fn app() -> Html {
                 time_end: time_end.clone(),
                 progress_sum: progress_sum.clone(),
                 processed_sentence: processed_sentence.clone(),
+                explanations: explanations.clone(),
+                show_explanations: show_explanations.clone(),
+                processed_explanation: processed_explanation.clone(),
             }}>
             <div class="app-container">
                 <FlashcardView />
@@ -452,6 +504,7 @@ fn calculate_swipe(
     let delta_xy = flashcard_context.delta_xy.clone();
     let time_start = flashcard_context.time_start.clone();
     let time_end = flashcard_context.time_end.clone();
+    let show_explanations = flashcard_context.show_explanations.clone();
 
     let new_direction = set_direction(flashcard_context, end_x, end_y, set_swipe_direction.clone(), false, false);
 
@@ -463,6 +516,10 @@ fn calculate_swipe(
     } else if new_direction == Some(SwipeDirection::Right) || new_direction == Some(SwipeDirection::Left) {
         if *time_start == *time_end {
             time_end.set(get_timestamp_ms());
+            
+            set_timeout(move || {
+                show_explanations.set(true);
+            }, 400);
         }
     }
 
@@ -535,12 +592,15 @@ fn reset_card(
     let time_end = flashcard_context.time_end.clone();
     let progress_sum = flashcard_context.progress_sum.clone();
     let processed_sentence = flashcard_context.processed_sentence.clone();
+    let explanations = flashcard_context.explanations.clone();
+    let show_explanations = flashcard_context.show_explanations.clone();
+    let processed_explanation = flashcard_context.processed_explanation.clone();
 
     let duration = *time_end - *time_start;
 
     let mut updated_scores = (*scores).clone();
     let correct = new_direction == Some(SwipeDirection::Up);
-    if duration > 1 {
+    if duration > 1 { // Avoids dividing by zero
         let raw_values = get_raw_info_for_cards(&current_translations, &scores.clone());
         let new_values = calculate_raw_scores(
             raw_values,
@@ -548,9 +608,9 @@ fn reset_card(
             (&current_card.base_language.len() + &current_card.target_language.len()) as i32,
             correct,
         );
-        if current_card.base_language != "Swipe to Begin" {
-            updated_scores = update_score(&current_translations, new_values, scores.clone(), last_data_update.clone());
-        }
+        // if current_card.base_language != "Swipe to Begin" {
+        updated_scores = update_score(&current_translations, new_values, scores.clone(), last_data_update.clone());
+        // }
     }
     update_progress(&updated_scores, progress_sum.clone());
     
@@ -563,19 +623,24 @@ fn reset_card(
         let next_key = find_key_of_lowest_score(&cards, &updated_scores, &current_translations);
         if let Some(key) = next_key {
             // current_card.set(cards[index].clone());
-            if let Some(sentence_index) = get_random_sentence_index(&cards[&key].sentence_indexes, (*progress_sum) as i32) {
+            if let Some(sentence_index) = get_random_sentence_index(&cards[&key].sentence_indexes, current_translations.list.len() as i32) {
                 let new_sentences = sentences[sentence_index as usize].clone();
                 let split_text = split_text(&new_sentences.target_language);
                 let (related_cards, processed_sentence_values) = find_related_cards(&updated_scores, &cards, split_text, &key);
-                current_translations.set(CurrentTranslations { list: related_cards });
+                current_translations.set(CurrentTranslations { list: related_cards.clone() });
                 
                 let processed_sentence_final = construct_processed_sentence(processed_sentence_values);
+
+                let processed_explanation_final = construct_processed_explanation(&related_cards, &*explanations, &updated_scores);
+
                 current_card.set(Card {
                     base_language: new_sentences.base_language.clone(),
                     target_language: new_sentences.target_language.clone()
                 });
 
                 processed_sentence.set(processed_sentence_final);
+
+                processed_explanation.set(processed_explanation_final);
 
             } else {
                 // Handle the case where no sentence index is available
@@ -585,6 +650,8 @@ fn reset_card(
                 });
 
                 processed_sentence.set(html! { <span>{ cards[&key].base_language.clone() }</span> });
+
+                processed_explanation.set(html! { <span>{ " " }</span> });
             }
             
         } else {
@@ -596,6 +663,7 @@ fn reset_card(
     
             fast_move.set(false);
             set_swipe_direction.set(SwipeDirection::None);
+            show_explanations.set(false);
 
             set_timeout(move || {
                 
@@ -864,7 +932,7 @@ fn get_random_sentence_index(sentence_indexes: &Vec<i32>, max_index: i32) -> Opt
         return None; // Return None if the list is empty
     }
 
-    let effective_max = max_index.max(225);
+    let effective_max = max_index.max(1);
 
     let valid_sentence_indexes: Vec<i32> = sentence_indexes
         .iter()
@@ -963,6 +1031,44 @@ fn construct_processed_sentence(processed_sentence_data: Vec<ProcessingData>) ->
                 html! { <span class="visible-word">{ &word.word }</span> }
             }
         })}
+    }
+}
+
+fn construct_processed_explanation(
+    related_cards: &Vec<Card>,
+    explanations: &HashMap<String, HashMap<String, String>>,
+    updated_scores: &HashMap<String, ScoreData>,
+) -> Html {
+
+    let mut explanation_nodes: Vec<Html> = vec![];
+    for card in related_cards {
+        let mut found = false;
+        if let Some(inner) = explanations.get(&card.base_language) {
+            for (target, text) in inner {
+                if !found {
+                    found = true;
+                    explanation_nodes.push(html! {
+                        <p class="explanation base-word">
+                            <strong>{ format!("{}", &card.base_language) }</strong>
+                        </p>
+                    });
+                }
+                if target == &card.target_language || updated_scores.contains_key(target) {
+                    explanation_nodes.push(html! {
+                        <p class="explanation target-word">
+                            <strong>{ format!("{}: ", target) }</strong>
+                            { text }
+                        </p>
+                    });
+                }
+            }
+        }
+    }
+
+    html! {
+        <div style={format!("--element-count: {};", explanation_nodes.len())}>
+            { for explanation_nodes }
+        </div>
     }
 }
 
@@ -1107,4 +1213,50 @@ mod tests {
             assert_eq!(new_last_review, expected_last_review, "Incorrect last_review for input: {:?}", (score, last_review, ms_for_review, character_length, correct, inverted_score));
         }
     }
+
+    #[test]
+    fn test_construct_processed_explanation_filters_correctly() {
+        let related_cards = vec![
+            Card {
+                base_language: "en".to_string(),
+                target_language: "apple".to_string(),
+            },
+            Card {
+                base_language: "en".to_string(),
+                target_language: "banana".to_string(),
+            },
+        ];
+
+        let mut explanation_inner = HashMap::new();
+        explanation_inner.insert("apple".to_string(), "A fruit".to_string());
+        explanation_inner.insert("banana".to_string(), "Yellow fruit".to_string());
+        explanation_inner.insert("grape".to_string(), "Small fruit".to_string());
+
+        let mut explanations = HashMap::new();
+        explanations.insert("en".to_string(), explanation_inner);
+
+        let mut updated_scores = HashMap::new();
+        updated_scores.insert(
+            "grape".to_string(),
+            ScoreData {
+                score: 0,
+                last_review: 0,
+            },
+        );
+
+        let output = construct_processed_explanation(&related_cards, &explanations, &updated_scores);
+
+        let p_count = match output {
+            yew::virtual_dom::VNode::VTag(tag) => {
+                tag.children().children.iter().filter(|child| {
+                    matches!(child, yew::virtual_dom::VNode::VTag(p) if p.tag() == "p")
+                }).count()
+            }
+            _ => 0,
+        };
+
+        // We expect "apple", "banana", and "grape" to appear
+        assert_eq!(p_count, 3);
+    }
+
 }

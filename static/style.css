@@ -62,7 +62,9 @@ html, body {
 }
 .flashcard-view .card {
   width: 300px;
-  height: 200px;
+  min-height: 200px;
+  padding: 1em;
+  box-sizing: border-box;
   background-color: #f8f9fa;
   border: 1px solid #ddd;
   border-radius: 10px;
@@ -133,6 +135,18 @@ html, body {
   opacity: 0.8;
   font-size: 0.8em;
   transform: translate(-50%, -65%);
+}
+.flashcard-view .card .explanation {
+  font-size: min(20em / (var(--element-count) + 15), 1em);
+  margin: min(10em / (var(--element-count) + 15), 0.5em) 0;
+  text-align: left;
+}
+.flashcard-view .card .explanation.base-word {
+  text-decoration: underline;
+}
+.flashcard-view .card .explanation.target-word {
+  padding-left: 3em;
+  text-indent: -1.5em;
 }
 
 .management-table {
