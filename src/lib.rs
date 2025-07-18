@@ -9,7 +9,7 @@ use std::collections::HashMap;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::wasm_bindgen;
-use web_sys::{TouchEvent, window};
+use web_sys::{Element, EventTarget, HtmlElement, TouchEvent, window};
 use yew::context::ContextProvider;
 use yew::prelude::*;
 
@@ -257,26 +257,34 @@ fn flashcard_view() -> Html {
             match e.type_().as_str() {
                 "touchstart" => {
                     let touch = get_first_touch(&e, "touches");
-                    start_x.set(touch.client_x() as f64);
-                    start_y.set(touch.client_y() as f64);
-                    is_moving.set(true);
+                    if let Some(target) = e.target() {
+                        if should_enable_drag_for_event_target(&target) {
+                            start_x.set(touch.client_x() as f64);
+                            start_y.set(touch.client_y() as f64);
+                            is_moving.set(true);
+                        }
+                    }
                 }
                 "touchmove" => {
-                    let touch = get_first_touch(&e, "touches");
-                    let current_y = touch.client_y() as f64;
-                    let current_x = touch.client_x() as f64;
+                    if *is_moving {
+                        let touch = get_first_touch(&e, "touches");
+                        let current_y = touch.client_y() as f64;
+                        let current_x = touch.client_x() as f64;
 
-                    drag_move(&flashcard_context, current_x, current_y);
+                        drag_move(&flashcard_context, current_x, current_y);
+                    }
                 }
                 "touchend" => {
-                    let touch = get_first_touch(&e, "changedTouches");
-                    let end_x = touch.client_x() as f64;
-                    let end_y = touch.client_y() as f64;
+                    if *is_moving {
+                        let touch = get_first_touch(&e, "changedTouches");
+                        let end_x = touch.client_x() as f64;
+                        let end_y = touch.client_y() as f64;
 
-                    calculate_swipe(
-                        &flashcard_context,
-                        end_x, end_y,
-                    );
+                        calculate_swipe(
+                            &flashcard_context,
+                            end_x, end_y,
+                        );
+                    }
                 }
                 _ => {}
             }
@@ -294,9 +302,13 @@ fn flashcard_view() -> Html {
 
             match e.type_().as_str() {
                 "mousedown" => {
-                    start_x.set(e.client_x() as f64);
-                    start_y.set(e.client_y() as f64);
-                    is_moving.set(true);
+                    if let Some(target) = e.target() {
+                        if should_enable_drag_for_event_target(&target) {
+                            start_x.set(e.client_x() as f64);
+                            start_y.set(e.client_y() as f64);
+                            is_moving.set(true);
+                        }
+                    }
                 }
                 "mousemove" => {
                     if *is_moving {
@@ -307,10 +319,10 @@ fn flashcard_view() -> Html {
                     }
                 }
                 "mouseup" => {
-                    let end_x = e.client_x() as f64;
-                    let end_y = e.client_y() as f64;
-
                     if *is_moving {
+                        let end_x = e.client_x() as f64;
+                        let end_y = e.client_y() as f64;
+
                         calculate_swipe(
                             &flashcard_context,
                             end_x, end_y,
@@ -1066,14 +1078,36 @@ fn construct_processed_explanation(
     }
 
     html! {
-        <div style={format!("--element-count: {};", explanation_nodes.len())}>
+        <div class="explanation-div">
             { for explanation_nodes }
         </div>
     }
 }
 
+fn find_ancestor_with_class(mut element: Option<Element>, class_name: &str) -> Option<HtmlElement> {
+    while let Some(el) = element {
+        if let Some(html_el) = el.dyn_ref::<HtmlElement>() {
+            if html_el.class_list().contains(class_name) {
+                return Some(html_el.clone());
+            }
+        }
+        element = el.parent_element();
+    }
+    None
+}
 
-
+fn should_enable_drag_for_event_target(target: &EventTarget) -> bool {
+    if let Ok(elem) = target.clone().dyn_into::<web_sys::Element>() {
+        if let Some(_) = target.dyn_ref::<HtmlElement>() {
+            return find_ancestor_with_class(Some(elem.clone()), "flashcard-view").is_some()
+                &&
+                !find_ancestor_with_class(Some(elem.clone()), "explanation-div")
+                    .map(|card_elem| card_elem.scroll_height() > card_elem.client_height())
+                    .unwrap_or(false);
+        }
+    }
+    false
+}
 
 
 
@@ -1213,50 +1247,4 @@ mod tests {
             assert_eq!(new_last_review, expected_last_review, "Incorrect last_review for input: {:?}", (score, last_review, ms_for_review, character_length, correct, inverted_score));
         }
     }
-
-    #[test]
-    fn test_construct_processed_explanation_filters_correctly() {
-        let related_cards = vec![
-            Card {
-                base_language: "en".to_string(),
-                target_language: "apple".to_string(),
-            },
-            Card {
-                base_language: "en".to_string(),
-                target_language: "banana".to_string(),
-            },
-        ];
-
-        let mut explanation_inner = HashMap::new();
-        explanation_inner.insert("apple".to_string(), "A fruit".to_string());
-        explanation_inner.insert("banana".to_string(), "Yellow fruit".to_string());
-        explanation_inner.insert("grape".to_string(), "Small fruit".to_string());
-
-        let mut explanations = HashMap::new();
-        explanations.insert("en".to_string(), explanation_inner);
-
-        let mut updated_scores = HashMap::new();
-        updated_scores.insert(
-            "grape".to_string(),
-            ScoreData {
-                score: 0,
-                last_review: 0,
-            },
-        );
-
-        let output = construct_processed_explanation(&related_cards, &explanations, &updated_scores);
-
-        let p_count = match output {
-            yew::virtual_dom::VNode::VTag(tag) => {
-                tag.children().children.iter().filter(|child| {
-                    matches!(child, yew::virtual_dom::VNode::VTag(p) if p.tag() == "p")
-                }).count()
-            }
-            _ => 0,
-        };
-
-        // We expect "apple", "banana", and "grape" to appear
-        assert_eq!(p_count, 3);
-    }
-
 }

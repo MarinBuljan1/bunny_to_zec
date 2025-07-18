@@ -67,6 +67,10 @@ html, body {
     .card {
         width: 300px;
         min-height: 200px;
+        max-height: 60vh;
+        // overflow-y: auto;
+        // touch-action: pan-y;
+        -webkit-overflow-scrolling: touch;
         padding: 1em;
         box-sizing: border-box;
         background-color: #f8f9fa;
@@ -151,9 +155,13 @@ html, body {
             }
         }
 
+        .explanation-div {
+            max-height: 60vh;
+            overflow-y: auto;
+            align-self: flex-start;
+        }
         .explanation {
-            font-size: min(calc(20em / (var(--element-count) + 15)), 1em);
-            margin: min(calc(10em / (var(--element-count) + 15)), 0.5em) 0;
+            margin: 0.5em 0.2em;
             text-align: left;
 
             &.base-word {
@@ -164,47 +172,6 @@ html, body {
                 padding-left: 3em;
                 text-indent: -1.5em;
             }
-        }
-    }
-}
-
-.management-table {
-    margin: 20px;
-    width: 100%;
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-
-        th, td {
-            padding: 12px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f4f4f4;
-        }
-
-        .edit-btn {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            cursor: pointer;
-        }
-
-        .delete-btn {
-            background-color: #f44336;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        .edit-btn:hover, .delete-btn:hover {
-            opacity: 0.8;
         }
     }
 }
