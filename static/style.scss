@@ -195,6 +195,9 @@ html, body {
     align-items: center;
     justify-content: center;
     z-index: 2000;
+    backdrop-filter: blur(4px) saturate(120%);
+    -webkit-backdrop-filter: blur(4px) saturate(120%);
+    animation: fadeIn 0.18s ease-out;
 }
 
 .settings-modal {
@@ -204,6 +207,7 @@ html, body {
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     overflow: hidden;
+    animation: popIn 0.22s cubic-bezier(.2,.7,.3,1);
 }
 
 .settings-modal .modal-header {
@@ -223,8 +227,104 @@ html, body {
     border: none;
     font-size: 1.2rem;
     cursor: pointer;
+    color: #304861;
+    padding: 0.25rem;
+    border-radius: 8px;
+    transition: background 0.15s ease;
 }
 
 .settings-modal .modal-body {
     padding: 1rem;
+    line-height: 1.5;
+}
+
+/* Instructions layout */
+.instructions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    .instruction-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        background: rgba(0, 123, 255, 0.02);
+        border: 1px solid rgba(0, 123, 255, 0.1);
+        border-radius: 10px;
+        padding: 0.75rem 0.9rem;
+
+        .instruction-icon {
+            color: #007bff;
+            flex: 0 0 1.6rem;
+            width: 1.6rem;
+            height: 1.6rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            line-height: 1;
+            text-align: center;
+            margin-top: 0.1rem;
+            background: linear-gradient(120deg, rgba(0,123,255,0.1), rgba(0,123,255,0.02));
+            border: 1px solid rgba(0,123,255,0.25);
+            border-radius: 50%;
+        }
+
+        .instruction-text {
+            margin: 0;
+        }
+    }
+
+    & .philosophy {
+        // border-top: 2px solid #eee;
+        padding-top: 0.5rem;
+        margin-top: 0.25rem;
+        background: rgba(255, 145, 0, 0.04);
+        border: 1px solid rgba(255, 145, 0, 0.2);
+
+        .instruction-icon {
+            color: rgb(255, 145, 0);
+            background: linear-gradient(120deg, rgba(255,145,0,0.1), rgba(255,145,0,0.02));
+            border: 1px solid rgba(255,145,0,0.25);
+        }
+    }
+}
+
+.settings-modal .close-button:hover {
+    background: rgba(0,0,0,0.06);
+}
+
+.top-left-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.86);
+    color: #1f2937;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: transform 0.1s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+
+    &:hover {
+        transform: translate(-50%, -1px);
+        background: rgba(255,255,255,0.92);
+        color: #007bff;
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0 }
+    to { opacity: 1 }
+}
+
+@keyframes popIn {
+    from { transform: translateY(8px) scale(0.985); opacity: 0 }
+    to { transform: translateY(0) scale(1); opacity: 1 }
+}
+
+@media (max-width: 480px) {
+    .settings-modal { width: 94vw; }
+    .instructions .instruction-row { padding: 0.65rem 0.8rem; }
 }

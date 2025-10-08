@@ -512,7 +512,7 @@ fn settings_modal(props: &SettingsModalProps) -> Html {
                 Callback::from(|e: MouseEvent| e.stop_propagation())
             }>
                 <div class="modal-header">
-                    <h3>{"Settings"}</h3>
+                    <h3>{"Guide"}</h3>
                     <button class="close-button" onclick={{
                         let cb = props.on_close.clone();
                         Callback::from(move |_| cb.emit(()))
@@ -521,7 +521,38 @@ fn settings_modal(props: &SettingsModalProps) -> Html {
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>{"Settings coming soon. Add your options here."}</p>
+                    <div class="instructions">
+                        <div class="instruction-row">
+                            <i class="fas fa-arrow-up instruction-icon" aria-hidden="true"></i>
+                            <p class="instruction-text">
+                                {"Swipe up or down to show the next card. A short timer starts as soon as it appears."}
+                            </p>
+                        </div>
+                        <div class="instruction-row">
+                            <i class="fas fa-arrows-left-right instruction-icon" aria-hidden="true"></i>
+                            <p class="instruction-text">
+                                {"When you think of the missing word, swipe left or right to reveal the answer and explanations. The timer stops the moment you reveal."}
+                            </p>
+                        </div>
+                        <div class="instruction-row">
+                            <i class="fas fa-check instruction-icon" aria-hidden="true"></i>
+                            <p class="instruction-text">
+                                {"Ready to move on? Swipe up if you were correct, or down if not."}
+                            </p>
+                        </div>
+                        <div class="instruction-row">
+                            <i class="fas fa-chart-line instruction-icon" aria-hidden="true"></i>
+                            <p class="instruction-text">
+                                {"Each word’s progress blends three things: how long since you last saw it, how quickly you recalled it, and whether you got it right. Your progress is saved in this browser."}
+                            </p>
+                        </div>
+                        <div class="instruction-row philosophy">
+                            <i class="fas fa-bolt instruction-icon" aria-hidden="true"></i>
+                            <p class="instruction-text">
+                                {"Real conversations are fast. Words become more ‘learnt’ when you can recall them quickly especially after longer breaks."}
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
