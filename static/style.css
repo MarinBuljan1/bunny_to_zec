@@ -17,10 +17,19 @@ html, body {
 
 .top-left-icon {
   position: absolute;
-  top: 1rem;
-  left: 1rem;
+  top: 5%;
+  left: 5%;
+  transform: translateX(-50%);
   cursor: pointer;
-  font-size: x-large;
+  font-size: xx-large;
+  z-index: 1500;
+  background: transparent;
+  border: none;
+  color: #304861;
+  margin: 0.25em 0;
+}
+.top-left-icon:hover {
+  color: #007bff;
 }
 
 .flashcard-view, .management-table {
@@ -153,6 +162,49 @@ html, body {
 .flashcard-view .card .explanation.target-word {
   padding-left: 3em;
   text-indent: -1.5em;
+}
+
+/* Modal overlay for settings */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.settings-modal {
+  background: #fff;
+  width: min(90vw, 520px);
+  max-width: 95vw;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.settings-modal .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1rem 0.5rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.settings-modal .modal-header h3 {
+  margin: 0;
+}
+
+.settings-modal .close-button {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.settings-modal .modal-body {
+  padding: 1rem;
 }
 
 /*# sourceMappingURL=style.css.map */

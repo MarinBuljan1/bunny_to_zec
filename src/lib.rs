@@ -141,8 +141,13 @@ fn flashcard(props: &FlashcardProps) -> Html {
     }
 }
 
+#[derive(Properties, PartialEq, Clone)]
+struct FlashcardViewProps {
+    open_settings: Callback<()>,
+}
+
 #[function_component(FlashcardView)]
-fn flashcard_view() -> Html {
+fn flashcard_view(props: &FlashcardViewProps) -> Html {
     let flashcard_context = use_context::<FlashcardContext>().expect("FlashcardContext not found");
     let pos_x = flashcard_context.pos_x.clone();
     let pos_y = flashcard_context.pos_y.clone();
@@ -386,6 +391,16 @@ fn flashcard_view() -> Html {
 
     html! {
         <>
+            <button
+                class="top-left-icon"
+                title="Settings"
+                onclick={{
+                    let cb = props.open_settings.clone();
+                    Callback::from(move |_| cb.emit(()))
+                }}
+            >
+                { html!{ <i class="fas fa-cog"></i> } }
+            </button>
             {progress_bars}
             <div class="flashcard-view"
                 ontouchstart={on_touch_event.clone()}
@@ -438,6 +453,7 @@ fn app() -> Html {
     let explanations = use_state(|| HashMap::new());
     let show_explanations = use_state(|| false);
     let processed_explanation = use_state(|| html! { "Swipe Up or Down" });
+    let show_settings = use_state(|| false);
 
     html! {
         <ContextProvider<FlashcardContext> context={
@@ -466,9 +482,49 @@ fn app() -> Html {
                 processed_explanation: processed_explanation.clone(),
             }}>
             <div class="app-container">
-                <FlashcardView />
+                <FlashcardView open_settings={{
+                    let show_settings = show_settings.clone();
+                    Callback::from(move |_| show_settings.set(true))
+                }} />
+
+                { if *show_settings { html! { <SettingsModal on_close={{
+                    let show_settings = show_settings.clone();
+                    Callback::from(move |_| show_settings.set(false))
+                }} /> } } else { html!{} } }
             </div>
         </ContextProvider<FlashcardContext>>
+    }
+}
+
+#[derive(Properties, PartialEq, Clone)]
+struct SettingsModalProps {
+    on_close: Callback<()>,
+}
+
+#[function_component(SettingsModal)]
+fn settings_modal(props: &SettingsModalProps) -> Html {
+    html! {
+        <div class="modal-overlay" onclick={{
+            let cb = props.on_close.clone();
+            Callback::from(move |_| cb.emit(()))
+        }}>
+            <div class="settings-modal" onclick={
+                Callback::from(|e: MouseEvent| e.stop_propagation())
+            }>
+                <div class="modal-header">
+                    <h3>{"Settings"}</h3>
+                    <button class="close-button" onclick={{
+                        let cb = props.on_close.clone();
+                        Callback::from(move |_| cb.emit(()))
+                    }} aria-label="Close">
+                        { html!{ <i class="fas fa-times"></i> } }
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>{"Settings coming soon. Add your options here."}</p>
+                </div>
+            </div>
+        </div>
     }
 }
 
