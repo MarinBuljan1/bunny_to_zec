@@ -173,7 +173,7 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
         use_effect_with_deps(move |_| {
             wasm_bindgen_futures::spawn_local(async move {
                 // Fetch cards
-                let fetched_cards: IndexMap<String, CardList> = match Request::get("/assets/croatian.json")
+                let fetched_cards: IndexMap<String, CardList> = match Request::get("assets/croatian.json")
                     .send()
                     .await
                 {
@@ -192,7 +192,7 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
                 };
 
                 // Fetch sentences
-                let card_sentences: Vec<CardSentences> = match Request::get("/assets/croatian_sentences.json")
+                let card_sentences: Vec<CardSentences> = match Request::get("assets/croatian_sentences.json")
                     .send()
                     .await
                 {
@@ -212,7 +212,7 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
 
                 // Fetch explanations
                 let fetched_explanations: HashMap<String, HashMap<String, String>> =
-                    match Request::get("/assets/croatian_explanations.json")
+                    match Request::get("assets/croatian_explanations.json")
                     .send()
                     .await 
                 {
