@@ -10,24 +10,14 @@ mkdir docs\pkg 2>nul
 mkdir docs\static 2>nul
 mkdir docs\assets 2>nul
 mkdir docs\icons 2>nul
+type nul > docs\.nojekyll 2>nul
 
-REM Build CSS (try sass, then npx sass; otherwise keep existing CSS)
-if exist static\style.scss (
-  where sass >nul 2>nul
-  if %ERRORLEVEL%==0 (
-    echo Compiling SCSS to CSS ^(sass^)...
-    sass static/style.scss:static/style.css || echo SCSS compile failed, continuing with existing CSS...
-  ) else (
-    where npx >nul 2>nul
-    if %ERRORLEVEL%==0 (
-      echo Compiling SCSS to CSS ^(npx sass^)...
-      npx sass static/style.scss static/style.css || echo SCSS compile failed, continuing with existing CSS...
-    ) else (
-      echo Sass not found; using existing static/style.css
-    )
-  )
+REM Build CSS (skippable)
+if defined SKIP_SASS (
+  echo SKIP_SASS is set; skipping SCSS compilation.
 ) else (
-  echo No SCSS found, skipping sass step.
+  echo Compiling SCSS to CSS...
+  powershell -NoProfile -ExecutionPolicy Bypass -File tools\sass_build.ps1 -TimeoutSeconds 120 || echo SCSS compile failed, continuing with existing CSS...
 )
 
 REM Build WASM to docs/pkg (or fallback to existing pkg)
@@ -49,14 +39,13 @@ REM Copy static files
 echo Copying site files to docs/ ...
 copy /Y index.html docs\index.html >nul
 copy /Y manifest.json docs\manifest.json >nul
-REM Generate an enabled service worker for docs by uncommenting lines and fixing URLs
+REM Generate an enabled service worker for docs (require prod sw)
 echo Preparing service worker...
-> _sw_build.ps1 echo $content = Get-Content -Raw 'service-worker.js'
->> _sw_build.ps1 echo $content = [regex]::Replace($content, '^[\s]*//[\s]?', '', 'Multiline')
->> _sw_build.ps1 echo $content = $content -replace '"/', '"'
->> _sw_build.ps1 echo Set-Content -Path 'docs/service-worker.js' -Encoding UTF8 -Value $content
-powershell -NoProfile -ExecutionPolicy Bypass -File _sw_build.ps1 || goto :error
-del _sw_build.ps1 >nul 2>nul
+if not exist service-worker.prod.js (
+  echo ERROR: service-worker.prod.js not found. Please ensure it exists in repo.
+  goto :error
+)
+copy /Y service-worker.prod.js docs\service-worker.js >nul || goto :error
 
 REM Copy folders
 xcopy /E /I /Y static docs\static >nul
