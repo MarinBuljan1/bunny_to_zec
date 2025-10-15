@@ -18,17 +18,31 @@ html, body {
 .top-left-icon {
     position: absolute;
     top: 5%;
-    left: 5%;
+    left: 7%;
     transform: translateX(-50%);
     cursor: pointer;
-    font-size: xx-large;
+    font-size: x-large;
     z-index: 1500;
     background: transparent;
     border: none;
-    color: #304861;
-    margin: 0.25em 0;
+    margin: 0.45em 0;
 
     &:hover {
+        color: #007bff;
+    }
+
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0, 123, 255, 0.2);
+    transition: transform 0.1s ease, color 0.2s ease;
+
+    &:hover {
+        transform: translate(-50%, -1px);
+        background: rgba(255,255,255,0.92);
         color: #007bff;
     }
 }
@@ -40,7 +54,7 @@ html, body {
 .progress-bar {
     position: absolute;
     top: 5%;
-    left: 10%;
+    left: 14%;
     width: 80%;
     background-color: white;
     z-index: 1000;
@@ -292,26 +306,6 @@ html, body {
 
 .settings-modal .close-button:hover {
     background: rgba(0,0,0,0.06);
-}
-
-.top-left-icon {
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255,255,255,0.86);
-    color: #1f2937;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    transition: transform 0.1s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
-
-    &:hover {
-        transform: translate(-50%, -1px);
-        background: rgba(255,255,255,0.92);
-        color: #007bff;
-    }
 }
 
 @keyframes fadeIn {
