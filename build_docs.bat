@@ -35,6 +35,9 @@ if %ERRORLEVEL%==0 (
   )
 )
 
+REM Ensure generated pkg files are committed (remove wasm-pack's .gitignore)
+if exist docs\pkg\.gitignore del /F /Q docs\pkg\.gitignore >nul 2>nul
+
 REM Copy static files
 echo Copying site files to docs/ ...
 copy /Y index.html docs\index.html >nul
