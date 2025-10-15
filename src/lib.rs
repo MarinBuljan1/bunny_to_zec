@@ -380,9 +380,16 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
     let progress_percentage = (progress_card_number / next_skill_level) * 100.0;
     let rounded_progress_card_number = (progress_card_number * 10.0).round() / 10.0;
 
+    let open_settings_cb = {
+        let cb = props.open_settings.clone();
+        Callback::from(move |_| cb.emit(()))
+    };
+
     let progress_bars = (0..2).map(|i| {
         html! {
-            <div class={format!("progress-bar bar-{}", i + 1)} style={format!("--progress:{}%", progress_percentage)}>
+            <div class={format!("progress-bar bar-{}", i + 1)}
+                 style={format!("--progress:{}%", progress_percentage)}
+                 onclick={open_settings_cb.clone()}>
                 <p>{format!("{}", skill_level)}</p>
                 <p>{format!("{}/{}", rounded_progress_card_number, next_skill_level)}</p>
             </div>
@@ -391,16 +398,6 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
 
     html! {
         <>
-            <button
-                class="top-left-icon"
-                title="Settings"
-                onclick={{
-                    let cb = props.open_settings.clone();
-                    Callback::from(move |_| cb.emit(()))
-                }}
-            >
-                { html!{ <i class="fas fa-cog"></i> } }
-            </button>
             {progress_bars}
             <div class="flashcard-view"
                 ontouchstart={on_touch_event.clone()}

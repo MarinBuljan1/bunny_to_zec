@@ -15,35 +15,6 @@ html, body {
   width: 100%;
 }
 
-.top-left-icon {
-  position: absolute;
-  top: 5%;
-  left: 7%;
-  transform: translateX(-50%);
-  cursor: pointer;
-  font-size: x-large;
-  z-index: 1500;
-  background: transparent;
-  border: none;
-  margin: 0.45em 0;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(0, 123, 255, 0.2);
-  transition: transform 0.1s ease, color 0.2s ease;
-}
-.top-left-icon:hover {
-  color: #007bff;
-}
-.top-left-icon:hover {
-  transform: translate(-50%, -1px);
-  background: rgba(255, 255, 255, 0.92);
-  color: #007bff;
-}
-
 .flashcard-view, .management-table {
   transition: opacity 0.3s ease-in-out;
 }
@@ -51,7 +22,7 @@ html, body {
 .progress-bar {
   position: absolute;
   top: 5%;
-  left: 14%;
+  left: 10%;
   width: 80%;
   background-color: white;
   z-index: 1000;
@@ -60,6 +31,8 @@ html, body {
   align-items: center;
   border-radius: 2em;
   border: 0.2em solid #007bff;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.05s ease;
 }
 .progress-bar p {
   color: black;
@@ -71,6 +44,12 @@ html, body {
 }
 .progress-bar.bar-1 p {
   color: white;
+}
+.progress-bar:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+.progress-bar:active {
+  transform: translateY(1px);
 }
 
 .flashcard-view {
