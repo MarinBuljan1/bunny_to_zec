@@ -15,24 +15,6 @@ html, body {
     width: 100%;
 }
 
-.top-left-icon {
-    position: absolute;
-    top: 5%;
-    left: 5%;
-    transform: translateX(-50%);
-    cursor: pointer;
-    font-size: xx-large;
-    z-index: 1500;
-    background: transparent;
-    border: none;
-    color: #304861;
-    margin: 0.25em 0;
-
-    &:hover {
-        color: #007bff;
-    }
-}
-
 .flashcard-view, .management-table {
     transition: opacity 0.3s ease-in-out;
 }
@@ -49,6 +31,8 @@ html, body {
     align-items: center;
     border-radius: 2em;
     border: 0.2em solid #007bff;
+    cursor: pointer;
+    transition: box-shadow 0.15s ease, transform 0.05s ease;
     // background: linear-gradient(to right, #007bff var(--progress), white var(--progress));
     
     p {
@@ -63,6 +47,13 @@ html, body {
         p {
             color: white;
         }
+    }
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+    &:active {
+        transform: translateY(1px);
     }
 }
 
@@ -292,26 +283,6 @@ html, body {
 
 .settings-modal .close-button:hover {
     background: rgba(0,0,0,0.06);
-}
-
-.top-left-icon {
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255,255,255,0.86);
-    color: #1f2937;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    transition: transform 0.1s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
-
-    &:hover {
-        transform: translate(-50%, -1px);
-        background: rgba(255,255,255,0.92);
-        color: #007bff;
-    }
 }
 
 @keyframes fadeIn {
