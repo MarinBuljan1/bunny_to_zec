@@ -357,6 +357,9 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
 
     let progress_card_number = *progress_sum as f64 / calculate_seconds(10, 0, 0, 0) as f64;
 
+    let initial_card = (*current_card).clone();
+    let is_initial_state = initial_card.base_language == "Swipe to Begin" && initial_card.target_language == "Swipe Up or Down";
+
     let skill_levels = [
         (100.0, "Beginner"),
         (300.0, "Novice"),
@@ -390,8 +393,18 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
             <div class={format!("progress-bar bar-{}", i + 1)}
                  style={format!("--progress:{}%", progress_percentage)}
                  onclick={open_settings_cb.clone()}>
-                <p>{format!("{}", skill_level)}</p>
-                <p>{format!("{}/{}", rounded_progress_card_number, next_skill_level)}</p>
+                {
+                    if is_initial_state {
+                        html! { <p>{"Guide"}</p> }
+                    } else {
+                        html! {
+                            <>
+                                <p>{format!("{}", skill_level)}</p>
+                                <p>{format!("{}/{}", rounded_progress_card_number, next_skill_level)}</p>
+                            </>
+                        }
+                    }
+                }
             </div>
         }
     }).collect::<Html>();
@@ -528,7 +541,7 @@ fn settings_modal(props: &SettingsModalProps) -> Html {
                         <div class="instruction-row">
                             <i class="fas fa-arrows-left-right instruction-icon" aria-hidden="true"></i>
                             <p class="instruction-text">
-                                {"When you think of the missing word, swipe left or right to reveal the answer and explanations. The timer stops the moment you reveal."}
+                                {"When you think of the missing word, swipe left or right to reveal the answer and explanations. The timer stops the moment it's revealed."}
                             </p>
                         </div>
                         <div class="instruction-row">
@@ -540,13 +553,13 @@ fn settings_modal(props: &SettingsModalProps) -> Html {
                         <div class="instruction-row">
                             <i class="fas fa-chart-line instruction-icon" aria-hidden="true"></i>
                             <p class="instruction-text">
-                                {"Each word’s progress blends three things: how long since you last saw it, how quickly you recalled it, and whether you got it right. Your progress is saved in this browser."}
+                                {"Each word’s progress score blends three things: how long since you last saw it, how quickly you recalled it, and whether you got it right. This drops over time."}
                             </p>
                         </div>
                         <div class="instruction-row philosophy">
                             <i class="fas fa-bolt instruction-icon" aria-hidden="true"></i>
                             <p class="instruction-text">
-                                {"Real conversations are fast. Words become more ‘learnt’ when you can recall them quickly especially after longer breaks."}
+                                {"Real conversations are fast. So we consider words ‘learnt’ when you can recall them quickly especially after longer breaks."}
                             </p>
                         </div>
                     </div>
