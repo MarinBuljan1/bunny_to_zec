@@ -199,6 +199,9 @@ html, body {
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     overflow: hidden;
     animation: popIn 0.22s cubic-bezier(.2,.7,.3,1);
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
 }
 
 .settings-modal .modal-header {
@@ -207,6 +210,10 @@ html, body {
     justify-content: space-between;
     padding: 1rem 1rem 0.5rem 1rem;
     border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 1;
 }
 
 .settings-modal .modal-header h3 {
@@ -227,6 +234,8 @@ html, body {
 .settings-modal .modal-body {
     padding: 1rem;
     line-height: 1.5;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Instructions layout */
@@ -296,6 +305,6 @@ html, body {
 }
 
 @media (max-width: 480px) {
-    .settings-modal { width: 94vw; }
+    .settings-modal { width: 94vw; max-height: 92vh; }
     .instructions .instruction-row { padding: 0.65rem 0.8rem; }
 }
