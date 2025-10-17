@@ -276,7 +276,6 @@ html, body {
     }
 
     & .philosophy {
-        // border-top: 2px solid #eee;
         padding-top: 0.5rem;
         margin-top: 0.25rem;
         background: rgba(255, 145, 0, 0.04);
@@ -286,6 +285,17 @@ html, body {
             color: rgb(255, 145, 0);
             background: linear-gradient(120deg, rgba(255,145,0,0.1), rgba(255,145,0,0.02));
             border: 1px solid rgba(255,145,0,0.25);
+        }
+    }
+
+    & .app-install {
+        background: rgba(46, 197, 0, 0.04);
+        border: 1px solid rgba(46, 197, 0, 0.2);
+
+        .instruction-icon {
+            color: rgb(46, 197, 0);
+            background: linear-gradient(120deg, rgba(46, 197,0,0.1), rgba(46, 197,0,0.02));
+            border: 1px solid rgba(46, 197,0,0.25);
         }
     }
 }

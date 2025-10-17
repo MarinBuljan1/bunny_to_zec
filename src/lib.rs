@@ -562,6 +562,18 @@ fn settings_modal(props: &SettingsModalProps) -> Html {
                                 {"Real conversations are fast. So we consider words ‘learnt’ when you can recall them quickly especially after longer breaks."}
                             </p>
                         </div>
+                        <div class="instruction-row app-install">
+                            <i class="fas fa-mobile-screen-button instruction-icon" aria-hidden="true"></i>
+                            <p class="instruction-text">
+                                {"Install the app:"}
+                                <br/>
+                                {"• iPhone/iPad (Safari): Tap the Share icon, then \"Add to Home Screen\", then \"Add\"."}
+                                <br/>
+                                {"• Android (Chrome): Tap the three-dots menu, then \"Add to Home screen\" or \"Install\"."}
+                                <br/>
+                                {"The app opens full screen and can work offline after the first load."}
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

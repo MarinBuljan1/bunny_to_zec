@@ -261,6 +261,15 @@ html, body {
   background: linear-gradient(120deg, rgba(255, 145, 0, 0.1), rgba(255, 145, 0, 0.02));
   border: 1px solid rgba(255, 145, 0, 0.25);
 }
+.instructions .app-install {
+  background: rgba(46, 197, 0, 0.04);
+  border: 1px solid rgba(46, 197, 0, 0.2);
+}
+.instructions .app-install .instruction-icon {
+  color: rgb(46, 197, 0);
+  background: linear-gradient(120deg, rgba(46, 197, 0, 0.1), rgba(46, 197, 0, 0.02));
+  border: 1px solid rgba(46, 197, 0, 0.25);
+}
 
 .settings-modal .close-button:hover {
   background: rgba(0, 0, 0, 0.06);
