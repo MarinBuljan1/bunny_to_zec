@@ -340,11 +340,11 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
     };
 
     let bg_color = match *drag_direction {
-        SwipeDirection::Up => "0, 255, 0",
-        SwipeDirection::Down => "255, 0, 0",
-        SwipeDirection::Right => "100, 100, 100",
-        SwipeDirection::Left => "100, 100, 100",
-        SwipeDirection::None => "0, 0, 0",
+        SwipeDirection::Up => "34, 197, 94",
+        SwipeDirection::Down => "239, 68, 68",
+        SwipeDirection::Right => "59, 130, 246",
+        SwipeDirection::Left => "59, 130, 246",
+        SwipeDirection::None => "88, 101, 122",
     }.to_string();
     let bg_direction = match *drag_direction {
         SwipeDirection::Up => "180deg",
@@ -353,7 +353,12 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
         SwipeDirection::Left => "90deg",
         SwipeDirection::None => "0deg",
     }.to_string();
-    let style = format!("--bg-rgba: {}, {}; --bg-direction: {}", bg_color, *delta_xy, bg_direction);
+    let edge_alpha = (*delta_xy * 0.8).min(0.8);
+    let shadow_boost = (*delta_xy * 0.9).min(0.9);
+    let style = format!(
+        "--edge-rgb: {}; --edge-alpha: {:.3}; --edge-angle: {}; --shadow-boost: {:.3};",
+        bg_color, edge_alpha, bg_direction, shadow_boost
+    );
 
     let progress_card_number = *progress_sum as f64 / calculate_seconds(10, 0, 0, 0) as f64;
 
