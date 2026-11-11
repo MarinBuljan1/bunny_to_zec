@@ -1,21 +1,19 @@
 @echo off
 setlocal
-
 set "ROOT_DIR=%~dp0"
-pushd "%ROOT_DIR%"
+pushd "%ROOT_DIR%" || exit /b 1
 
-wasm-pack build --target web
+call :Build
 set "RC=%ERRORLEVEL%"
-if %RC% NEQ 0 (
-    echo wasm-pack build failed with exit code %RC%.
-    popd
-    endlocal
-    exit /b %RC%
-)
+popd
+endlocal & exit /b %RC%
+
+:Build
+call sass --no-source-map "static/style.scss" "static/style.css"
+if errorlevel 1 exit /b %ERRORLEVEL%
+
+call wasm-pack build --target web -- --locked
+if errorlevel 1 exit /b %ERRORLEVEL%
 
 call "%ROOT_DIR%sync_docs.bat"
-set "SYNC_RC=%ERRORLEVEL%"
-
-popd
-endlocal
-exit /b %SYNC_RC%
+exit /b %ERRORLEVEL%

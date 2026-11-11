@@ -1,75 +1,64 @@
-// const CACHE_NAME = 'yew-pwa-cache-v1.01.03';
-// const urlsToCache = [
-//     '/index.html',
-//     '/manifest.json',
-//     '/assets/croatian.json',
-//     '/pkg/yew_project_bg.wasm',
-//     '/pkg/yew_project.js',
-//     '/icons/icon-192x192.png',
-//     '/icons/icon-512x512.png',
-//     '/icons/icon-1024x1024.png',
-//     '/static/style.css',
-// ];
+// The build replaces this marker with a hash of the deployed files.
+const CACHE_PREFIX = `language-learner:${self.registration.scope}:`;
+const CACHE_NAME = `${CACHE_PREFIX}__BUILD_VERSION__`;
+const LOCAL_DEVELOPMENT = ['localhost', '127.0.0.1', '[::1]', '::1']
+  .includes(new URL(self.registration.scope).hostname);
+const APP_FILES = [
+  'index.html', 'manifest.json',
+  'assets/croatian.json', 'assets/croatian_sentences.json', 'assets/croatian_explanations.json',
+  'pkg/yew_project_bg.wasm', 'pkg/yew_project.js',
+  'icons/icon-192x192.png', 'icons/icon-512x512.png', 'icons/icon-1024x1024.png',
+  'static/style.css',
+];
 
-// self.addEventListener('install', function(event) {
-//     event.waitUntil(
-//         caches.open(CACHE_NAME)
-//             .then(cache => {
-//                 // console.log('Service Worker: Caching Files');
-//                 return cache.addAll(urlsToCache).catch(error => {
-//                     console.error('Service Worker: Caching failed for one or more files:', error);
-//                 });
-//             })
-//     );
-// });
+self.addEventListener('install', event => {
+  if (LOCAL_DEVELOPMENT) {
+    // Also retire older local workers whose cached HTML predates the page's opt-out.
+    event.waitUntil(self.skipWaiting());
+    return;
+  }
+  event.waitUntil((async () => {
+    try {
+      const cache = await caches.open(CACHE_NAME);
+      // Bypass the HTTP cache so a new version cannot accidentally store old assets.
+      await cache.addAll(APP_FILES.map(path => new Request(
+        new URL(path, self.registration.scope), { cache: 'reload' }
+      )));
+    } catch (error) {
+      await caches.delete(CACHE_NAME);
+      throw error;
+    }
+  })());
+  // Wait for old app tabs to close; never mix their WASM/JS with a new version.
+});
 
-// self.addEventListener('fetch', event => {
-//     if (event.request.url.includes('browser-sync')) {
-//         console.log('Service Worker: Ignoring browser-sync request:', event.request.url);
-//         return;  // Skip handling browser-sync requests
-//     }
-//     event.respondWith(
-//         caches.match(event.request)
-//             .then(response => {
-//                 // Serve cached file if available
-//                 if (response) {
-//                     console.log('Service Worker: Fetching from cache:', event.request.url);
-//                     return response;
-//                 }
-//                 // If not in cache, fetch from network
-//                 console.log('Service Worker: Fetching from network:', event.request.url);
-//                 return fetch(event.request)
-//                     .then(networkResponse => {
-//                         // Optionally cache the new file
-//                         return caches.open(CACHE_NAME).then(cache => {
-//                             cache.put(event.request, networkResponse.clone());
-//                             return networkResponse;
-//                         });
-//                     })
-//                     .catch(error => {
-//                         console.error('Service Worker: Fetch failed; returning offline page', error);
-//                         // You can add an offline fallback here if you have a dedicated offline page
-//                         return caches.match('/index.html');  // Fallback to main page or offline page
-//                     });
-//             })
-//     );
-// });
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+    const names = await caches.keys();
+    await Promise.all(names
+      .filter(name => name.startsWith(CACHE_PREFIX) && (LOCAL_DEVELOPMENT || name !== CACHE_NAME))
+      .map(name => caches.delete(name)));
+    await self.clients.claim();
+    if (LOCAL_DEVELOPMENT) await self.registration.unregister();
+  })());
+});
 
+self.addEventListener('fetch', event => {
+  const request = event.request;
+  const url = new URL(request.url);
+  const scope = new URL(self.registration.scope);
+  if (LOCAL_DEVELOPMENT || request.method !== 'GET' || url.origin !== scope.origin ||
+      !url.pathname.startsWith(scope.pathname) || url.pathname.includes('browser-sync')) {
+    return;
+  }
 
-// self.addEventListener('activate', function(event) {
-//     // console.log('Service Worker: Activated');
-//     const cacheWhitelist = [CACHE_NAME];
-//     event.waitUntil(
-//         caches.keys().then(function(cacheNames) {
-//             return Promise.all(
-//                 cacheNames.map(cacheName => {
-//                     if (!cacheWhitelist.includes(cacheName)) {
-//                         console.log('Service Worker: Removing Old Cache:', cacheName);
-//                         return caches.delete(cacheName);
-//                     }
-//                 })
-//             );
-//         })
-//     );
-//     self.clients.claim();
-// });
+  event.respondWith((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    const cached = request.mode === 'navigate'
+      ? await cache.match(new URL('index.html', scope).href)
+      : await cache.match(request);
+    // Only the successfully installed app shell is cached. Failed requests and
+    // non-navigation resources never receive an HTML fallback or replace it.
+    return cached || fetch(request);
+  })());
+});
