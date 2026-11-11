@@ -10,13 +10,19 @@ A client-side Yew/WebAssembly flashcard app. Edit Rust in `src/`, styles in
 - `learning.rs`: pure scoring, decay, progress, and card-selection rules. Time is an explicit input.
 - `sentences.rs`: pure tokenization, word matching, and sentence selection. Random samples are explicit inputs.
 - `storage.rs`: network loading and browser persistence, separated from learning calculations.
+- `persistence.rs`: dataset validation, versioned snapshots, and legacy-data migration.
 - `review_state.rs`: local review, drag, and animation state.
 - `tests/`: unit tests attached to their owning modules, plus build/cache checks.
 
-Persistence failures during review saving allow the in-memory session to continue;
-they are reported in the browser console, and unsaved progress may be lost on reload.
-The existing content-loading fallback policy remains unchanged; broader error/retry
-handling is tracked under R5 in the roadmap.
+Content has explicit loading, ready, and failed states. When there is no usable
+network or cached dataset, a **Try again** button restarts loading. Swipes are enabled
+only after validated content is ready. Saved progress is restored independently of
+network success and is not reloaded on content retries.
+
+Saving failures show a visible warning and **Retry saving** button. Learning can
+continue in memory, but unsaved changes may be lost on reload. If existing progress
+cannot be read or uses a newer format, it is left unchanged and the session becomes
+read-only for persistence; no automatic reset or overwrite is performed.
 
 Mouse, touch, and pen input share one pointer-event path. Only the active primary
 pointer can move or finish its drag; cancellation or lost capture resets the drag
@@ -25,6 +31,35 @@ original gesture. Overflowing explanations keep native vertical scrolling, while
 short explanations and the card/background remain swipeable. Overflow is measured
 when explanations change and on window resize so the CSS touch policy is set before
 the gesture begins, as required by the [Pointer Events standard](https://www.w3.org/TR/pointerevents/#the-touch-action-css-property).
+
+## Saved-data formats and recovery
+
+Browser local storage uses two versioned snapshots, each serialized as
+`{"version":1,"value":...}`:
+
+- `learning_content_v1`: vocabulary, sentences, and explanations together. Downloads
+  must have successful HTTP responses, parse correctly, and pass reference/order
+  validation before a cache write. Any failed resource falls back to a whole saved
+  dataset. A valid download remains usable if its cache write fails, with a warning.
+- `learning_progress_v1`: scores and their Unix-second update timestamp in one write.
+  Failed writes preserve the previous snapshot. Scoring formulas and timestamp units
+  remain unchanged.
+
+The legacy `cards`, `sentences`, and `explanations` content keys remain readable.
+Once a complete new content snapshot is saved successfully, those old content copies
+are removed to free storage space. They are retained if the new write fails.
+Migration can temporarily require space for both copies; quota failures are reported
+without deleting the good cache. Offline service-worker caching remains separate.
+
+Legacy `card_scores` and `last_data_update` progress keys are read until a new progress
+snapshot exists. The first successful save migrates them, leaving the old progress
+keys intact. Readable legacy scores with a missing/invalid update time are preserved;
+their decay resumes from the current time with a warning. Malformed scores, negative
+score/timestamp values, and unsupported snapshot versions are not silently replaced.
+
+Load cleanup invalidates pending work when the view is removed or a load is replaced.
+An in-flight request may finish, but cancelled loads cannot write caches or update the
+view. Requests remain sequential; this change makes no startup-speed claim.
 
 ## Build and deploy
 

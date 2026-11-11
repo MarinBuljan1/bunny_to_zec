@@ -40,14 +40,14 @@ pub(crate) struct ProcessingData {
     pub(crate) translation: String,
 }
 
-#[derive(Default, PartialEq)]
+#[derive(Serialize, Deserialize, Default, Debug, PartialEq)]
 pub(crate) struct LearningContent {
     pub(crate) cards: IndexMap<String, CardList>,
     pub(crate) sentences: Vec<CardSentences>,
     pub(crate) explanations: HashMap<String, HashMap<String, String>>,
 }
 
-#[derive(PartialEq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub(crate) struct SavedProgress {
     pub(crate) scores: HashMap<String, ScoreData>,
     pub(crate) last_data_update: i32,

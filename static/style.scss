@@ -214,6 +214,59 @@ html, body {
     }
 }
 
+/* Loading and persistence feedback */
+.load-panel {
+    position: relative;
+    z-index: 1;
+    width: min(85vw, 26rem);
+    padding: 1.5rem;
+    border: 1px solid #ccd4df;
+    border-radius: 10px;
+    background: #fff;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.app-notices {
+    position: fixed;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(90vw, 40rem);
+    max-height: 30vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 1100;
+}
+
+.app-notice {
+    padding: 0.75rem;
+    border: 1px solid #b98420;
+    border-radius: 8px;
+    background: #fff8e8;
+    color: #4b3612;
+    line-height: 1.4;
+
+    p { margin: 0 0 0.5rem; }
+}
+
+.load-panel button, .app-notice button {
+    padding: 0.6rem 1rem;
+    border: 1px solid #1658a0;
+    border-radius: 6px;
+    background: #1658a0;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+
+    &:focus-visible {
+        outline: 3px solid #f09819;
+        outline-offset: 3px;
+    }
+}
+
 /* Modal overlay for settings */
 .modal-overlay {
     position: fixed;

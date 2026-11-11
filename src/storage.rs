@@ -1,79 +1,187 @@
-//! Browser loading and persistence boundaries. Existing keys and JSON formats are retained.
-//! Content loading retains the existing network-first/cache-fallback behavior;
-//! HTTP/parse failures and cache-write recovery are tracked separately under R5.
+//! Browser networking and storage access. Downloads never write caches; the UI
+//! commits validated content only after checking that its load is still current.
 
-use crate::model::{CardList, CardSentences, LearningContent, SavedProgress};
+use crate::model::{LearningContent, SavedProgress};
+use crate::persistence::{self, LoadedProgress, StorageError, Store};
 use gloo_net::http::Request;
-use gloo_storage::{errors::StorageError, LocalStorage, Storage};
-use indexmap::IndexMap;
-use std::collections::HashMap;
+use serde::de::DeserializeOwned;
+use std::cell::Cell;
+use std::fmt;
 
-pub(crate) async fn load_learning_content() -> LearningContent {
-    // Fetch cards
-    let fetched_cards: IndexMap<String, CardList> =
-        match Request::get("assets/croatian.json").send().await {
-            Ok(response) => {
-                let cards: IndexMap<String, CardList> =
-                    response.json().await.expect("Failed to parse JSON");
+struct BrowserStore;
 
-                LocalStorage::set("cards", &cards).expect("Failed to store cards");
-                cards
+impl BrowserStore {
+    fn storage() -> Result<web_sys::Storage, StorageError> {
+        web_sys::window()
+            .ok_or(StorageError::Unavailable)?
+            .local_storage()
+            .map_err(|_| StorageError::Unavailable)?
+            .ok_or(StorageError::Unavailable)
+    }
+}
+
+impl Store for BrowserStore {
+    fn get(&self, key: &str) -> Result<Option<String>, StorageError> {
+        Self::storage()?
+            .get_item(key)
+            .map_err(|_| StorageError::ReadFailed)
+    }
+    fn set(&mut self, key: &str, value: &str) -> Result<(), StorageError> {
+        Self::storage()?
+            .set_item(key, value)
+            .map_err(|_| StorageError::WriteFailed)
+    }
+
+    fn remove(&mut self, key: &str) -> Result<(), StorageError> {
+        Self::storage()?
+            .remove_item(key)
+            .map_err(|_| StorageError::WriteFailed)
+    }
+}
+
+#[derive(Debug)]
+pub(crate) enum DownloadError {
+    Network(&'static str),
+    Http(&'static str, u16),
+    InvalidJson(&'static str),
+    InvalidContent(&'static str),
+}
+
+impl fmt::Display for DownloadError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Network(resource) => write!(f, "Could not download {resource}."),
+            Self::Http(resource, status) => {
+                write!(f, "Downloading {resource} returned HTTP {status}.")
             }
-            Err(_) => LocalStorage::get::<IndexMap<String, CardList>>("cards")
-                .unwrap_or_else(|_| IndexMap::new()),
-        };
+            Self::InvalidJson(resource) => write!(f, "Downloaded {resource} was not valid JSON."),
+            Self::InvalidContent(reason) => f.write_str(reason),
+        }
+    }
+}
 
-    // Fetch sentences
-    let card_sentences: Vec<CardSentences> = match Request::get("assets/croatian_sentences.json")
+#[derive(PartialEq)]
+pub(crate) enum ContentOrigin {
+    Downloaded,
+    Saved,
+}
+
+#[derive(PartialEq)]
+pub(crate) struct LoadedContent {
+    pub content: LearningContent,
+    pub notice: Option<String>,
+    pub origin: ContentOrigin,
+}
+
+#[derive(PartialEq)]
+pub(crate) enum ContentLoadState {
+    Loading,
+    Ready(LoadedContent),
+    Failed(String),
+}
+
+/// Shared transport, status, and JSON checks for each content resource.
+async fn fetch_json<T: DeserializeOwned>(
+    resource: &'static str,
+    label: &'static str,
+) -> Result<T, DownloadError> {
+    let response = Request::get(resource)
         .send()
         .await
-    {
-        Ok(response) => {
-            let sentences: Vec<CardSentences> =
-                response.json().await.expect("Failed to parse JSON");
+        .map_err(|_| DownloadError::Network(label))?;
+    if !response.ok() {
+        return Err(DownloadError::Http(label, response.status()));
+    }
+    response
+        .json()
+        .await
+        .map_err(|_| DownloadError::InvalidJson(label))
+}
 
-            LocalStorage::set("sentences", &sentences).expect("Failed to store sentences");
-            sentences
-        }
-        Err(_) => LocalStorage::get::<Vec<CardSentences>>("sentences").unwrap_or_else(|_| vec![]),
+async fn download_content() -> Result<LearningContent, DownloadError> {
+    let content = LearningContent {
+        cards: fetch_json("assets/croatian.json", "vocabulary").await?,
+        sentences: fetch_json("assets/croatian_sentences.json", "sentences").await?,
+        explanations: fetch_json("assets/croatian_explanations.json", "explanations").await?,
     };
+    Ok(content)
+}
 
-    // Fetch explanations
-    let fetched_explanations: HashMap<String, HashMap<String, String>> =
-        match Request::get("assets/croatian_explanations.json")
-            .send()
-            .await
-        {
-            Ok(response) => {
-                let explanations: HashMap<String, HashMap<String, String>> = response
-                    .json()
-                    .await
-                    .expect("Failed to parse explanations JSON");
+/// Fall back as a complete dataset instead of mixing resource versions. This
+/// operation reads caches but never writes them, even if the UI is torn down.
+pub(crate) async fn load_learning_content() -> Result<LoadedContent, String> {
+    choose_content(download_content().await, &BrowserStore)
+}
 
-                LocalStorage::set("explanations", &explanations)
-                    .expect("Failed to store explanations");
-                explanations
+fn choose_content(
+    download: Result<LearningContent, DownloadError>,
+    store: &impl Store,
+) -> Result<LoadedContent, String> {
+    let validated = download.and_then(|content| {
+        persistence::validate_content(&content).map_err(DownloadError::InvalidContent)?;
+        Ok(content)
+    });
+    match validated {
+        Ok(content) => Ok(LoadedContent {
+            content,
+            notice: None,
+            origin: ContentOrigin::Downloaded,
+        }),
+        Err(error) => match persistence::read_content(store) {
+            Ok(content) => Ok(LoadedContent {
+                content,
+                notice: Some(
+                    "Using saved learning content because the latest files could not be loaded."
+                        .into(),
+                ),
+                origin: ContentOrigin::Saved,
+            }),
+            Err(cached) => Err(format!(
+                "{error} {cached} Connect to the internet and try again."
+            )),
+        },
+    }
+}
+
+/// Call only after confirming the load is still active. Failure leaves the
+/// validated in-memory content usable.
+pub(crate) fn commit_content_load(
+    result: Result<LoadedContent, String>,
+    cancelled: &Cell<bool>,
+) -> Option<ContentLoadState> {
+    commit_content_load_to_store(result, &mut BrowserStore, cancelled)
+}
+
+fn commit_content_load_to_store(
+    result: Result<LoadedContent, String>,
+    store: &mut impl Store,
+    cancelled: &Cell<bool>,
+) -> Option<ContentLoadState> {
+    if cancelled.get() {
+        return None;
+    }
+    Some(match result {
+        Ok(mut loaded) => {
+            if loaded.origin == ContentOrigin::Downloaded {
+                match persistence::write_content(store, &loaded.content) {
+                    Ok(warning) => loaded.notice = warning,
+                    Err(error) => loaded.notice = Some(format!("{error} You can keep learning, but a local fallback copy of these learning files could not be saved.")),
+                }
             }
-            Err(_) => LocalStorage::get("explanations").unwrap_or_else(|_| HashMap::new()),
-        };
-
-    LearningContent {
-        cards: fetched_cards,
-        sentences: card_sentences,
-        explanations: fetched_explanations,
-    }
+            ContentLoadState::Ready(loaded)
+        }
+        Err(message) => ContentLoadState::Failed(message),
+    })
 }
 
-pub(crate) fn load_progress(now_s: i32) -> SavedProgress {
-    SavedProgress {
-        scores: LocalStorage::get("card_scores").unwrap_or_default(),
-        last_data_update: LocalStorage::get("last_data_update").unwrap_or(now_s),
-    }
+pub(crate) fn load_progress(now_s: i32) -> Result<LoadedProgress, StorageError> {
+    persistence::read_progress(&BrowserStore, now_s)
 }
 
-/// The two legacy keys are written in their original order. A partial write can
-/// still occur if the second write fails; atomic/versioned storage is part of R5.
 pub(crate) fn save_progress(progress: &SavedProgress) -> Result<(), StorageError> {
-    LocalStorage::set("card_scores", &progress.scores)?;
-    LocalStorage::set("last_data_update", progress.last_data_update)
+    persistence::write_progress(&mut BrowserStore, progress)
 }
+
+#[cfg(test)]
+#[path = "tests/storage_tests.rs"]
+mod tests;

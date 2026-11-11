@@ -1,6 +1,6 @@
 # Refactoring roadmap
 
-Status: R1, R2, R3, R4, and R7 implemented; browser smoke verification remains pending. Other tasks remain proposed except for supporting work explicitly recorded below.
+Status: R1, R2, R3, R4, R5, and R7 implemented; browser smoke verification remains pending. Other tasks remain proposed except for supporting work explicitly recorded below.
 
 This document records the ten improvements from the project review so they can be implemented incrementally in future sessions. Follow `AGENTS.md` during implementation. The objective is clearer, easier-to-modify Rust while preserving the core flashcard and learning behavior.
 
@@ -232,14 +232,28 @@ Roughly 30–60 lines may be removed, although recovery UI may offset savings. C
 
 ### Completion checklist
 
-- [ ] Offline startup works with a valid saved dataset.
-- [ ] First startup without content produces an understandable failure/retry state.
-- [ ] Bad HTTP responses, malformed JSON, storage failure, and invalid indices are handled.
-- [ ] Failed downloads never overwrite valid cached content.
-- [ ] Existing user progress survives the change.
-- [ ] Async completion after teardown or a superseding load has a defined policy.
+- [x] Valid saved datasets provide the offline fallback in automated tests; real-browser startup verification remains pending.
+- [x] First startup without usable content produces a failed state with a Try again action; browser interaction verification remains pending.
+- [x] Non-successful HTTP responses, malformed JSON, unavailable/full storage, and invalid/unordered sentence references have explicit failure paths.
+- [x] Failed or invalid downloads cannot overwrite valid cached content.
+- [x] Legacy progress restores and migrates without deleting old progress keys; corrupt/future records are protected from overwrite.
+- [x] Superseded/unmounted loads can finish reading but cannot commit caches or update UI state.
 
 Dependencies: R2 boundaries and R9 storage/loading coverage.
+
+### R5 implementation record — 2026-11-11
+
+- Consolidated resource transport/status/JSON checking into one typed fetch function. The three resources are still fetched sequentially. A complete downloaded dataset is validated before use, and any network, HTTP, parsing, or validation failure falls back to a complete valid cached dataset instead of mixing resource versions.
+- Added `persistence.rs` for versioned schemas, reference/order validation, and legacy readers. Its small key/value boundary has browser and in-memory implementations so parsing, migration, atomic writes, and failure policy can be tested without a browser. The direct `gloo-storage` dependency was removed because its accessor can throw when storage is unavailable; browser access now uses fallible `web-sys::Storage` operations. No new crates were added; Cargo regenerated the lockfile.
+- New snapshots use `learning_content_v1` and `learning_progress_v1`, each with `{"version":1,"value":...}`. Score fields, time units, and learning formulas are unchanged. Content snapshots hold all three resources; progress snapshots hold the scores and update time together. Each snapshot uses one atomic storage write.
+- Legacy content keys remain readable. Only after a new complete snapshot has committed are the legacy `cards`, `sentences`, and `explanations` copies removed, freeing space for progress. Failed writes retain the old cache; a cleanup failure leaves the new cache usable and produces a warning. Migration can temporarily need space for both versions, so quota errors are recoverable rather than destructive.
+- Legacy `card_scores` and `last_data_update` remain readable and are never deleted or rewritten. The first successful progress save creates the new snapshot. Readable scores with a missing/invalid legacy update time are retained and resume decay from now with a warning. Corrupt/unsupported progress or inaccessible storage causes a visible read-only persistence state, preserving the existing raw records. There is no automatic progress reset.
+- Progress is restored once independently of network/content loading. Content retries do not reload or overwrite the current in-memory progress. A failed progress write keeps the session usable, shows a visible warning, and offers Retry saving using the latest in-memory scores. Success clears the warning.
+- Content uses Loading/Ready/Failed states, a loading panel, and a Try again action on failure. Pointer-down is ignored until content is ready. Valid downloads remain usable with a notice when caching fails; saved fallback content is identified with a nonblocking notice. Error messages avoid exposing raw stored values or internal storage keys.
+- Each load effect owns an `Rc<Cell<bool>>` cancellation flag. Cleanup invalidates that load; the synchronous commit boundary checks it before any cache mutation or UI result is returned. In-flight requests are not aborted, but obsolete results cannot affect the active view/cache. Tests cover that boundary.
+- Added 18 persistence/loading tests, including a validation check against the actual project JSON. All 49 Rust tests and 11 Node build/cache tests pass; formatting, Cargo check, Clippy, and web-target WASM checks pass. One pre-existing UI Clippy warning remains (`repeat().take()`). The canonical build regenerates deployment output from sources.
+- No browser is connected. Before deployment, check online start, offline cached start, first-load failure/retry, blocked/full storage, save failure/retry, legacy migration with real browser records, and the loading/notice layouts on desktop and mobile. Unit tests verify storage policy and parsing; they do not substitute for these UI checks.
+- This adds explicit validation, recovery UI, and migration behavior beyond the original repeated loader. No net line-count reduction or startup-speedup claim is made.
 
 ## R6 — Make animation transitions explicit and cancellable
 
@@ -459,9 +473,9 @@ Measure production-code lines separately from tests and generated output. Measur
 | R2 | Implemented; browser smoke pending | Pure learning/sentence rules, shared models, browser persistence boundary, explicit time/random inputs; 27 Rust tests pass. |
 | R3 | Implemented with R2 | Selection borrows saved scores; priorities, insertion-order ties, and exclusions tested. No speedup benchmark claimed. |
 | R4 | Implemented; browser/device smoke pending | Unified pointer events, active-pointer ownership, capture/cancellation, and overflow-aware native scrolling; 31 Rust tests pass. |
-| R5 | Proposed | |
+| R5 | Implemented; browser smoke pending | Validated whole-dataset fallback, loading/retry UI, atomic versioned snapshots, protected legacy progress, save warnings/retry, and cancelled-load guards; 49 Rust tests pass. |
 | R6 | Proposed | |
 | R7 | Implemented; browser smoke pending | Canonical Sass/WASM build, fail-fast sync, scoped versioned offline cache, localhost bypass, cleanup, and README; 11 Node tests pass. |
 | R8 | Proposed | |
-| R9 | Proposed | |
+| R9 | Partially implemented | R1/R2/R4/R5 added state, learning, selection, storage parsing/migration, and cache failure tests. Broader timer/browser coverage remains. |
 | R10 | Partially implemented | Obsolete files, HTTPS certificates, duplicate build/worker paths, stale instructions, and unnecessary deployed sources removed. Rendering/accessibility/dependency work remains. |

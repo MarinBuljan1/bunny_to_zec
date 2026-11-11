@@ -1,6 +1,8 @@
 use gloo_events::EventListener;
 use js_sys::{Date, Math};
+use std::cell::Cell;
 use std::collections::HashMap;
+use std::rc::Rc;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsCast;
@@ -9,6 +11,7 @@ use yew::prelude::*;
 
 mod learning;
 mod model;
+mod persistence;
 mod review_state;
 mod sentences;
 mod storage;
@@ -22,6 +25,15 @@ use review_state::{
     ReviewState,
 };
 use sentences::{choose_sentence_index, find_related_cards, split_text};
+use storage::ContentLoadState;
+
+#[derive(PartialEq)]
+enum SaveStatus {
+    Saved,
+    Warning(String),
+    Unsaved(String),
+    ReadOnly(String),
+}
 
 #[derive(Clone, PartialEq, Debug)]
 enum SwipeDirection {
@@ -126,7 +138,9 @@ struct FlashcardViewProps {
 
 #[function_component(FlashcardView)]
 fn flashcard_view(props: &FlashcardViewProps) -> Html {
-    let content = use_state(LearningContent::default);
+    let content = use_state(|| ContentLoadState::Loading);
+    let load_attempt = use_state(|| 0_u32);
+    let save_status = use_state(|| SaveStatus::Saved);
     let progress = use_state(|| SavedProgress {
         scores: HashMap::new(),
         last_data_update: get_timestamp_s(),
@@ -136,21 +150,64 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
     let animation = use_state(AnimationState::default);
     let drag_surface = use_node_ref();
 
+    // Progress is read independently of content/network success, once per mount.
     {
-        let content = content.clone();
         let progress = progress.clone();
+        let save_status = save_status.clone();
         use_effect_with_deps(
             move |_| {
-                wasm_bindgen_futures::spawn_local(async move {
-                    let loaded_content = storage::load_learning_content().await;
-                    progress.set(storage::load_progress(get_timestamp_s()));
-                    content.set(loaded_content);
-                });
+                match storage::load_progress(get_timestamp_s()) {
+                    Ok(loaded) => {
+                        let status = loaded
+                            .warning
+                            .map(SaveStatus::Warning)
+                            .unwrap_or(SaveStatus::Saved);
+                        progress.set(loaded.progress);
+                        save_status.set(status);
+                    }
+                    Err(error) => {
+                        let message = format!("{error} Saved progress is unchanged. This session won't be saved. Reload after fixing browser storage.");
+                        save_status.set(SaveStatus::ReadOnly(message));
+                    }
+                }
                 || ()
             },
             (),
         );
     }
+    {
+        let content = content.clone();
+        use_effect_with_deps(
+            move |_| {
+                // The request may finish after teardown, but a superseded load must
+                // never write a cache or update UI state. Cleanup owns cancellation.
+                let cancelled = Rc::new(Cell::new(false));
+                let request_cancelled = cancelled.clone();
+                wasm_bindgen_futures::spawn_local(async move {
+                    let result = storage::load_learning_content().await;
+                    if let Some(state) = storage::commit_content_load(result, &request_cancelled) {
+                        content.set(state);
+                    }
+                });
+                move || cancelled.set(true)
+            },
+            *load_attempt,
+        );
+    }
+
+    let retry_loading = {
+        let content = content.clone();
+        let load_attempt = load_attempt.clone();
+        Callback::from(move |_| {
+            content.set(ContentLoadState::Loading);
+            load_attempt.set(load_attempt.wrapping_add(1));
+        })
+    };
+    let retry_saving = {
+        let progress = progress.clone();
+        let save_status = save_status.clone();
+        Callback::from(move |_| save_progress_and_update_status(&progress, &save_status))
+    };
 
     let on_swipe_completed = {
         let drag = drag.clone();
@@ -158,6 +215,7 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
         let review = review.clone();
         let content = content.clone();
         let progress = progress.clone();
+        let save_status = save_status.clone();
         Callback::from(move |(pointer_id, end): (i32, Point)| {
             if let Some(direction) =
                 drag.completed_direction(pointer_id, end, &animation.direction())
@@ -165,7 +223,8 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
                 animation.set(AnimationState::Swiping(direction.clone()));
                 match direction {
                     SwipeDirection::Up | SwipeDirection::Down => {
-                        let updated_scores = save_review_result(&progress, &review, direction);
+                        let updated_scores =
+                            save_review_result(&progress, &review, direction, &save_status);
                         animate_next_review(&content, &review, &animation, updated_scores);
                     }
                     SwipeDirection::Left | SwipeDirection::Right => {
@@ -188,6 +247,7 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
     let on_pointer_event = {
         let drag = drag.clone();
         let drag_surface = drag_surface.clone();
+        let content = content.clone();
         Callback::from(move |event: PointerEvent| {
             let pointer_id = event.pointer_id();
             let position = Point {
@@ -196,7 +256,8 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
             };
             match event.type_().as_str() {
                 "pointerdown" => {
-                    if !event.is_primary()
+                    if !matches!(&*content, ContentLoadState::Ready(_))
+                        || !event.is_primary()
                         || event.button() != 0
                         || drag.is_moving()
                         || !event
@@ -340,17 +401,40 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
                 onlostpointercapture={on_pointer_event}
                 style={style.clone()}>
                 <div class="drag-surface" aria-hidden="true"></div>
-                <Flashcard
-                    swipe_direction={animation.direction()}
-                    is_moving={drag.is_moving()}
-                    pos_x={drag.rotation()}
-                    pos_y={drag.offset().y}
-                    fast_move={*animation == AnimationState::Repositioning}
-                    current_card={review.presentation.card.clone()}
-                    processed_sentence={review.presentation.sentence.clone()}
-                    show_explanations={review.show_explanations()}
-                    processed_explanation={review.presentation.explanation.clone()}
-                />
+                { match &*content {
+                    ContentLoadState::Loading => html! { <section class="load-panel" role="status"><h2>{"Loading flashcards?"}</h2></section> },
+                    ContentLoadState::Failed(message) => html! {
+                        <section class="load-panel" role="alert">
+                            <h2>{"Flashcards could not be loaded"}</h2><p>{message}</p>
+                            <button onclick={retry_loading}>{"Try again"}</button>
+                        </section>
+                    },
+                    ContentLoadState::Ready(_) => html! {
+                        <Flashcard
+                            swipe_direction={animation.direction()}
+                            is_moving={drag.is_moving()}
+                            pos_x={drag.rotation()}
+                            pos_y={drag.offset().y}
+                            fast_move={*animation == AnimationState::Repositioning}
+                            current_card={review.presentation.card.clone()}
+                            processed_sentence={review.presentation.sentence.clone()}
+                            show_explanations={review.show_explanations()}
+                            processed_explanation={review.presentation.explanation.clone()}
+                        />
+                    },
+                } }
+
+            </div>
+            <div class="app-notices">
+                { if let ContentLoadState::Ready(loaded) = &*content {
+                    loaded.notice.as_ref().map(|notice| html! { <aside class="app-notice" role="status">{notice}</aside> }).unwrap_or_default()
+                } else { Html::default() } }
+                { match &*save_status {
+                    SaveStatus::Saved => Html::default(),
+                    SaveStatus::Warning(message) => html! { <aside class="app-notice" role="status">{message}</aside> },
+                    SaveStatus::ReadOnly(message) => html! { <aside class="app-notice" role="alert">{message}</aside> },
+                    SaveStatus::Unsaved(message) => html! { <aside class="app-notice" role="alert"><p>{message}</p><button onclick={retry_saving}>{"Retry saving"}</button></aside> },
+                } }
             </div>
         </>
     }
@@ -476,6 +560,7 @@ fn save_review_result(
     progress: &UseStateHandle<SavedProgress>,
     review: &ReviewState,
     direction: SwipeDirection,
+    save_status: &UseStateHandle<SaveStatus>,
 ) -> HashMap<String, ScoreData> {
     let attempt = ReviewAttempt {
         elapsed_ms: review.duration(),
@@ -496,17 +581,24 @@ fn save_review_result(
     ) else {
         return progress.scores.clone();
     };
-    // Continue safely in memory if persistence is unavailable. R5 will add user-facing recovery.
-    if let Err(error) = storage::save_progress(&updated) {
-        web_sys::console::error_1(&format!("Progress could not be saved; this session can continue, but changes may be lost on reload: {error}").into());
-    }
+    save_progress_and_update_status(&updated, save_status);
     let updated_scores = updated.scores.clone();
     progress.set(updated);
     updated_scores
 }
 
+fn save_progress_and_update_status(progress: &SavedProgress, status: &UseStateHandle<SaveStatus>) {
+    if matches!(&**status, SaveStatus::ReadOnly(_)) {
+        return;
+    }
+    status.set(match storage::save_progress(progress) {
+        Ok(()) => SaveStatus::Saved,
+        Err(error) => SaveStatus::Unsaved(format!("{error} Your progress is kept in this session, but may be lost if you reload or close it.")),
+    });
+}
+
 fn animate_next_review(
-    content: &UseStateHandle<LearningContent>,
+    content: &UseStateHandle<ContentLoadState>,
     review: &UseReducerHandle<ReviewState>,
     animation: &UseStateHandle<AnimationState>,
     updated_scores: HashMap<String, ScoreData>,
@@ -517,8 +609,11 @@ fn animate_next_review(
     set_timeout(
         move || {
             animation.set(AnimationState::Repositioning);
+            let ContentLoadState::Ready(loaded) = &*content else {
+                return;
+            };
             if let Some(presentation) = prepare_next_review(
-                &content,
+                &loaded.content,
                 &updated_scores,
                 &review.presentation.translations,
                 get_timestamp_s(),
@@ -697,3 +792,7 @@ fn should_enable_drag_for_event_target(target: &EventTarget) -> bool {
 #[cfg(test)]
 #[path = "tests/presentation_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "tests/memory_store.rs"]
+mod memory_store;
