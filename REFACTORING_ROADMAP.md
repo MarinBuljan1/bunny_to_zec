@@ -1,6 +1,6 @@
 # Refactoring roadmap
 
-Status: proposed; implementation has not started.
+Status: R1 implemented; browser smoke verification remains pending. R2–R10 remain proposed except for supporting work explicitly recorded below.
 
 This document records the ten improvements from the project review so they can be implemented incrementally in future sessions. Follow `AGENTS.md` during implementation. The objective is clearer, easier-to-modify Rust while preserving the core flashcard and learning behavior.
 
@@ -60,13 +60,26 @@ The main benefit is a shorter, more coherent execution path with fewer inconsist
 
 ### Completion checklist
 
-- [ ] Review phases no longer depend on matching instructional strings or timestamp equality.
-- [ ] Drag updates do not require updating unrelated application state.
-- [ ] Related review values change through one understandable operation.
-- [ ] Welcome, reveal, correct, incorrect, and guide interactions retain their behavior.
-- [ ] No new shared mutable containers or forwarding layers are introduced without need.
+- [x] Review phases no longer depend on matching instructional strings or timestamp equality.
+- [x] Drag updates do not require updating unrelated application state.
+- [x] Related review values change through one understandable operation.
+- [ ] Welcome, reveal, correct, incorrect, and guide interactions retain their behavior: transition/formula tests pass; visual browser smoke verification remains pending.
+- [x] No new shared mutable containers or forwarding layers are introduced without need.
 
 Dependencies: establish R9 coverage and preferably complete the pure-function boundaries in R2. Coordinate with R6.
+
+### R1 implementation record — 2026-11-11
+
+- Removed `FlashcardContext` and its provider. `App` now owns only guide visibility; `FlashcardView` owns five groups: learning content, saved progress, review, drag, and animation.
+- Added `src/review_state.rs` with explicit welcome/exercise identity, question/answer phases, grouped review presentation, derived drag visuals, and settled/swiping/repositioning animation states. The reducers use Yew's normal immutable `Rc` ownership; no shared mutable containers were added.
+- A presentation action replaces the card, its review words, sentence markup, and explanation markup together. Presentation preparation runs only when advancing, not during drag updates.
+- Saved scores and their update timestamp change together. Progress is derived and memoized from saved scores rather than independently updated. Accumulation now uses `i64` throughout to avoid the previous intermediate `i32` overflow; a boundary test covers this supporting correctness fix.
+- Kept scoring formulas, vocabulary order, current sentence eligibility and fallback behavior, local-storage keys/formats, and the 400/50/100 ms transition delays. Full timer cancellation remains R6; loading/error-policy changes remain R5; per-candidate score-map cloning remains R3.
+- Added 13 tests: ten local state/gesture tests and three presentation/progress tests. The four existing formula/tokenization tests continue to pass. This is supporting coverage for R1, not completion of R9.
+- Validation passed: `cargo fmt --check`, `cargo check --offline`, `cargo test --offline` (17 tests), `cargo clippy --offline --all-targets --all-features`, and `wasm-pack build --target web --out-dir target/r1-browser/pkg -- --offline`. Clippy still reports existing warnings in unchanged calculation/rendering code and the older wasm-bindgen macro. Dependencies were fetched with `cargo fetch --locked`; no dependency versions or storage schemas changed.
+- No connected browser was available for visual interaction checks. Before deployment, smoke-test welcome/start, left/right reveal and flip-back, up/down advancement, guide opening/closing, explanation scrolling, and persistence after refresh.
+- Browser-build output stays under ignored `target/r1-browser/pkg`; `pkg` and `docs` were not regenerated for deployment. `cargo fmt` also normalized existing Rust formatting, including the trailing newline in the commented integration-test file.
+- Actual size outcome differs from the initial estimate: with both versions formatted consistently, production Rust is approximately 1,265 lines before and 1,367 after, excluding tests. The main file's production portion fell to approximately 1,083 lines, with 284 lines in the explicit state module. This step improves ownership and testability rather than delivering a net line-count reduction; added tests increase total source further. No speedup was benchmarked.
 
 ## R2 — Separate learning rules from Yew and browser APIs
 
@@ -391,7 +404,7 @@ Measure production-code lines separately from tests and generated output. Measur
 
 | Item | Status | Notes / validation |
 | --- | --- | --- |
-| R1 | Proposed | |
+| R1 | Implemented; browser smoke pending | Five local state groups replace 22 context handles; 17 tests and Rust/WASM build checks pass. See implementation record above. |
 | R2 | Proposed | |
 | R3 | Proposed | |
 | R4 | Proposed | |
