@@ -1,28 +1,29 @@
 use gloo_events::EventListener;
+use gloo_timers::callback::Timeout;
 use js_sys::{Date, Math};
 use std::cell::Cell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use wasm_bindgen::closure::Closure;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsCast;
 use web_sys::{window, Element, EventTarget, PointerEvent};
 use yew::prelude::*;
 
+mod animation;
 mod learning;
 mod model;
 mod persistence;
 mod review_state;
 mod sentences;
 mod storage;
+use animation::AnimationStepKind;
 use learning::{
     apply_review, calculate_progress_sum, find_key_of_lowest_score, ReviewAttempt, ReviewOutcome,
     LEARNED_INTERVAL_SECONDS,
 };
 use model::{Card, CurrentTranslations, LearningContent, ProcessingData, SavedProgress, ScoreData};
 use review_state::{
-    AnimationState, DragAction, DragState, Point, ReviewAction, ReviewKind, ReviewPresentation,
-    ReviewState,
+    DragAction, DragState, Point, ReviewAction, ReviewKind, ReviewPresentation, ReviewState,
 };
 use sentences::{choose_sentence_index, find_related_cards, split_text};
 use storage::ContentLoadState;
@@ -35,8 +36,9 @@ enum SaveStatus {
     ReadOnly(String),
 }
 
-#[derive(Clone, PartialEq, Debug)]
+#[derive(Clone, Default, PartialEq, Debug)]
 enum SwipeDirection {
+    #[default]
     None,
     Up,
     Down,
@@ -147,7 +149,6 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
     });
     let review = use_reducer(|| ReviewState::welcome(get_timestamp_ms()));
     let drag = use_reducer(DragState::default);
-    let animation = use_state(AnimationState::default);
     let drag_surface = use_node_ref();
 
     // Progress is read independently of content/network success, once per mount.
@@ -209,36 +210,71 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
         Callback::from(move |_| save_progress_and_update_status(&progress, &save_status))
     };
 
-    let on_swipe_completed = {
-        let drag = drag.clone();
-        let animation = animation.clone();
+    {
+        let animation_step = review.animation.step();
         let review = review.clone();
         let content = content.clone();
         let progress = progress.clone();
         let save_status = save_status.clone();
+        use_effect_with_deps(
+            move |step| {
+                let timer = step.as_ref().map(|step: &animation::AnimationStep| {
+                    match &step.kind {
+                        AnimationStepKind::Advance(_) => {
+                            save_review_result(&progress, &review, step, &save_status);
+                        }
+                        AnimationStepKind::Reposition => {
+                            if let ContentLoadState::Ready(loaded) = &*content {
+                                if let Some(presentation) = prepare_next_review(
+                                    &loaded.content,
+                                    &progress.scores,
+                                    &review.presentation.translations,
+                                    get_timestamp_s(),
+                                    Math::random(),
+                                ) {
+                                    review.dispatch(ReviewAction::PresentNext {
+                                        generation: step.generation,
+                                        presentation,
+                                    });
+                                } else {
+                                    web_sys::console::log_1(
+                                        &"No valid card found with the lowest score".into(),
+                                    );
+                                }
+                            }
+                        }
+                        AnimationStepKind::Reveal | AnimationStepKind::StartQuestion => {}
+                    }
+                    let generation = step.generation;
+                    // Start the full interval after preparation so the offscreen card
+                    // gets its original 50 ms before returning to the front.
+                    let delay = step.delay_ms();
+                    let review = review.clone();
+                    Timeout::new(delay, move || {
+                        review.dispatch(ReviewAction::AnimationElapsed {
+                            generation,
+                            at_ms: get_timestamp_ms(),
+                        })
+                    })
+                });
+                // Changing phase or unmounting drops the handle and cancels its timer.
+                move || drop(timer)
+            },
+            animation_step,
+        );
+    }
+
+    let on_swipe_completed = {
+        let drag = drag.clone();
+        let review = review.clone();
         Callback::from(move |(pointer_id, end): (i32, Point)| {
             if let Some(direction) =
-                drag.completed_direction(pointer_id, end, &animation.direction())
+                drag.completed_direction(pointer_id, end, &review.animation.direction())
             {
-                animation.set(AnimationState::Swiping(direction.clone()));
-                match direction {
-                    SwipeDirection::Up | SwipeDirection::Down => {
-                        let updated_scores =
-                            save_review_result(&progress, &review, direction, &save_status);
-                        animate_next_review(&content, &review, &animation, updated_scores);
-                    }
-                    SwipeDirection::Left | SwipeDirection::Right => {
-                        if review.is_question() {
-                            review.dispatch(ReviewAction::Reveal(get_timestamp_ms()));
-                            let review = review.clone();
-                            set_timeout(
-                                move || review.dispatch(ReviewAction::ShowExplanations),
-                                400,
-                            );
-                        }
-                    }
-                    SwipeDirection::None => {}
-                }
+                review.dispatch(ReviewAction::Swipe {
+                    direction,
+                    at_ms: get_timestamp_ms(),
+                });
             }
             drag.dispatch(DragAction::End(pointer_id));
         })
@@ -248,6 +284,7 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
         let drag = drag.clone();
         let drag_surface = drag_surface.clone();
         let content = content.clone();
+        let review = review.clone();
         Callback::from(move |event: PointerEvent| {
             let pointer_id = event.pointer_id();
             let position = Point {
@@ -256,7 +293,8 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
             };
             match event.type_().as_str() {
                 "pointerdown" => {
-                    if !matches!(&*content, ContentLoadState::Ready(_))
+                    if !review.animation.accepts_swipes()
+                        || !matches!(&*content, ContentLoadState::Ready(_))
                         || !event.is_primary()
                         || event.button() != 0
                         || drag.is_moving()
@@ -411,11 +449,11 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
                     },
                     ContentLoadState::Ready(_) => html! {
                         <Flashcard
-                            swipe_direction={animation.direction()}
+                            swipe_direction={review.animation.direction()}
                             is_moving={drag.is_moving()}
                             pos_x={drag.rotation()}
                             pos_y={drag.offset().y}
-                            fast_move={*animation == AnimationState::Repositioning}
+                            fast_move={review.animation.fast_move()}
                             current_card={review.presentation.card.clone()}
                             processed_sentence={review.presentation.sentence.clone()}
                             show_explanations={review.show_explanations()}
@@ -559,15 +597,18 @@ fn move_drag(drag: &UseReducerHandle<DragState>, pointer_id: i32, position: Poin
 fn save_review_result(
     progress: &UseStateHandle<SavedProgress>,
     review: &ReviewState,
-    direction: SwipeDirection,
+    step: &animation::AnimationStep,
     save_status: &UseStateHandle<SaveStatus>,
-) -> HashMap<String, ScoreData> {
+) {
+    let AnimationStepKind::Advance(direction) = &step.kind else {
+        return;
+    };
     let attempt = ReviewAttempt {
         elapsed_ms: review.duration(),
         // Preserve the original byte-length measurement, including accented text.
         character_length: (review.presentation.card.base_language.len()
             + review.presentation.card.target_language.len()) as i32,
-        outcome: if direction == SwipeDirection::Up {
+        outcome: if *direction == SwipeDirection::Up {
             ReviewOutcome::Correct
         } else {
             ReviewOutcome::Incorrect
@@ -577,14 +618,12 @@ fn save_review_result(
         progress,
         &review.presentation.translations.list,
         &attempt,
-        get_timestamp_s(),
+        (step.started_at_ms / 1000) as i32,
     ) else {
-        return progress.scores.clone();
+        return;
     };
     save_progress_and_update_status(&updated, save_status);
-    let updated_scores = updated.scores.clone();
     progress.set(updated);
-    updated_scores
 }
 
 fn save_progress_and_update_status(progress: &SavedProgress, status: &UseStateHandle<SaveStatus>) {
@@ -595,48 +634,6 @@ fn save_progress_and_update_status(progress: &SavedProgress, status: &UseStateHa
         Ok(()) => SaveStatus::Saved,
         Err(error) => SaveStatus::Unsaved(format!("{error} Your progress is kept in this session, but may be lost if you reload or close it.")),
     });
-}
-
-fn animate_next_review(
-    content: &UseStateHandle<ContentLoadState>,
-    review: &UseReducerHandle<ReviewState>,
-    animation: &UseStateHandle<AnimationState>,
-    updated_scores: HashMap<String, ScoreData>,
-) {
-    let content = content.clone();
-    let review = review.clone();
-    let animation = animation.clone();
-    set_timeout(
-        move || {
-            animation.set(AnimationState::Repositioning);
-            let ContentLoadState::Ready(loaded) = &*content else {
-                return;
-            };
-            if let Some(presentation) = prepare_next_review(
-                &loaded.content,
-                &updated_scores,
-                &review.presentation.translations,
-                get_timestamp_s(),
-                Math::random(),
-            ) {
-                review.dispatch(ReviewAction::Present(presentation));
-            } else {
-                web_sys::console::log_1(&"No valid card found with the lowest score".into());
-            }
-            set_timeout(
-                move || {
-                    animation.set(AnimationState::Settled);
-                    review.dispatch(ReviewAction::HideExplanations);
-                    set_timeout(
-                        move || review.dispatch(ReviewAction::StartTimer(get_timestamp_ms())),
-                        100,
-                    );
-                },
-                50,
-            );
-        },
-        400,
-    );
 }
 
 /// Prepare presentation once when advancing, preserving selection and sentence rules.
@@ -686,24 +683,6 @@ fn prepare_next_review(
             explanation: html! { <span>{ " " }</span> },
         })
     }
-}
-
-fn set_timeout<F>(callback: F, delay_ms: i32)
-where
-    F: FnOnce() + 'static,
-{
-    let closure = Closure::once(callback);
-
-    window()
-        .unwrap()
-        .set_timeout_with_callback_and_timeout_and_arguments_0(
-            closure.as_ref().unchecked_ref(),
-            delay_ms,
-        )
-        .unwrap();
-
-    // Forget the closure to avoid it being dropped prematurely
-    closure.forget();
 }
 
 fn get_timestamp_s() -> i32 {

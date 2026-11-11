@@ -1,6 +1,6 @@
 # Refactoring roadmap
 
-Status: R1, R2, R3, R4, R5, and R7 implemented; browser smoke verification remains pending. Other tasks remain proposed except for supporting work explicitly recorded below.
+Status: R1–R7 implemented; browser smoke verification remains pending. Other tasks remain proposed except for supporting work explicitly recorded below.
 
 This document records the ten improvements from the project review so they can be implemented incrementally in future sessions. Follow `AGENTS.md` during implementation. The objective is clearer, easier-to-modify Rust while preserving the core flashcard and learning behavior.
 
@@ -276,13 +276,26 @@ Potentially 20–50 fewer lines, but correct cancellation may offset this. Anima
 
 ### Completion checklist
 
-- [ ] One review action produces at most one score update and next-card transition.
-- [ ] Rapid swipes cannot apply an older transition to a newer review.
-- [ ] Pending reveal/animation work has explicit teardown behavior.
-- [ ] Answer timing still stops at the intended user action.
-- [ ] Visual timing and front/back behavior match the baseline.
+- [x] An accepted advance creates one phase entry for scoring and one next-card preparation; repeated swipes leave that entry unchanged in tests.
+- [x] Obsolete timer/presentation IDs cannot modify a later transition or reveal a new question in tests.
+- [x] One owned timeout is dropped on phase changes or unmount; no forgotten JS timer closures remain. Browser teardown verification is pending.
+- [x] Answer timing stops on the first accepted horizontal swipe, using its input timestamp.
+- [ ] The existing 400/50/100 ms intervals and front/back rules are covered by native tests; visual/browser timing verification remains pending.
 
 Dependencies: R1 and R2, supported by R9 transition tests and browser verification.
+
+### R6 implementation record — 2026-11-11
+
+- Added `animation.rs`, a pure controller for reveal, outgoing advance, offscreen reposition, and starting the next question. It retains the existing 400/50/100 ms intervals. Each timer stage has a generation ID; elapsed events and presentation updates are accepted only for the current stage.
+- Moved animation ownership into `ReviewState` so one reducer accepts a swipe, freezes recall duration, and changes the animation phase atomically. UI callbacks dispatch the action rather than scheduling nested callbacks or performing scoring directly. A rejected rapid swipe cannot alter the review timing or create another scoring phase.
+- The UI has one phase-dependent effect. Entering advance calculates/persists progress once using the accepted input timestamp; entering reposition prepares the next presentation once. Changes to progress, notices, drag position, or card presentation do not rerun an unchanged phase effect. Its timeout dispatches only an ID-tagged elapsed event; stale timer callbacks perform no direct UI/storage work.
+- Added `gloo-timers = "0.2"` as a direct dependency for cancellable `Timeout` handles. That version was already locked transitively; no dependency versions were updated. Phase cleanup and view teardown drop the handle, replacing manual `Closure::forget()` and nested `set_timeout` calls. Each interval is scheduled after its phase preparation so the new card retains its 50 ms offscreen step.
+- Quick horizontal flip-back keeps the original pending reveal timer. Advancing during reveal replaces/cancels that timer. All new swipes are ignored while leaving, repositioning, or waiting to start the next question; input resumes after the final 100 ms pause. No-eligible-card fallback retains the old card and restarts its timer, as before.
+- Removed the full score-map clone formerly needed to capture updated scores in the delayed next-card closure. The reposition phase reads the current in-memory progress instead. Scoring formulas, character-byte measurement, storage/retry policy, pointer capture on the view's `NodeRef`, direction thresholds, and explanation scrolling are unchanged.
+- Updated review-state tests to exercise the production swipe/elapsed/presentation actions. Added native animation tests for stage delays, repeated input, flip-back, superseded reveal, duplicate elapsed events, and stale presentation/reveal protection. All 58 Rust tests and 11 Node build/cache tests pass; formatting, Cargo check, Clippy, and isolated web-target WASM checks pass. One existing UI Clippy warning remains (`repeat().take()`).
+- The canonical `build_and_sync.bat` also passes and regenerated `docs`; generated JavaScript, WASM, styles, and the versioned worker match the final sources/build.
+- No browser is connected. Before deployment, verify welcome/start, reveal/flip-back, immediate advance before reveal completion, repeated up/down swipes during transition, the 400/50/100 ms visual sequence, and view teardown. Native tests validate phase ordering and input timestamps, not actual browser timer cancellation or rendering.
+- This favors explicit lifecycle and state transitions over a net line-count reduction. No runtime-speedup claim is made; CSS transition events were not added because the existing fixed intervals are retained.
 
 ## R7 — Consolidate build and deployment scripts
 
@@ -474,8 +487,8 @@ Measure production-code lines separately from tests and generated output. Measur
 | R3 | Implemented with R2 | Selection borrows saved scores; priorities, insertion-order ties, and exclusions tested. No speedup benchmark claimed. |
 | R4 | Implemented; browser/device smoke pending | Unified pointer events, active-pointer ownership, capture/cancellation, and overflow-aware native scrolling; 31 Rust tests pass. |
 | R5 | Implemented; browser smoke pending | Validated whole-dataset fallback, loading/retry UI, atomic versioned snapshots, protected legacy progress, save warnings/retry, and cancelled-load guards; 49 Rust tests pass. |
-| R6 | Proposed | |
+| R6 | Implemented; browser smoke pending | Phase-owned cancellable timers, atomic swipe/reveal transitions, ID-guarded callbacks/presentations, and input locking; 58 Rust tests pass. |
 | R7 | Implemented; browser smoke pending | Canonical Sass/WASM build, fail-fast sync, scoped versioned offline cache, localhost bypass, cleanup, and README; 11 Node tests pass. |
 | R8 | Proposed | |
-| R9 | Partially implemented | R1/R2/R4/R5 added state, learning, selection, storage parsing/migration, and cache failure tests. Broader timer/browser coverage remains. |
+| R9 | Partially implemented | R1/R2/R4/R5/R6 added state, learning, selection, storage/migration, cache-failure, and animation-order tests. Browser lifecycle coverage remains. |
 | R10 | Partially implemented | Obsolete files, HTTPS certificates, duplicate build/worker paths, stale instructions, and unnecessary deployed sources removed. Rendering/accessibility/dependency work remains. |

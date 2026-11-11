@@ -4,6 +4,7 @@ use std::rc::Rc;
 
 use yew::prelude::*;
 
+use crate::animation::{AnimationState, AnimationStepKind};
 use crate::model::{Card, CurrentTranslations};
 use crate::SwipeDirection;
 
@@ -43,15 +44,23 @@ enum ReviewPhase {
 pub(super) struct ReviewState {
     pub kind: ReviewKind,
     pub presentation: ReviewPresentation,
+    pub animation: AnimationState,
     phase: ReviewPhase,
 }
 
 pub(super) enum ReviewAction {
-    Present(ReviewPresentation),
-    Reveal(i64),
-    ShowExplanations,
-    HideExplanations,
-    StartTimer(i64),
+    Swipe {
+        direction: SwipeDirection,
+        at_ms: i64,
+    },
+    AnimationElapsed {
+        generation: u64,
+        at_ms: i64,
+    },
+    PresentNext {
+        generation: u64,
+        presentation: ReviewPresentation,
+    },
 }
 
 impl ReviewState {
@@ -68,6 +77,7 @@ impl ReviewState {
                 explanation: html! { "Swipe Up or Down" },
             },
             phase: ReviewPhase::Question { started_at: now },
+            animation: AnimationState::default(),
         }
     }
 
@@ -99,32 +109,51 @@ impl Reducible for ReviewState {
     fn reduce(self: Rc<Self>, action: Self::Action) -> Rc<Self> {
         let mut next = (*self).clone();
         match action {
-            ReviewAction::Present(presentation) => {
+            ReviewAction::PresentNext {
+                generation,
+                presentation,
+            } if self.animation.can_present(generation) => {
                 next.kind = ReviewKind::Exercise;
                 next.presentation = presentation;
             }
-            ReviewAction::Reveal(now) => {
-                // Flipping an already revealed answer must not restart its timer.
-                if let ReviewPhase::Question { started_at } = self.phase {
+            ReviewAction::Swipe { direction, at_ms } => {
+                let reveals_answer =
+                    matches!(direction, SwipeDirection::Left | SwipeDirection::Right)
+                        && self.is_question();
+                if !next.animation.accept_swipe(direction, at_ms) {
+                    return self;
+                }
+                if reveals_answer {
+                    let ReviewPhase::Question { started_at } = self.phase else {
+                        return self;
+                    };
                     next.phase = ReviewPhase::Answer {
-                        duration: now - started_at,
+                        duration: at_ms - started_at,
                         explanation: ExplanationVisibility::Hidden,
                     };
+                    next.animation.begin_reveal(at_ms);
                 }
             }
-            ReviewAction::ShowExplanations => {
-                if let ReviewPhase::Answer { explanation, .. } = &mut next.phase {
-                    *explanation = ExplanationVisibility::Visible;
+            ReviewAction::AnimationElapsed { generation, at_ms } => {
+                match next.animation.elapse(generation, at_ms) {
+                    Some(AnimationStepKind::Reveal) => {
+                        if let ReviewPhase::Answer { explanation, .. } = &mut next.phase {
+                            *explanation = ExplanationVisibility::Visible;
+                        }
+                    }
+                    Some(AnimationStepKind::Reposition) => {
+                        if let ReviewPhase::Answer { explanation, .. } = &mut next.phase {
+                            *explanation = ExplanationVisibility::Hidden;
+                        }
+                    }
+                    Some(AnimationStepKind::StartQuestion) => {
+                        next.phase = ReviewPhase::Question { started_at: at_ms }
+                    }
+                    Some(AnimationStepKind::Advance(_)) => {}
+                    None => return self,
                 }
             }
-            ReviewAction::HideExplanations => {
-                if let ReviewPhase::Answer { explanation, .. } = &mut next.phase {
-                    *explanation = ExplanationVisibility::Hidden;
-                }
-            }
-            ReviewAction::StartTimer(started_at) => {
-                next.phase = ReviewPhase::Question { started_at };
-            }
+            ReviewAction::PresentNext { .. } => return self,
         }
         next.into()
     }
@@ -280,24 +309,6 @@ fn direction(offset: Point) -> SwipeDirection {
 fn swipe_intensity(offset: Point) -> f64 {
     // Preserve the existing axis-difference threshold, including diagonal drags.
     (offset.x.abs() - offset.y.abs()).abs().min(50.0) / 50.0
-}
-
-#[derive(Clone, Default, PartialEq)]
-pub(super) enum AnimationState {
-    #[default]
-    Settled,
-    Swiping(SwipeDirection),
-    Repositioning,
-}
-
-impl AnimationState {
-    pub fn direction(&self) -> SwipeDirection {
-        match self {
-            Self::Settled => SwipeDirection::None,
-            Self::Swiping(direction) => direction.clone(),
-            Self::Repositioning => SwipeDirection::Down,
-        }
-    }
 }
 
 #[cfg(test)]

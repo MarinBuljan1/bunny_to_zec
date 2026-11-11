@@ -12,6 +12,7 @@ A client-side Yew/WebAssembly flashcard app. Edit Rust in `src/`, styles in
 - `storage.rs`: network loading and browser persistence, separated from learning calculations.
 - `persistence.rs`: dataset validation, versioned snapshots, and legacy-data migration.
 - `review_state.rs`: local review, drag, and animation state.
+- `animation.rs`: pure animation ordering, input locking, and transition IDs.
 - `tests/`: unit tests attached to their owning modules, plus build/cache checks.
 
 Content has explicit loading, ready, and failed states. When there is no usable
@@ -31,6 +32,20 @@ original gesture. Overflowing explanations keep native vertical scrolling, while
 short explanations and the card/background remain swipeable. Overflow is measured
 when explanations change and on window resize so the CSS touch policy is set before
 the gesture begins, as required by the [Pointer Events standard](https://www.w3.org/TR/pointerevents/#the-touch-action-css-property).
+
+Animations retain the 400 ms reveal/outgoing delay, 50 ms offscreen reposition,
+and 100 ms pause before the next recall timer starts. The first horizontal reveal
+stops recall timing immediately; flipping back does not restart its reveal delay.
+Advancing before explanations appear cancels that pending reveal. Further swipes
+are ignored during advancement until the next question is ready, preventing a
+second score update or overlapping card replacement.
+
+One phase-owned `gloo-timers` timeout drives the current step. Phase changes or
+view teardown drop the handle and cancel it; transition IDs also reject obsolete
+callbacks already queued. The review reducer applies timing and swipe acceptance
+together, while the UI performs scoring/persistence once on entering the advance
+phase and prepares the next card on entering repositioning. Scoring uses the
+accepted input timestamp, not a later timer/effect timestamp.
 
 ## Saved-data formats and recovery
 
