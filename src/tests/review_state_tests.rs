@@ -6,12 +6,10 @@ fn exercise(word: &str) -> ReviewPresentation {
             base_language: "translation".into(),
             target_language: word.into(),
         },
-        translations: CurrentTranslations {
-            list: vec![Card {
-                base_language: "translation".into(),
-                target_language: word.into(),
-            }],
-        },
+        review_words: vec![Card {
+            base_language: "translation".into(),
+            target_language: word.into(),
+        }],
         sentence: html! { <span>{word.to_owned()}</span> },
         explanation: html! { "explanation" },
     }

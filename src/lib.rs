@@ -21,11 +21,11 @@ use learning::{
     apply_review, calculate_progress_sum, find_key_of_lowest_score, ReviewAttempt, ReviewOutcome,
     LEARNED_INTERVAL_SECONDS,
 };
-use model::{Card, CurrentTranslations, LearningContent, ProcessingData, SavedProgress, ScoreData};
+use model::{Card, LearningContent, SavedProgress, ScoreData};
 use review_state::{
     DragAction, DragState, Point, ReviewAction, ReviewKind, ReviewPresentation, ReviewState,
 };
-use sentences::{choose_sentence_index, find_related_cards, split_text};
+use sentences::{choose_sentence_index, prepare_sentence, split_text, ProcessedToken};
 use storage::ContentLoadState;
 
 #[derive(PartialEq)]
@@ -228,7 +228,7 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
                                 if let Some(presentation) = prepare_next_review(
                                     &loaded.content,
                                     &progress.scores,
-                                    &review.presentation.translations,
+                                    &review.presentation.review_words,
                                     get_timestamp_s(),
                                     Math::random(),
                                 ) {
@@ -616,7 +616,7 @@ fn save_review_result(
     };
     let Some(updated) = apply_review(
         progress,
-        &review.presentation.translations.list,
+        &review.presentation.review_words,
         &attempt,
         (step.started_at_ms / 1000) as i32,
     ) else {
@@ -640,35 +640,33 @@ fn save_progress_and_update_status(progress: &SavedProgress, status: &UseStateHa
 fn prepare_next_review(
     content: &LearningContent,
     scores: &HashMap<String, ScoreData>,
-    current_translations: &CurrentTranslations,
+    previous_review_words: &[Card],
     now_s: i32,
     sentence_sample: f64,
 ) -> Option<ReviewPresentation> {
-    let key = find_key_of_lowest_score(&content.cards, scores, &current_translations.list, now_s)?;
+    let key = find_key_of_lowest_score(&content.cards, scores, previous_review_words, now_s)?;
     let card = &content.cards[&key];
     if let Some(index) = choose_sentence_index(
         &card.sentence_indexes,
-        current_translations.list.len() as i32,
+        previous_review_words.len() as i32,
         sentence_sample,
     ) {
         let sentence = &content.sentences[index as usize];
-        let (related_cards, tokens) = find_related_cards(
+        let (review_words, tokens) = prepare_sentence(
             scores,
             &content.cards,
             split_text(&sentence.target_language),
             &key,
         );
         let explanation =
-            construct_processed_explanation(&related_cards, &content.explanations, scores);
+            construct_processed_explanation(&review_words, &content.explanations, scores);
         Some(ReviewPresentation {
             card: Card {
                 base_language: sentence.base_language.clone(),
                 target_language: sentence.target_language.clone(),
             },
-            translations: CurrentTranslations {
-                list: related_cards,
-            },
-            sentence: construct_processed_sentence(tokens),
+            review_words,
+            sentence: construct_processed_sentence(&tokens),
             explanation,
         })
     } else {
@@ -678,7 +676,7 @@ fn prepare_next_review(
                 target_language: key,
             },
             // Preserve the existing no-sentence fallback; changing its review words is a separate decision.
-            translations: current_translations.clone(),
+            review_words: previous_review_words.to_vec(),
             sentence: html! { <span>{ card.base_language.clone() }</span> },
             explanation: html! { <span>{ " " }</span> },
         })
@@ -696,63 +694,54 @@ fn get_timestamp_ms() -> i64 {
     now as i64
 }
 
-fn construct_processed_sentence(processed_sentence_data: Vec<ProcessingData>) -> Html {
+fn construct_processed_sentence(tokens: &[ProcessedToken]) -> Html {
     html! {
-        { for processed_sentence_data.iter().map(|word| {
-            if word.found {
-                let char_difference = word.translation.len() as isize + 2 - word.word.len() as isize;
-                let spacing_value = if char_difference > 0 { char_difference / 2 } else { 0 } as usize;
-                let spaces = std::iter::repeat(html! { <span>{"\u{00A0}"}</span> })
-                    .take(spacing_value)
-                    .collect::<Html>();
-
+        { for tokens.iter().map(|token| {
+            if let Some(translation) = &token.translation {
+                // Retain the original byte-based padding, including non-ASCII words.
+                let padding = (translation.len() + 2).saturating_sub(token.text.len()) / 2;
+                let spaces = "\u{00A0}".repeat(padding);
                 html! {
-                    <span class="hidden-word" data-translation={ word.translation.clone() }>
-                        { spaces.clone() }{ &word.word }{ spaces }
+                    <span class="hidden-word" data-translation={translation.clone()}>
+                        {spaces.clone()}{&token.text}{spaces}
                     </span>
                 }
             } else {
-                html! { <span class="visible-word">{ &word.word }</span> }
+                html! { <span class="visible-word">{&token.text}</span> }
             }
         })}
     }
 }
 
 fn construct_processed_explanation(
-    related_cards: &Vec<Card>,
+    review_words: &[Card],
     explanations: &HashMap<String, HashMap<String, String>>,
-    updated_scores: &HashMap<String, ScoreData>,
+    scores: &HashMap<String, ScoreData>,
 ) -> Html {
-    let mut explanation_nodes: Vec<Html> = vec![];
-    for card in related_cards {
-        let mut found = false;
-        if let Some(inner) = explanations.get(&card.base_language) {
-            for (target, text) in inner {
-                if !found {
-                    found = true;
-                    explanation_nodes.push(html! {
-                        <p class="explanation base-word">
-                            <strong>{ format!("{}", &card.base_language) }</strong>
-                        </p>
-                    });
-                }
-                if target == &card.target_language || updated_scores.contains_key(target) {
-                    explanation_nodes.push(html! {
-                        <p class="explanation target-word">
-                            <strong>{ format!("{}: ", target) }</strong>
-                            { text }
-                        </p>
-                    });
-                }
+    let mut nodes = Vec::new();
+    for word in review_words {
+        let Some(entries) = explanations.get(&word.base_language) else {
+            continue;
+        };
+        // The existing UI shows a header for every nonempty group, even when
+        // none of its targets pass the learned/current-word filter.
+        if entries.is_empty() {
+            continue;
+        }
+        nodes.push(html! {
+            <p class="explanation base-word"><strong>{&word.base_language}</strong></p>
+        });
+        for (target, text) in entries {
+            if target == &word.target_language || scores.contains_key(target) {
+                nodes.push(html! {
+                    <p class="explanation target-word">
+                        <strong>{format!("{target}: ")}</strong>{text}
+                    </p>
+                });
             }
         }
     }
-
-    html! {
-        <div class="explanation-div">
-            { for explanation_nodes }
-        </div>
-    }
+    html! { <div class="explanation-div">{for nodes}</div> }
 }
 
 fn should_enable_drag_for_event_target(target: &EventTarget) -> bool {

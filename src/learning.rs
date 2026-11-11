@@ -51,7 +51,7 @@ pub(crate) fn apply_review(
                 })
         })
         .collect();
-    let weights = get_inverted_normalised_score(&raw_scores);
+    let weights = review_weights(&raw_scores);
     let mut updated_scores = progress.scores.clone();
     let decay_seconds = now_s - progress.last_data_update;
     for score in updated_scores.values_mut() {
@@ -72,9 +72,10 @@ pub(crate) fn apply_review(
     })
 }
 
-fn get_inverted_normalised_score(raw_values: &[ScoreData]) -> Vec<f32> {
+/// Invert the clamped score shares so weaker words receive more review weight.
+fn review_weights(raw_values: &[ScoreData]) -> Vec<f32> {
     let total_score: f32 = raw_values.iter().map(|entry| entry.score as f32).sum();
-    let normalised_scores: Vec<f32> = raw_values
+    let mut weights: Vec<f32> = raw_values
         .iter()
         .map(|entry| {
             let normalised = if total_score > 0.0 {
@@ -82,15 +83,14 @@ fn get_inverted_normalised_score(raw_values: &[ScoreData]) -> Vec<f32> {
             } else {
                 0.0
             };
-            normalised.max(0.1)
+            1.0 / normalised.max(0.1)
         })
         .collect();
-    let processed_scores: Vec<f32> = normalised_scores.iter().map(|&score| 1.0 / score).collect();
-    let total_processed_score: f32 = processed_scores.iter().sum();
-    processed_scores
-        .iter()
-        .map(|&score| score / total_processed_score)
-        .collect()
+    let total_weight: f32 = weights.iter().sum();
+    for weight in &mut weights {
+        *weight /= total_weight;
+    }
+    weights
 }
 
 fn calculate_raw_score(

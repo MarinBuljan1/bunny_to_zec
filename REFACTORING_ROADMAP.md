@@ -1,6 +1,6 @@
 # Refactoring roadmap
 
-Status: R1–R7 implemented; browser smoke verification remains pending. Other tasks remain proposed except for supporting work explicitly recorded below.
+Status: R1–R8 implemented; browser smoke verification remains pending. Other tasks remain proposed except for supporting work explicitly recorded below.
 
 This document records the ten improvements from the project review so they can be implemented incrementally in future sessions. Follow `AGENTS.md` during implementation. The objective is clearer, easier-to-modify Rust while preserving the core flashcard and learning behavior.
 
@@ -340,6 +340,13 @@ Dependencies: independent of most Rust work; coordinate the loading fallback pol
 - Validation: 17 Rust tests and 11 Node cache/build-script tests pass; Cargo check and formatting pass; the consolidated Sass/WASM build regenerates `docs` successfully. Tests cover space-containing paths, invocation outside the script directory, failed stages, missing required files, complete synchronization, deterministic cache fingerprints, offline navigation/assets, failed installation, scoped upgrade cleanup, request exclusions, and localhost retirement.
 - No connected browser is available. Real-browser first-install, reload, upgrade activation, and offline checks remain pending; automated service-worker tests exercise the policy using an in-memory browser-API fixture rather than an actual browser.
 
+### R7 follow-up audit — 2026-11-11
+
+- Rechecked the canonical build, script-relative paths, error propagation, cache versioning, and deployment synchronization before starting R8. The remaining implementation gap was overlapping build/sync writers: independent watchers could copy generated files while a Rust build was updating them.
+- Added `tools/run_site_command.ps1` to serialize canonical Build/Sync operations using an exclusive file handle under `target`. Nested synchronization reuses the build's lock. The handle is disposed on success/failure and released by the OS if the process exits; a leftover file does not create a stale lock. Waiting is bounded to two minutes.
+- Existing build tests continue to pass, including paths with spaces and preserved failure codes. A concurrent-process test verifies that synchronization waits for an active compiler stage and that a failed build releases its lock. All 12 Node build/cache tests pass, and the canonical build succeeds when invoked from the parent directory.
+- Browser repository-path/offline lifecycle checks remain pending because no browser is connected; the earlier service-worker policy and deployment structure are retained.
+
 ## R8 — Simplify small types, wrappers, and calculations
 
 ### Current situation
@@ -363,12 +370,25 @@ Approximately 25–60 lines, overlapping with R2 and R3. Fewer allocations and n
 
 ### Completion checklist
 
-- [ ] Removed wrappers did not encode a storage schema that is now incompatible.
-- [ ] Tokenization preserves existing punctuation, apostrophe, spacing, and Unicode behavior.
-- [ ] Normalization handles empty and zero-score inputs and retains expected outputs.
-- [ ] Important domain concepts remain named; shorter code is still easy to understand locally.
+- [x] Removed types were only used in the in-memory presentation; saved content/progress schemas and migration tests are unchanged.
+- [x] The UTF-8 scanner matches the old regex for both languages in all sentences and generated punctuation/Unicode boundary inputs, including legacy pipe behavior.
+- [x] Normalization uses one temporary vector and passes the existing expected distributions, empty/zero inputs, and score tests.
+- [x] Review words and processed tokens remain explicit domain concepts; slices, ownership, and Option replace wrappers, copies, and overlapping fields.
 
 Dependencies: R9 characterization tests; coordinate storage changes with R5.
+
+### R8 implementation record — 2026-11-11
+
+- Removed the one-field `CurrentTranslations` wrapper. `ReviewPresentation.review_words` is now a plain `Vec<Card>`, and read-only functions receive slices. This type was never part of the content/progress snapshots, so no persistent migration is required.
+- Replaced `ProcessingData { word, found, translation }` with `ProcessedToken { text, translation: Option<String> }` in the sentence module. A matched empty translation remains `Some("")`, distinct from an unmatched token. Sentence preparation consumes its input strings instead of cloning every token, preserves first-occurrence masking, and returns the same ordered review words.
+- Replaced per-sentence regex construction/compilation with a small `char_indices` scanner using only the standard library. The scanner preserves individual spaces, punctuation, Unicode boundaries, apostrophes, tabs/newlines, and the original regex's quirk of discarding pipe characters. No whitespace splitting or new linguistic rules were introduced.
+- Moved `regex` from runtime dependencies to development dependencies for an independent compatibility reference. Tests compare the scanner with the previous regex across both languages in the full sentence corpus and generated boundary inputs. The normal browser dependency tree no longer contains regex.
+- `review_weights` now builds one inverse-weight vector and normalizes it in place, preserving the original operation order and formulas. Sentence selection counts and borrows the eligible ordered prefix rather than allocating a second index vector; its first-index fallback is unchanged. Repeated learning intervals were already named in R2, and score-name forwarding wrappers were already removed there.
+- Explanation rendering now emits each nonempty group's header before its target loop, eliminating the mutable found flag while preserving filtering, repeated group headers, and HashMap iteration order. Sentence padding uses an NBSP string rather than one span per space, retaining the original byte-based padding and visible classes/translation attributes.
+- All 60 Rust tests pass, including the original score expectations, storage/migration cases, and animation/pointer-state checks. Formatting, Cargo check, and Clippy pass without application warnings. All 12 Node build/cache checks pass as part of R7. No new runtime dependencies or persistent schema versions were introduced.
+- An optimized release WASM size comparison uses the same installed Rust/wasm-pack/wasm-opt toolchain and web-target build settings. The pre-R8 binary was 1,596,402 bytes. Final generated-output measurements are recorded below; this measures uncompressed WASM size, not total site size or page-load latency.
+- The final canonical build succeeds and generated output matches its sources. Optimized WASM is now **478,717 bytes**, down **1,117,685 bytes (70.01%)**. Production Rust across the top-level source modules, consistently formatted and excluding test modules, fell from **1,940 to 1,905 lines** (35 fewer). Added compatibility/build tests increase test-source size; no page-load timing benchmark was performed.
+- Browser visual verification remains pending because no browser is connected. Check token hiding/spacing, explanation headers, short/long explanation scrolling, pointer swipes, and offline upgrades after deploying the regenerated output. No whole-app speedup is claimed.
 
 ## R9 — Establish behavior-preserving tests
 
@@ -488,7 +508,7 @@ Measure production-code lines separately from tests and generated output. Measur
 | R4 | Implemented; browser/device smoke pending | Unified pointer events, active-pointer ownership, capture/cancellation, and overflow-aware native scrolling; 31 Rust tests pass. |
 | R5 | Implemented; browser smoke pending | Validated whole-dataset fallback, loading/retry UI, atomic versioned snapshots, protected legacy progress, save warnings/retry, and cancelled-load guards; 49 Rust tests pass. |
 | R6 | Implemented; browser smoke pending | Phase-owned cancellable timers, atomic swipe/reveal transitions, ID-guarded callbacks/presentations, and input locking; 58 Rust tests pass. |
-| R7 | Implemented; browser smoke pending | Canonical Sass/WASM build, fail-fast sync, scoped versioned offline cache, localhost bypass, cleanup, and README; 11 Node tests pass. |
-| R8 | Proposed | |
+| R7 | Implemented; browser smoke pending | Canonical build/sync serialized across processes; fail-fast behavior and cache policy validated by 12 Node tests and an outside-directory build. |
+| R8 | Implemented; browser smoke pending | Removed in-memory wrappers/flags, runtime regex, temporary vectors, and redundant rendering work; 60 Rust tests and warning-free Clippy pass. |
 | R9 | Partially implemented | R1/R2/R4/R5/R6 added state, learning, selection, storage/migration, cache-failure, and animation-order tests. Browser lifecycle coverage remains. |
 | R10 | Partially implemented | Obsolete files, HTTPS certificates, duplicate build/worker paths, stale instructions, and unnecessary deployed sources removed. Rendering/accessibility/dependency work remains. |

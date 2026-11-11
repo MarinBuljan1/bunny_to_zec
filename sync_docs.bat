@@ -1,6 +1,11 @@
 @echo off
 setlocal
 set "ROOT_DIR=%~dp0"
+if "%~1"=="--lock-held" goto :Run
+powershell -NoProfile -ExecutionPolicy Bypass -File "%ROOT_DIR%tools\run_site_command.ps1" -Operation Sync
+exit /b %ERRORLEVEL%
+
+:Run
 pushd "%ROOT_DIR%" || exit /b 1
 set "DOCS_DIR=%CD%\docs"
 

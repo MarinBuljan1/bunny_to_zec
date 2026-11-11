@@ -22,7 +22,7 @@ fn derived_progress_caps_each_word_and_accumulates_beyond_i32() {
 }
 
 #[test]
-fn test_get_inverted_normalised_score() {
+fn test_review_weights() {
     let test_cases = vec![
         // (Input Values, Expected Output)
         (
@@ -40,7 +40,7 @@ fn test_get_inverted_normalised_score() {
     ];
 
     for (input_values, expected_output) in test_cases {
-        let result = get_inverted_normalised_score(
+        let result = review_weights(
             &input_values
                 .iter()
                 .map(|&(score, last_review)| ScoreData { score, last_review })
@@ -380,7 +380,7 @@ fn empty_review_word_list_still_decays_existing_progress_as_before() {
 
 #[test]
 fn normalisation_handles_empty_and_zero_scores() {
-    assert!(get_inverted_normalised_score(&[]).is_empty());
+    assert!(review_weights(&[]).is_empty());
     let scores = vec![
         ScoreData {
             score: 0,
@@ -388,7 +388,7 @@ fn normalisation_handles_empty_and_zero_scores() {
         };
         2
     ];
-    assert_eq!(get_inverted_normalised_score(&scores), vec![0.5, 0.5]);
+    assert_eq!(review_weights(&scores), vec![0.5, 0.5]);
 }
 
 #[test]

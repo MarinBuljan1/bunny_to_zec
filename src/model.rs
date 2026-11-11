@@ -11,11 +11,6 @@ pub(crate) struct Card {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-pub(crate) struct CurrentTranslations {
-    pub(crate) list: Vec<Card>,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub(crate) struct CardList {
     pub(crate) base_language: String,
     pub(crate) sentence_indexes: Vec<i32>,
@@ -31,13 +26,6 @@ pub(crate) struct CardSentences {
 pub(crate) struct ScoreData {
     pub(crate) score: i32,
     pub(crate) last_review: i32,
-}
-
-#[derive(Serialize, Deserialize, Clone, PartialEq, Debug)]
-pub(crate) struct ProcessingData {
-    pub(crate) word: String,
-    pub(crate) found: bool,
-    pub(crate) translation: String,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, PartialEq)]

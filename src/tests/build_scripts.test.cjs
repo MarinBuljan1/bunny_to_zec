@@ -2,7 +2,8 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { spawnSync } = require('node:child_process');
+const { spawn, spawnSync } = require('node:child_process');
+const { setTimeout: delay } = require('node:timers/promises');
 
 const root = path.resolve(__dirname, '../..');
 
@@ -13,6 +14,8 @@ function fixture(t) {
   // Keep generated fixtures under ignored target; no user/source files are removed.
   const bin = path.join(dir, 'bin');
   fs.mkdirSync(bin);
+  fs.mkdirSync(path.join(dir, 'tools'));
+  fs.copyFileSync(path.join(root, 'tools/run_site_command.ps1'), path.join(dir, 'tools/run_site_command.ps1'));
   t.after(() => {
     const resolved = fs.realpathSync(dir);
     assert.ok(resolved.startsWith(fs.realpathSync(parent) + path.sep));
@@ -87,7 +90,6 @@ test('cache fingerprints are stable and change for asset or worker-template chan
 
 test('a complete sync copies runtime files and removes generated source-only extras', { skip: process.platform !== 'win32' }, t => {
   const { dir, bin } = fixture(t);
-  fs.mkdirSync(path.join(dir, 'tools'));
   fs.copyFileSync(path.join(root, 'tools/write_service_worker.ps1'), path.join(dir, 'tools/write_service_worker.ps1'));
   fs.copyFileSync(path.join(root, 'service-worker.js'), path.join(dir, 'service-worker.js'));
   for (const file of ['index.html', 'manifest.json']) fs.writeFileSync(path.join(dir, file), 'fixture');
@@ -104,4 +106,35 @@ test('a complete sync copies runtime files and removes generated source-only ext
   assert.equal(fs.existsSync(path.join(dir, 'docs/pkg/README.md')), false);
   assert.equal(fs.existsSync(path.join(dir, 'docs/.nojekyll')), true);
   assert.doesNotMatch(fs.readFileSync(path.join(dir, 'docs/service-worker.js'), 'utf8'), /__BUILD_VERSION__/);
+});
+
+test('asset sync waits for an active build and a failed build releases its lock', { skip: process.platform !== 'win32', timeout: 15000 }, async t => {
+  const { dir, bin } = fixture(t);
+  fs.writeFileSync(path.join(bin, 'sass.cmd'), '@exit /b 0\r\n');
+  fs.writeFileSync(path.join(bin, 'wasm-pack.cmd'),
+    '@echo started > build-started\r\n@node -e "setTimeout(() => {}, 1800)"\r\n@exit /b 9\r\n');
+  function launch(name) {
+    const child = spawn('cmd.exe', ['/d', '/c', `call "${path.join(dir, name)}"`], {
+      cwd: root,
+      env: { ...process.env, PATH: `${bin};${process.env.PATH}` },
+      windowsVerbatimArguments: true,
+      stdio: 'ignore',
+    });
+    return new Promise((resolve, reject) => {
+      child.on('error', reject);
+      child.on('exit', resolve);
+    });
+  }
+  const building = launch('build_and_sync.bat');
+  const deadline = Date.now() + 5000;
+  while (!fs.existsSync(path.join(dir, 'build-started'))) {
+    assert.ok(Date.now() < deadline, 'build should reach the fake compiler');
+    await delay(25);
+  }
+  const syncing = launch('sync_docs.bat');
+  await delay(300);
+  assert.equal(fs.existsSync(path.join(dir, 'docs')), false, 'sync must wait for the build lock');
+  assert.equal(await building, 9);
+  assert.equal(await syncing, 1); // After the lock is released, this fixture has no index.html.
+  assert.equal(fs.existsSync(path.join(dir, 'docs')), true);
 });

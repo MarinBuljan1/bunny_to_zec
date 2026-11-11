@@ -15,6 +15,16 @@ A client-side Yew/WebAssembly flashcard app. Edit Rust in `src/`, styles in
 - `animation.rs`: pure animation ordering, input locking, and transition IDs.
 - `tests/`: unit tests attached to their owning modules, plus build/cache checks.
 
+Review words are a plain `Vec<Card>` inside the current presentation; processed
+sentence tokens use `Option<String>` for their translation. These are in-memory
+UI values and are not part of the persisted snapshot format.
+
+The tokenizer is a small UTF-8 scanner. It preserves punctuation, individual spaces,
+apostrophes, and the previous behavior for tabs/newlines and discarded pipe characters.
+The regex crate is kept only as a development dependency: compatibility tests compare
+the scanner against the original regex on the sentence corpus and generated boundary
+inputs. Browser builds do not include the regex engine.
+
 Content has explicit loading, ready, and failed states. When there is no usable
 network or cached dataset, a **Try again** button restarts loading. Swipes are enabled
 only after validated content is ready. Saved progress is restored independently of
@@ -90,6 +100,11 @@ configured to serve `docs/`. Do not edit `docs/` or `pkg/` manually.
 `sync_docs.bat` only synchronizes existing output and generates the versioned service
 worker; it does not compile Sass or Rust. Use it for asset changes after a build.
 The scripts preserve `.nojekyll` and omit Sass sources and source maps from deployment.
+Build and sync commands share an exclusive file handle under `target/`, so an asset
+watcher cannot synchronize partially generated WASM output. A waiting command times
+out after two minutes. The OS releases the handle when its process exits; the lock
+file may remain and does not need to be deleted. Use the canonical commands rather
+than running a separate `wasm-pack` process against the same output concurrently.
 
 ## Local development
 

@@ -2,7 +2,7 @@ use super::*;
 use indexmap::indexmap;
 
 #[test]
-fn test_find_related_cards() {
+fn test_prepare_sentence() {
     let updated_scores: HashMap<String, ScoreData> = vec![
         (
             "hola".to_string(),
@@ -33,7 +33,7 @@ fn test_find_related_cards() {
     let current_card = "mundo".to_string();
 
     let (related_cards, processed_sentence_data) =
-        find_related_cards(&updated_scores, &cards, words, &current_card);
+        prepare_sentence(&updated_scores, &cards, words, &current_card);
 
     // Expected related cards (must match words in `cards`)
     let expected_related_cards = vec![
@@ -49,20 +49,17 @@ fn test_find_related_cards() {
 
     // Expected processed sentence data
     let expected_processed_sentence_data = vec![
-        ProcessingData {
-            word: "hola".to_string(),
-            found: true,
-            translation: "hello".to_string(),
+        ProcessedToken {
+            text: "hola".to_string(),
+            translation: Some("hello".to_string()),
         },
-        ProcessingData {
-            word: "óxido".to_string(),
-            found: false,
-            translation: "".to_string(),
+        ProcessedToken {
+            text: "óxido".to_string(),
+            translation: None,
         },
-        ProcessingData {
-            word: "mundo".to_string(),
-            found: true,
-            translation: "world".to_string(),
+        ProcessedToken {
+            text: "mundo".to_string(),
+            translation: Some("world".to_string()),
         },
     ];
 
@@ -121,13 +118,64 @@ fn repeated_words_only_hide_the_first_eligible_occurrence() {
     let cards = indexmap! {
         "bok".into() => CardList { base_language: "hello".into(), sentence_indexes: vec![] },
     };
-    let (related, tokens) = find_related_cards(
+    let (related, tokens) = prepare_sentence(
         &HashMap::new(),
         &cards,
         vec!["bok".into(), " ".into(), "bok".into()],
         "bok",
     );
     assert_eq!(related.len(), 1);
-    assert!(tokens[0].found);
-    assert!(!tokens[2].found);
+    assert_eq!(tokens[0].translation.as_deref(), Some("hello"));
+    assert!(tokens[2].translation.is_none());
+}
+
+#[test]
+fn scanner_matches_the_original_regex_on_the_sentence_corpus_and_boundary_inputs() {
+    // Keep an independent reference for the previous behavior, including its pipe quirk.
+    let punctuation = [' ', ',', '.', '!', '?']
+        .iter()
+        .map(|character| regex::escape(&character.to_string()))
+        .collect::<Vec<_>>()
+        .join("|");
+    let reference = regex::Regex::new(&format!("({punctuation})|([^{punctuation}]+)")).unwrap();
+    let check = |text: &str| {
+        let expected: Vec<String> = reference
+            .find_iter(text)
+            .map(|matched| matched.as_str().to_owned())
+            .collect();
+        assert_eq!(split_text(text), expected, "Tokenizer changed for {text:?}");
+    };
+    let sentences: Vec<crate::model::CardSentences> =
+        serde_json::from_str(include_str!("../../assets/croatian_sentences.json")).unwrap();
+    for sentence in sentences {
+        check(&sentence.target_language);
+        check(&sentence.base_language);
+    }
+    let fragments = [
+        "", "bok", "?????", "don't", " ", "  ", ",", ".", "!", "?", "|", "||", "\t", "\n", "?",
+        "??", "[]", "/", ";",
+    ];
+    for first in fragments {
+        for second in fragments {
+            for third in fragments {
+                check(&format!("{first}{second}{third}"));
+            }
+        }
+    }
+}
+
+#[test]
+fn matched_empty_translation_is_distinct_from_an_unmatched_word() {
+    let cards = indexmap! {
+        "bok".into() => CardList { base_language: String::new(), sentence_indexes: vec![] },
+    };
+    let (review_words, tokens) = prepare_sentence(
+        &HashMap::new(),
+        &cards,
+        vec!["bok".into(), "other".into()],
+        "bok",
+    );
+    assert_eq!(review_words.len(), 1);
+    assert_eq!(tokens[0].translation.as_deref(), Some(""));
+    assert_eq!(tokens[1].translation, None);
 }

@@ -5,7 +5,7 @@ use std::rc::Rc;
 use yew::prelude::*;
 
 use crate::animation::{AnimationState, AnimationStepKind};
-use crate::model::{Card, CurrentTranslations};
+use crate::model::Card;
 use crate::SwipeDirection;
 
 #[derive(Clone, PartialEq)]
@@ -17,7 +17,7 @@ pub(super) enum ReviewKind {
 #[derive(Clone, PartialEq)]
 pub(super) struct ReviewPresentation {
     pub card: Card,
-    pub translations: CurrentTranslations,
+    pub review_words: Vec<Card>,
     pub sentence: Html,
     pub explanation: Html,
 }
@@ -72,7 +72,7 @@ impl ReviewState {
                     base_language: "Swipe to Begin".into(),
                     target_language: "Swipe Up or Down".into(),
                 },
-                translations: CurrentTranslations { list: vec![] },
+                review_words: vec![],
                 sentence: html! { "Swipe to Begin" },
                 explanation: html! { "Swipe Up or Down" },
             },
