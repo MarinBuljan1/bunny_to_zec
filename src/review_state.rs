@@ -4,7 +4,8 @@ use std::rc::Rc;
 
 use yew::prelude::*;
 
-use super::{Card, CurrentTranslations, SwipeDirection};
+use crate::model::{Card, CurrentTranslations};
+use crate::SwipeDirection;
 
 #[derive(Clone, PartialEq)]
 pub(super) enum ReviewKind {

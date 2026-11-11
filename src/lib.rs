@@ -1,10 +1,4 @@
-use gloo_net::http::Request;
-use gloo_storage::{LocalStorage, Storage};
-use indexmap::IndexMap;
 use js_sys::{Date, Math, Reflect};
-use regex::Regex;
-use serde::{Deserialize, Serialize};
-use std::cmp::max;
 use std::collections::HashMap;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::prelude::wasm_bindgen;
@@ -12,11 +6,21 @@ use wasm_bindgen::JsCast;
 use web_sys::{window, Element, EventTarget, HtmlElement, TouchEvent};
 use yew::prelude::*;
 
+mod learning;
+mod model;
 mod review_state;
+mod sentences;
+mod storage;
+use learning::{
+    apply_review, calculate_progress_sum, find_key_of_lowest_score, ReviewAttempt, ReviewOutcome,
+    LEARNED_INTERVAL_SECONDS,
+};
+use model::{Card, CurrentTranslations, LearningContent, ProcessingData, SavedProgress, ScoreData};
 use review_state::{
     AnimationState, DragAction, DragState, Point, ReviewAction, ReviewKind, ReviewPresentation,
     ReviewState,
 };
+use sentences::{choose_sentence_index, find_related_cards, split_text};
 
 #[derive(Clone, PartialEq, Debug)]
 enum SwipeDirection {
@@ -38,55 +42,6 @@ struct FlashcardProps {
     processed_sentence: Html,
     show_explanations: bool,
     processed_explanation: Html,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-struct Card {
-    base_language: String,
-    target_language: String,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-struct CurrentTranslations {
-    list: Vec<Card>,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-struct CardList {
-    base_language: String,
-    sentence_indexes: Vec<i32>,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-struct CardSentences {
-    target_language: String,
-    base_language: String,
-}
-
-#[derive(Serialize, Deserialize, Clone, PartialEq, Debug)]
-struct ScoreData {
-    score: i32,
-    last_review: i32,
-}
-
-#[derive(Serialize, Deserialize, Clone, PartialEq, Debug)]
-struct ProcessingData {
-    word: String,
-    found: bool,
-    translation: String,
-}
-
-#[derive(Default, PartialEq)]
-struct LearningContent {
-    cards: IndexMap<String, CardList>,
-    sentences: Vec<CardSentences>,
-    explanations: HashMap<String, HashMap<String, String>>,
-}
-
-#[derive(PartialEq)]
-struct SavedProgress {
-    scores: HashMap<String, ScoreData>,
-    last_data_update: i32,
 }
 
 #[function_component(Flashcard)]
@@ -156,67 +111,9 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
         use_effect_with_deps(
             move |_| {
                 wasm_bindgen_futures::spawn_local(async move {
-                    // Fetch cards
-                    let fetched_cards: IndexMap<String, CardList> =
-                        match Request::get("assets/croatian.json").send().await {
-                            Ok(response) => {
-                                let cards: IndexMap<String, CardList> =
-                                    response.json().await.expect("Failed to parse JSON");
-
-                                LocalStorage::set("cards", &cards).expect("Failed to store cards");
-                                cards
-                            }
-                            Err(_) => LocalStorage::get::<IndexMap<String, CardList>>("cards")
-                                .unwrap_or_else(|_| IndexMap::new()),
-                        };
-
-                    // Fetch sentences
-                    let card_sentences: Vec<CardSentences> =
-                        match Request::get("assets/croatian_sentences.json").send().await {
-                            Ok(response) => {
-                                let sentences: Vec<CardSentences> =
-                                    response.json().await.expect("Failed to parse JSON");
-
-                                LocalStorage::set("sentences", &sentences)
-                                    .expect("Failed to store sentences");
-                                sentences
-                            }
-                            Err(_) => LocalStorage::get::<Vec<CardSentences>>("sentences")
-                                .unwrap_or_else(|_| vec![]),
-                        };
-
-                    // Fetch explanations
-                    let fetched_explanations: HashMap<String, HashMap<String, String>> =
-                        match Request::get("assets/croatian_explanations.json")
-                            .send()
-                            .await
-                        {
-                            Ok(response) => {
-                                let explanations: HashMap<String, HashMap<String, String>> =
-                                    response
-                                        .json()
-                                        .await
-                                        .expect("Failed to parse explanations JSON");
-
-                                LocalStorage::set("explanations", &explanations)
-                                    .expect("Failed to store explanations");
-                                explanations
-                            }
-                            Err(_) => {
-                                LocalStorage::get("explanations").unwrap_or_else(|_| HashMap::new())
-                            }
-                        };
-
-                    progress.set(SavedProgress {
-                        scores: LocalStorage::get("card_scores").unwrap_or_default(),
-                        last_data_update: LocalStorage::get("last_data_update")
-                            .unwrap_or_else(|_| get_timestamp_s()),
-                    });
-                    content.set(LearningContent {
-                        cards: fetched_cards,
-                        sentences: card_sentences,
-                        explanations: fetched_explanations,
-                    });
+                    let loaded_content = storage::load_learning_content().await;
+                    progress.set(storage::load_progress(get_timestamp_s()));
+                    content.set(loaded_content);
                 });
                 || ()
             },
@@ -350,7 +247,7 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
     let progress_card_number = if is_initial_state {
         0.0
     } else {
-        *progress_sum as f64 / calculate_seconds(10, 0, 0, 0) as f64
+        *progress_sum as f64 / LEARNED_INTERVAL_SECONDS as f64
     };
 
     let skill_levels = [
@@ -528,7 +425,6 @@ pub fn run_app() {
     yew::Renderer::<App>::new().render();
 }
 
-// Helper Functions
 fn get_first_touch(event: &TouchEvent, property: &str) -> web_sys::Touch {
     let touches = Reflect::get(event, &property.into()).unwrap();
     let touch = Reflect::get(&touches, &0.into()).unwrap();
@@ -549,25 +445,32 @@ fn save_review_result(
     review: &ReviewState,
     direction: SwipeDirection,
 ) -> HashMap<String, ScoreData> {
-    let duration = review.duration();
-    let current_translations = &review.presentation.translations;
-    let current_card = &review.presentation.card;
-    let correct = direction == SwipeDirection::Up;
-    if duration > 1 {
-        let raw_values = get_raw_info_for_cards(current_translations, &progress.scores);
-        let new_values = calculate_raw_scores(
-            raw_values,
-            duration,
-            (current_card.base_language.len() + current_card.target_language.len()) as i32,
-            correct,
-        );
-        let updated = update_score(current_translations, new_values, progress);
-        let updated_scores = updated.scores.clone();
-        progress.set(updated);
-        updated_scores
-    } else {
-        progress.scores.clone()
+    let attempt = ReviewAttempt {
+        elapsed_ms: review.duration(),
+        // Preserve the original byte-length measurement, including accented text.
+        character_length: (review.presentation.card.base_language.len()
+            + review.presentation.card.target_language.len()) as i32,
+        outcome: if direction == SwipeDirection::Up {
+            ReviewOutcome::Correct
+        } else {
+            ReviewOutcome::Incorrect
+        },
+    };
+    let Some(updated) = apply_review(
+        progress,
+        &review.presentation.translations.list,
+        &attempt,
+        get_timestamp_s(),
+    ) else {
+        return progress.scores.clone();
+    };
+    // Continue safely in memory if persistence is unavailable. R5 will add user-facing recovery.
+    if let Err(error) = storage::save_progress(&updated) {
+        web_sys::console::error_1(&format!("Progress could not be saved; this session can continue, but changes may be lost on reload: {error}").into());
     }
+    let updated_scores = updated.scores.clone();
+    progress.set(updated);
+    updated_scores
 }
 
 fn animate_next_review(
@@ -582,9 +485,13 @@ fn animate_next_review(
     set_timeout(
         move || {
             animation.set(AnimationState::Repositioning);
-            if let Some(presentation) =
-                prepare_next_review(&content, &updated_scores, &review.presentation.translations)
-            {
+            if let Some(presentation) = prepare_next_review(
+                &content,
+                &updated_scores,
+                &review.presentation.translations,
+                get_timestamp_s(),
+                Math::random(),
+            ) {
                 review.dispatch(ReviewAction::Present(presentation));
             } else {
                 web_sys::console::log_1(&"No valid card found with the lowest score".into());
@@ -610,12 +517,15 @@ fn prepare_next_review(
     content: &LearningContent,
     scores: &HashMap<String, ScoreData>,
     current_translations: &CurrentTranslations,
+    now_s: i32,
+    sentence_sample: f64,
 ) -> Option<ReviewPresentation> {
-    let key = find_key_of_lowest_score(&content.cards, scores, current_translations)?;
+    let key = find_key_of_lowest_score(&content.cards, scores, &current_translations.list, now_s)?;
     let card = &content.cards[&key];
-    if let Some(index) = get_random_sentence_index(
+    if let Some(index) = choose_sentence_index(
         &card.sentence_indexes,
         current_translations.list.len() as i32,
+        sentence_sample,
     ) {
         let sentence = &content.sentences[index as usize];
         let (related_cards, tokens) = find_related_cards(
@@ -669,224 +579,6 @@ where
     closure.forget();
 }
 
-fn update_score(
-    current_translations: &CurrentTranslations,
-    new_values: Vec<(i32, i32)>,
-    progress: &SavedProgress,
-) -> SavedProgress {
-    let mut updated_scores = progress.scores.clone();
-
-    // Subtract score decay amount from all scores
-    let subtraction_amount = get_timestamp_s() - progress.last_data_update;
-    for (_, score_data) in updated_scores.iter_mut() {
-        score_data.score = (score_data.score - subtraction_amount).max(0);
-    }
-
-    // Iterate through all cards in current_translations
-    for (card, (new_score, new_last_review)) in
-        current_translations.list.iter().zip(new_values.iter())
-    {
-        let key = get_scorecard_name(card); // Get unique key for each card
-
-        updated_scores
-            .entry(key)
-            .and_modify(|e| {
-                e.score = *new_score;
-                e.last_review = *new_last_review;
-            })
-            .or_insert(ScoreData {
-                score: *new_score,
-                last_review: *new_last_review,
-            });
-    }
-
-    let last_data_update_value = get_timestamp_s();
-
-    // Store updated scores in LocalStorage
-    LocalStorage::set("card_scores", &updated_scores)
-        .expect("Failed to store scores in local storage");
-    LocalStorage::set("last_data_update", last_data_update_value)
-        .expect("Failed to store last data update in local storage");
-
-    SavedProgress {
-        scores: updated_scores,
-        last_data_update: last_data_update_value,
-    }
-}
-
-fn calculate_raw_scores(
-    raw_values: Vec<(i32, i32)>,
-    ms_for_review: i64,
-    character_length: i32,
-    correct: bool,
-) -> Vec<(i32, i32)> {
-    let inverted_normalised_scores = get_inverted_normalised_score(raw_values.clone());
-
-    raw_values
-        .into_iter()
-        .zip(inverted_normalised_scores.into_iter())
-        .map(|((score, last_review), inverted_normalised_score)| {
-            calculate_raw_score(
-                score,
-                last_review,
-                ms_for_review,
-                character_length,
-                correct,
-                inverted_normalised_score,
-                false,
-            )
-        })
-        .collect()
-}
-
-fn get_inverted_normalised_score(raw_values: Vec<(i32, i32)>) -> Vec<f32> {
-    // Compute total sum of scores
-    let total_score: f32 = raw_values.iter().map(|(score, _)| *score as f32).sum();
-
-    // Step 1: Compute normalised_score (ensuring min 0.1)
-    let normalised_scores: Vec<f32> = raw_values
-        .iter()
-        .map(|(score, _)| {
-            let norm_score = if total_score > 0.0 {
-                *score as f32 / total_score
-            } else {
-                0.0
-            };
-            norm_score.max(0.1) // Ensure minimum score of 0.1
-        })
-        .collect();
-
-    // Step 2: Compute processed_score (1 / normalised_score)
-    let processed_scores: Vec<f32> = normalised_scores
-        .iter()
-        .map(|&norm_score| 1.0 / norm_score)
-        .collect();
-
-    // Step 3: Sum all processed_scores
-    let total_processed_score: f32 = processed_scores.iter().sum();
-
-    // Step 4: Compute inverted_normalised_score (processed_score / total_processed_score)
-    let inverted_normalised_scores: Vec<f32> = processed_scores
-        .iter()
-        .map(|&processed_score| processed_score / total_processed_score)
-        .collect();
-
-    inverted_normalised_scores
-}
-
-fn calculate_raw_score(
-    score: i32,
-    last_review: i32,
-    ms_for_review: i64,
-    character_length: i32,
-    correct: bool,
-    inverted_normalised_score: f32,
-    mock_last_review: bool,
-) -> (i32, i32) {
-    let mut new_score = score;
-    let mut new_last_review;
-    if mock_last_review {
-        new_last_review = 1_700_000_000;
-    } else {
-        new_last_review = get_timestamp_s();
-    }
-
-    let seconds_for_review = (ms_for_review as f64 / 1000.0) as f32 * inverted_normalised_score;
-    let mut seconds_since_last_review = (new_last_review - last_review) as f32;
-    let mut calculated_divisor = (seconds_for_review / 1.5) - (character_length as f32) * 0.02;
-
-    if last_review == 0 {
-        new_score = 0;
-        seconds_since_last_review = calculate_seconds(10, 0, 0, 0) as f32;
-    }
-
-    if calculated_divisor < 0.1 {
-        calculated_divisor = 0.1;
-    } else if calculated_divisor > 10.0 {
-        calculated_divisor = 10.0;
-    }
-
-    if correct {
-        new_score = new_score + (seconds_since_last_review / calculated_divisor) as i32;
-    } else {
-        if last_review != 0 {
-            new_last_review = (last_review as f64
-                + (seconds_since_last_review * inverted_normalised_score) as f64)
-                as i32;
-        }
-    }
-
-    (new_score, new_last_review)
-}
-
-fn calculate_final_score(score: i32, last_review: i32) -> i32 {
-    let mut new_score = calculate_seconds(10, 0, 0, 0);
-
-    if last_review != 0 {
-        new_score = score
-            + max(
-                last_review + calculate_seconds(10, 0, 2, 0) - get_timestamp_s(),
-                0,
-            );
-    }
-
-    new_score
-}
-
-fn get_raw_info_for_cards(
-    cards: &CurrentTranslations,
-    scores: &HashMap<String, ScoreData>,
-) -> Vec<(i32, i32)> {
-    cards
-        .list
-        .iter()
-        .map(|card| get_raw_info_for_card(card, scores))
-        .collect()
-}
-
-fn get_raw_info_for_card(card: &Card, scores: &HashMap<String, ScoreData>) -> (i32, i32) {
-    let score_name = get_scorecard_name(card);
-    if let Some(score_data) = scores.get(&score_name) {
-        (score_data.score, score_data.last_review)
-    } else {
-        (0, 0)
-    }
-}
-
-fn get_scorecard_name(card: &Card) -> String {
-    scorecard_name(&card.target_language)
-}
-
-fn scorecard_name(target_language: &str) -> String {
-    target_language.to_string()
-}
-
-fn get_score_for_key(key: &str, scores: HashMap<String, ScoreData>) -> i32 {
-    if let Some(score_data) = scores.get(key) {
-        calculate_final_score(score_data.score, score_data.last_review)
-    } else {
-        calculate_final_score(0, 0)
-    }
-}
-
-fn find_key_of_lowest_score(
-    cards: &IndexMap<String, CardList>,
-    scores: &HashMap<String, ScoreData>,
-    current_translations: &CurrentTranslations,
-) -> Option<String> {
-    let current_keys: Vec<&String> = current_translations
-        .list
-        .iter()
-        .map(|card| &card.target_language)
-        .collect();
-
-    cards
-        .iter()
-        .filter(|(key, _)| !current_keys.contains(key))
-        .min_by_key(|(key, _)| get_score_for_key(key, scores.clone()))
-        .map(|(key, _)| key.clone())
-}
-
 fn get_timestamp_s() -> i32 {
     let now = Date::now();
     let duration = now / 1000.0; // Convert to seconds
@@ -896,106 +588,6 @@ fn get_timestamp_s() -> i32 {
 fn get_timestamp_ms() -> i64 {
     let now = Date::now();
     now as i64
-}
-
-fn calculate_seconds(days: i32, hours: i32, minutes: i32, seconds: i32) -> i32 {
-    days * 86400 + hours * 3600 + minutes * 60 + seconds
-}
-
-fn calculate_progress_sum(scores: &HashMap<String, ScoreData>) -> i64 {
-    scores
-        .values()
-        .map(|score| i64::from(score.score.min(calculate_seconds(10, 0, 0, 0))))
-        .sum()
-}
-
-fn get_random_sentence_index(sentence_indexes: &Vec<i32>, max_index: i32) -> Option<i32> {
-    if sentence_indexes.is_empty() {
-        return None; // Return None if the list is empty
-    }
-
-    let effective_max = max_index.max(1);
-
-    let valid_sentence_indexes: Vec<i32> = sentence_indexes
-        .iter()
-        .take_while(|&&val| val < effective_max)
-        .cloned()
-        .collect();
-
-    let valid_len = valid_sentence_indexes.len();
-
-    if valid_len == 0 {
-        return Some(sentence_indexes[0]);
-    }
-
-    let random_index = (Math::random() * valid_len as f64).floor() as usize;
-    Some(valid_sentence_indexes[random_index])
-}
-
-fn punctuation_list() -> Vec<char> {
-    vec![' ', ',', '.', '!', '?']
-}
-
-fn find_related_cards(
-    updated_scores: &HashMap<String, ScoreData>,
-    cards: &IndexMap<String, CardList>,
-    words: Vec<String>,
-    current_key: &String,
-) -> (Vec<Card>, Vec<ProcessingData>) {
-    let mut related_cards = Vec::new();
-
-    let mut processed_sentence_data: Vec<ProcessingData> = words
-        .iter()
-        .map(|word| ProcessingData {
-            word: word.clone(),
-            found: false,
-            translation: "".to_string(),
-        })
-        .collect();
-
-    for processed_word in processed_sentence_data.iter_mut() {
-        let word_key = &processed_word.word;
-
-        if updated_scores.contains_key(&scorecard_name(word_key)) || word_key == current_key {
-            // Only add if not already in the related_cards list
-            if !related_cards
-                .iter()
-                .any(|c: &Card| &c.target_language == word_key)
-            {
-                if let Some(matching_card) = cards.get(word_key) {
-                    processed_word.found = true;
-                    processed_word.translation = matching_card.base_language.clone();
-
-                    related_cards.push(Card {
-                        base_language: matching_card.base_language.clone(),
-                        target_language: word_key.clone(),
-                    });
-                }
-            }
-        }
-    }
-
-    (related_cards, processed_sentence_data)
-}
-
-fn split_text(text: &str) -> Vec<String> {
-    // Create regex pattern dynamically
-    let punctuations: String = punctuation_list()
-        .iter()
-        .map(|&c| regex::escape(&c.to_string()))
-        .collect::<Vec<String>>()
-        .join("|");
-
-    let pattern = format!("({})|([^{}]+)", punctuations, punctuations);
-    let re = Regex::new(&pattern).unwrap();
-
-    // Find matches and store them in a vector (convert &str to String)
-    let parts: Vec<String> = re
-        .find_iter(text)
-        .map(|m| m.as_str().to_string()) // Convert &str to String
-        .collect();
-
-    parts
 }
 
 fn construct_processed_sentence(processed_sentence_data: Vec<ProcessingData>) -> Html {
@@ -1082,5 +674,5 @@ fn should_enable_drag_for_event_target(target: &EventTarget) -> bool {
 }
 
 #[cfg(test)]
-#[path = "tests/learning_tests.rs"]
+#[path = "tests/presentation_tests.rs"]
 mod tests;

@@ -3,6 +3,21 @@
 A client-side Yew/WebAssembly flashcard app. Edit Rust in `src/`, styles in
 `static/style.scss`, and learning content in `assets/`.
 
+## Rust source layout
+
+- `lib.rs`: UI rendering, browser events, clocks, randomness, and animation timers.
+- `model.rs`: shared vocabulary and progress structures, retaining the existing JSON schemas.
+- `learning.rs`: pure scoring, decay, progress, and card-selection rules. Time is an explicit input.
+- `sentences.rs`: pure tokenization, word matching, and sentence selection. Random samples are explicit inputs.
+- `storage.rs`: network loading and browser persistence, separated from learning calculations.
+- `review_state.rs`: local review, drag, and animation state.
+- `tests/`: unit tests attached to their owning modules, plus build/cache checks.
+
+Persistence failures during review saving allow the in-memory session to continue;
+they are reported in the browser console, and unsaved progress may be lost on reload.
+The existing content-loading fallback policy remains unchanged; broader error/retry
+handling is tracked under R5 in the roadmap.
+
 ## Build and deploy
 
 Required tools: Rust with the `wasm32-unknown-unknown` target, `wasm-pack`, and the

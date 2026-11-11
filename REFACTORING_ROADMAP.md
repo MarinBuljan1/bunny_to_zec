@@ -1,6 +1,6 @@
 # Refactoring roadmap
 
-Status: R1 and R7 implemented; browser smoke verification remains pending. Other tasks remain proposed except for supporting work explicitly recorded below.
+Status: R1, R2, R3, and R7 implemented; browser smoke verification remains pending. Other tasks remain proposed except for supporting work explicitly recorded below.
 
 This document records the ten improvements from the project review so they can be implemented incrementally in future sessions. Follow `AGENTS.md` during implementation. The objective is clearer, easier-to-modify Rust while preserving the core flashcard and learning behavior.
 
@@ -102,13 +102,25 @@ Little immediate speed or line-count improvement is expected. The benefit is bei
 
 ### Completion checklist
 
-- [ ] Learning calculations can be tested without invoking JavaScript or rendering Yew.
-- [ ] Time-dependent rules accept an explicit timestamp.
-- [ ] Calculation code performs no browser storage writes.
-- [ ] Existing formula outputs and selection ordering are preserved.
-- [ ] Module boundaries isolate responsibilities without adding trivial wrappers.
+- [x] Learning calculations can be tested without invoking JavaScript or rendering Yew.
+- [x] Time-dependent rules accept an explicit timestamp.
+- [x] Calculation code performs no browser storage writes.
+- [x] Existing formula outputs and selection ordering are preserved by deterministic tests.
+- [x] Module boundaries isolate responsibilities without adding trivial wrappers.
 
 Dependencies: start alongside R9; this makes several subsequent tasks easier.
+
+### R2 implementation record — 2026-11-11
+
+- Added `model.rs` for the shared vocabulary/progress structures, `learning.rs` for pure scoring/decay/progress/selection, `sentences.rs` for pure sentence rules, and `storage.rs` for browser loading and persistence. `lib.rs` retains UI rendering, events, clocks, randomness, and timers; `review_state.rs` retains local interaction state.
+- `apply_review` accepts borrowed saved progress, review words, a `ReviewAttempt`, and an explicit Unix-second timestamp. It returns new progress or `None` for a skipped review. `ReviewOutcome` replaces positional correctness booleans in production calculations, and the test-only `mock_last_review` path is gone. Production and tests now run the same calculation code.
+- All score, decay, and selection calculations use one supplied timestamp per operation. Sentence selection takes a supplied random sample. Native tests no longer need special sentence indices just to avoid invoking browser time/randomness.
+- Preserved the formulas, score-key strings, millisecond/second units, combined UTF-8 byte length, reviewed-word pre-decay values, ten-day intervals, insertion-order selection ties, previous-review sentence limit, ordered-prefix eligibility, first-index fallback, and first-occurrence word masking. Existing JSON schemas and browser storage keys are unchanged.
+- Calculation and persistence are separate calls. Progress saving returns a typed storage error; the UI intentionally continues in memory if saving fails and logs the failure. Changes may be lost on reload. Content loading retains its existing network/cache policy and failure modes; user-visible recovery, atomic storage writes, and content validation remain R5.
+- The read-only selection API also completes R3: score lookups borrow the map, so no full score-map clone occurs for each candidate. Removed the score-name allocation wrappers as part of using direct borrowed keys. No runtime speedup was benchmarked.
+- All unit tests remain under `src/tests/`, attached to their owning modules. Added deterministic coverage for decay ordering/flooring, immutable inputs, skipped reviews, unseen words, incorrect multiword reviews, empty review words, zero/empty normalization, selection priorities/ties/exclusions, sentence sampling boundaries/fallbacks, and repeated words. The original eight raw-score expectations and existing normalization/tokenization tests still pass.
+- Validation: 27 Rust tests and 11 Node build/cache tests pass; formatting and Cargo check pass; Clippy completes with two existing UI warnings (`repeat().take()` and redundant option matching); the WASM build succeeds. Pure learning/model/sentence modules import no browser or Yew APIs. Dependencies and storage schemas were not changed.
+- Real-browser interaction verification remains pending because no browser is connected. Formula/selection tests verify business behavior, but do not replace a visual check of welcome, reveal, advance, explanations, and persistence.
 
 ## R3 — Remove unnecessary score-map cloning
 
@@ -133,12 +145,16 @@ This is the clearest performance opportunity. It removes work proportional to ca
 
 ### Completion checklist
 
-- [ ] No full score-map clone occurs inside candidate comparison/lookup.
-- [ ] The same next card is selected for identical inputs, including ties.
-- [ ] Empty scores and exclusion of current words retain their behavior.
-- [ ] Any reported speedup includes input sizes and measurement conditions.
+- [x] No full score-map clone occurs inside candidate comparison/lookup.
+- [x] The same selection priorities and insertion-order ties are covered by deterministic tests.
+- [x] Empty scores and exclusion of current words retain their behavior.
+- [x] No measured speedup is claimed; the structural removal of per-candidate copying is documented.
 
 Dependencies: small selection tests from R9; can be implemented early and independently.
+
+Implemented alongside R2 because the new pure, read-only selection boundary naturally
+borrows the score map. The remaining full-map copies create updated immutable state
+or share a result with the delayed UI transition; they do not occur per candidate.
 
 ## R4 — Unify mouse and touch handling
 
@@ -416,8 +432,8 @@ Measure production-code lines separately from tests and generated output. Measur
 | Item | Status | Notes / validation |
 | --- | --- | --- |
 | R1 | Implemented; browser smoke pending | Five local state groups replace 22 context handles; 17 tests and Rust/WASM build checks pass. See implementation record above. |
-| R2 | Proposed | |
-| R3 | Proposed | |
+| R2 | Implemented; browser smoke pending | Pure learning/sentence rules, shared models, browser persistence boundary, explicit time/random inputs; 27 Rust tests pass. |
+| R3 | Implemented with R2 | Selection borrows saved scores; priorities, insertion-order ties, and exclusions tested. No speedup benchmark claimed. |
 | R4 | Proposed | |
 | R5 | Proposed | |
 | R6 | Proposed | |
