@@ -1,6 +1,6 @@
 # Refactoring roadmap
 
-Status: R1, R2, R3, and R7 implemented; browser smoke verification remains pending. Other tasks remain proposed except for supporting work explicitly recorded below.
+Status: R1, R2, R3, R4, and R7 implemented; browser smoke verification remains pending. Other tasks remain proposed except for supporting work explicitly recorded below.
 
 This document records the ten improvements from the project review so they can be implemented incrementally in future sessions. Follow `AGENTS.md` during implementation. The objective is clearer, easier-to-modify Rust while preserving the core flashcard and learning behavior.
 
@@ -177,13 +177,37 @@ Approximately 40–70 lines may be removed, potentially around half the duplicat
 
 ### Completion checklist
 
-- [ ] Mouse and touch use the common action path.
-- [ ] Pointer cancellation and release outside the interaction region leave no stuck drag.
-- [ ] Scrollable explanations remain usable on touch devices.
-- [ ] Short drags, diagonal drags, flips, correct, and incorrect actions preserve their meanings.
-- [ ] Multiple pointers do not accidentally complete another pointer's review action.
+- [x] Mouse and touch use the common action path (pen input also uses it).
+- [ ] Pointer cancellation and release outside the interaction region leave no stuck drag: state tests pass and capture is implemented; real-browser verification remains pending.
+- [ ] Scrollable explanations remain usable on touch devices: measured overflow and CSS pan-y policy implemented; device verification remains pending.
+- [x] Short drags, diagonal drags, flips, correct, and incorrect actions retain the existing direction rules in tests; visual interaction checks remain pending.
+- [x] Multiple pointers cannot replace, move, complete, or cancel another pointer's active drag in state tests.
 
 Dependencies: pure direction tests from R9. Coordinate state placement with R1.
+
+### R4 implementation record — 2026-11-11
+
+- Replaced separate touch/mouse handlers with one typed `PointerEvent` handler for down, move, up, cancellation, and lost capture. Removed JavaScript reflection and unchecked touch-list extraction; the direct `web-sys` feature list now requests `PointerEvent` instead of `TouchEvent`/`Touch`.
+- Drag state and its actions carry the active pointer ID. Only an idle state accepts a new start, and other pointers cannot change or finish an active gesture. The UI accepts only primary pointers and the primary button. Capture failures leave the drag unstarted; viewport-read failure or movement without the primary button cancels safely.
+- The interaction container captures accepted pointers, preserving completion outside the original card/window coordinates. Pointer-up performs the existing swipe action and clears the drag; the browser implicitly releases capture. Pointer cancellation and lost capture only clear the matching drag, without revealing/scoring/advancing a card. Direction, displacement, the axis-difference threshold, flip-back behavior, scoring, and animation timing are unchanged.
+- Preserved the overflowing-explanation exception. Before a gesture, the front card measures whether its explanation actually overflows and enables `touch-action: pan-y` when needed. Measurements refresh on explanation changes and window resize; the resize listener is removed with its effect. The existing `gloo-events` dependency is now used for that listener.
+- Regular cards and a background interaction surface use `touch-action: none`; the enclosing view stays compatible with native explanation scrolling. Short explanations remain swipeable. Gestures starting inside an overflowing explanation are not captured or prevented by the app. The policy follows the [Pointer Events touch-action rules](https://www.w3.org/TR/pointerevents/#the-touch-action-css-property), which must be established before pointer-down handling.
+- Added four pointer-ownership/cancellation regression tests and updated the existing geometry tests. All 31 Rust tests and 11 Node build/cache tests pass. Formatting, Cargo check, Clippy, an isolated web-target WASM build, and `build_and_sync.bat` pass; generated Sass/WASM/worker output is synchronized. One pre-existing UI Clippy warning remains (`repeat().take()`). An initial packaging JSON error did not reproduce in the isolated build or the subsequent canonical build.
+- No browser is connected. Before deployment, verify mouse and touch swipes, short/diagonal drags, outside-card release, cancellation/lost capture, secondary pointers/right-click, short versus overflowing explanations, and resize/orientation changes. Automated state tests do not validate actual browser capture or native scrolling.
+- The original line-reduction estimate predates R1's shared swipe-completion callback. This change removes input duplication, but capture/cancellation guards and correct pre-gesture scrolling add code; no net line-count or runtime-speedup claim is made.
+
+#### R4 regression fix — capture on the view's node reference
+
+The user reported that desktop and emulated mobile swipes stopped working. The first
+implementation captured on `event.current_target()`. In Yew 0.20 that is the delegated
+subtree root, not the element whose callback appears in the markup, so subsequent
+captured events could bypass the flashcard view entirely. Capture now uses a `NodeRef`
+attached directly to `.flashcard-view`. See [Yew's event-delegation documentation](https://yew.rs/docs/0.20/concepts/html/events#event-delegation).
+
+Formatting, Cargo check, and all 31 unit tests pass after the correction. The tests
+cover gesture state but cannot validate Yew's DOM event routing. Real-browser swipe
+verification remains pending; future pointer changes must explicitly check that
+capture remains on the view rather than the delegated application root.
 
 ## R5 — Consolidate loading, caching, and error handling
 
@@ -377,7 +401,7 @@ This is a collection of smaller follow-ups. Complete them separately when practi
 
 ### Dependencies and repository hygiene
 
-- Confirm and remove unused crates/features, including apparently unused logging/event dependencies, using source inspection and compiler/build validation.
+- Confirm and remove unused crates/features, including apparently unused logging dependencies, using source inspection and compiler/build validation. `gloo-events` is now used by R4 for resize measurements.
 - Align the package name, browser title, manifest identity, and instructions with the app's actual identity. A package rename also affects generated JS/WASM names and service-worker asset lists.
 - Remove local certificates/private keys from tracked files and ignore machine-specific artifacts. Verify whether any tracked key needs replacement based on its actual use; do not assume removing a file erases Git history.
 - Document how the spreadsheets relate to generated JSON, including the actual export/update workflow if it can be established.
@@ -434,7 +458,7 @@ Measure production-code lines separately from tests and generated output. Measur
 | R1 | Implemented; browser smoke pending | Five local state groups replace 22 context handles; 17 tests and Rust/WASM build checks pass. See implementation record above. |
 | R2 | Implemented; browser smoke pending | Pure learning/sentence rules, shared models, browser persistence boundary, explicit time/random inputs; 27 Rust tests pass. |
 | R3 | Implemented with R2 | Selection borrows saved scores; priorities, insertion-order ties, and exclusions tested. No speedup benchmark claimed. |
-| R4 | Proposed | |
+| R4 | Implemented; browser/device smoke pending | Unified pointer events, active-pointer ownership, capture/cancellation, and overflow-aware native scrolling; 31 Rust tests pass. |
 | R5 | Proposed | |
 | R6 | Proposed | |
 | R7 | Implemented; browser smoke pending | Canonical Sass/WASM build, fail-fast sync, scoped versioned offline cache, localhost bypass, cleanup, and README; 11 Node tests pass. |

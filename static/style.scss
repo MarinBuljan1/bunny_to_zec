@@ -87,12 +87,19 @@ html, body {
         transition: background 0.16s ease-out;
     }
 
+    // Keep the container scroll-compatible. Its background and regular cards
+    // reserve touch gestures for swiping; overflowing explanations allow pan-y.
+    .drag-surface {
+        position: absolute;
+        inset: 0;
+        touch-action: none;
+    }
+
     .card {
         width: 300px;
         min-height: 200px;
         max-height: 60vh;
-        // overflow-y: auto;
-        // touch-action: pan-y;
+        touch-action: none;
         -webkit-overflow-scrolling: touch;
         padding: 1em;
         box-sizing: border-box;
@@ -114,6 +121,10 @@ html, body {
         transform: rotateY(calc(var(--pos_x) * 1deg)) translateY(calc(var(--pos_y) * 1px));
         transition: transform 0.4s ease, box-shadow 0.2s ease, border-color 0.2s ease;
         backface-visibility: hidden;
+
+        &.explanation-scrollable {
+            touch-action: pan-y;
+        }
     
         &.back-side {
             transform: rotateY(calc(180deg - var(--pos_x) * 1deg)) translateY(calc(var(--pos_y) * 1px));

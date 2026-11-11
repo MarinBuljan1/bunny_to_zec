@@ -116,8 +116,12 @@ fn delayed_explanations_do_not_reveal_an_unanswered_question() {
 #[test]
 fn drag_visuals_are_derived_and_reset_together() {
     let drag = Rc::new(DragState::Idle)
-        .reduce(DragAction::Start(Point { x: 10.0, y: 20.0 }))
+        .reduce(DragAction::Start {
+            pointer_id: 7,
+            origin: Point { x: 10.0, y: 20.0 },
+        })
         .reduce(DragAction::Move {
+            pointer_id: 7,
             position: Point { x: 110.0, y: 45.0 },
             viewport_width: 400.0,
         });
@@ -128,7 +132,7 @@ fn drag_visuals_are_derived_and_reset_together() {
     assert_eq!(drag.intensity(), 1.0);
     assert_eq!(drag.direction(), SwipeDirection::Right);
 
-    let drag = drag.reduce(DragAction::End);
+    let drag = drag.reduce(DragAction::End(7));
     assert!(!drag.is_moving());
     assert_eq!(drag.offset().x, 0.0);
     assert_eq!(drag.offset().y, 0.0);
@@ -139,7 +143,10 @@ fn drag_visuals_are_derived_and_reset_together() {
 
 #[test]
 fn completed_swipes_preserve_thresholds_directions_and_flip_back() {
-    let drag = Rc::new(DragState::Idle).reduce(DragAction::Start(Point::default()));
+    let drag = Rc::new(DragState::Idle).reduce(DragAction::Start {
+        pointer_id: 7,
+        origin: Point::default(),
+    });
     let examples = [
         (Point { x: 49.0, y: 0.0 }, None),
         (Point { x: 100.0, y: 100.0 }, None),
@@ -150,12 +157,117 @@ fn completed_swipes_preserve_thresholds_directions_and_flip_back() {
     ];
     for (end, expected) in examples {
         assert_eq!(
-            drag.completed_direction(end, &SwipeDirection::None),
+            drag.completed_direction(7, end, &SwipeDirection::None),
             expected
         );
     }
     assert_eq!(
-        drag.completed_direction(Point { x: 50.0, y: 0.0 }, &SwipeDirection::Left),
+        drag.completed_direction(7, Point { x: 50.0, y: 0.0 }, &SwipeDirection::Left),
         Some(SwipeDirection::None),
+    );
+}
+
+#[test]
+fn another_pointer_cannot_replace_or_move_an_active_drag() {
+    let drag = Rc::new(DragState::Idle)
+        .reduce(DragAction::Start {
+            pointer_id: 7,
+            origin: Point { x: 10.0, y: 20.0 },
+        })
+        .reduce(DragAction::Start {
+            pointer_id: 8,
+            origin: Point { x: 500.0, y: 500.0 },
+        })
+        .reduce(DragAction::Move {
+            pointer_id: 8,
+            position: Point { x: 900.0, y: 900.0 },
+            viewport_width: 400.0,
+        });
+    assert!(drag.is_active_pointer(7));
+    assert!(!drag.is_active_pointer(8));
+    assert_eq!(drag.offset().x, 0.0);
+    assert_eq!(drag.offset().y, 0.0);
+    let drag = drag.reduce(DragAction::Move {
+        pointer_id: 7,
+        position: Point { x: 110.0, y: 45.0 },
+        viewport_width: 400.0,
+    });
+    assert_eq!(drag.offset().x, 100.0);
+    assert_eq!(drag.offset().y, 25.0);
+}
+
+#[test]
+fn another_pointer_cannot_complete_or_cancel_an_active_drag() {
+    let drag = Rc::new(DragState::Idle)
+        .reduce(DragAction::Start {
+            pointer_id: 7,
+            origin: Point::default(),
+        })
+        .reduce(DragAction::End(8));
+    assert!(drag.is_active_pointer(7));
+    assert_eq!(
+        drag.completed_direction(8, Point { x: 0.0, y: -100.0 }, &SwipeDirection::None),
+        None
+    );
+    assert_eq!(
+        drag.completed_direction(7, Point { x: 0.0, y: -100.0 }, &SwipeDirection::None),
+        Some(SwipeDirection::Up)
+    );
+}
+
+#[test]
+fn cancelled_drag_cannot_later_complete_a_swipe_and_next_pointer_can_start() {
+    let drag = Rc::new(DragState::Idle)
+        .reduce(DragAction::Start {
+            pointer_id: 7,
+            origin: Point::default(),
+        })
+        .reduce(DragAction::Move {
+            pointer_id: 7,
+            position: Point { x: 0.0, y: -100.0 },
+            viewport_width: 400.0,
+        })
+        .reduce(DragAction::End(7));
+    assert!(!drag.is_moving());
+    assert_eq!(drag.intensity(), 0.0);
+    assert_eq!(
+        drag.completed_direction(7, Point { x: 0.0, y: -100.0 }, &SwipeDirection::None),
+        None
+    );
+    let drag = drag.reduce(DragAction::Start {
+        pointer_id: 8,
+        origin: Point { x: 200.0, y: 200.0 },
+    });
+    assert!(drag.is_active_pointer(8));
+    assert_eq!(drag.offset().x, 0.0);
+}
+
+#[test]
+fn captured_pointer_can_complete_beyond_the_original_viewport() {
+    let drag = Rc::new(DragState::Idle).reduce(DragAction::Start {
+        pointer_id: 7,
+        origin: Point { x: 100.0, y: 100.0 },
+    });
+    assert_eq!(
+        drag.completed_direction(
+            7,
+            Point {
+                x: -200.0,
+                y: 100.0
+            },
+            &SwipeDirection::None
+        ),
+        Some(SwipeDirection::Left)
+    );
+    assert_eq!(
+        drag.completed_direction(
+            7,
+            Point {
+                x: 100.0,
+                y: -200.0
+            },
+            &SwipeDirection::None
+        ),
+        Some(SwipeDirection::Up)
     );
 }

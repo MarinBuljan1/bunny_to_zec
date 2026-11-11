@@ -18,6 +18,14 @@ they are reported in the browser console, and unsaved progress may be lost on re
 The existing content-loading fallback policy remains unchanged; broader error/retry
 handling is tracked under R5 in the roadmap.
 
+Mouse, touch, and pen input share one pointer-event path. Only the active primary
+pointer can move or finish its drag; cancellation or lost capture resets the drag
+without rating the card. Capture keeps releases outside the card connected to the
+original gesture. Overflowing explanations keep native vertical scrolling, while
+short explanations and the card/background remain swipeable. Overflow is measured
+when explanations change and on window resize so the CSS touch policy is set before
+the gesture begins, as required by the [Pointer Events standard](https://www.w3.org/TR/pointerevents/#the-touch-action-css-property).
+
 ## Build and deploy
 
 Required tools: Rust with the `wasm32-unknown-unknown` target, `wasm-pack`, and the

@@ -1,9 +1,10 @@
-use js_sys::{Date, Math, Reflect};
+use gloo_events::EventListener;
+use js_sys::{Date, Math};
 use std::collections::HashMap;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsCast;
-use web_sys::{window, Element, EventTarget, HtmlElement, TouchEvent};
+use web_sys::{window, Element, EventTarget, PointerEvent};
 use yew::prelude::*;
 
 mod learning;
@@ -46,6 +47,35 @@ struct FlashcardProps {
 
 #[function_component(Flashcard)]
 fn flashcard(props: &FlashcardProps) -> Html {
+    let front = use_node_ref();
+    let explanation_scrolls = use_state_eq(|| false);
+    {
+        let front = front.clone();
+        let explanation_scrolls = explanation_scrolls.clone();
+        use_effect_with_deps(
+            move |_| {
+                let measure = move || {
+                    let scrolls = front
+                        .cast::<Element>()
+                        .and_then(|card| card.query_selector(".explanation-div").ok().flatten())
+                        .is_some_and(|explanation| {
+                            explanation.scroll_height() > explanation.client_height()
+                        });
+                    explanation_scrolls.set(scrolls);
+                };
+                measure();
+                let resize = window()
+                    .map(|window| EventListener::new(&window, "resize", move |_| measure()));
+                move || drop(resize)
+            },
+            (props.show_explanations, props.processed_explanation.clone()),
+        );
+    }
+    let front_class = if props.show_explanations && *explanation_scrolls {
+        "front-side explanation-scrollable"
+    } else {
+        "front-side"
+    };
     let style = format!("--pos_x: {}; --pos_y: {};", props.pos_x, props.pos_y);
 
     let mut class_name = match props.swipe_direction {
@@ -67,7 +97,7 @@ fn flashcard(props: &FlashcardProps) -> Html {
 
     html! {
         <>
-            <div class={format!("{} front-side", class_name.clone())} style={style.clone()}>
+            <div ref={front} class={format!("{class_name} {front_class}")} style={style.clone()}>
                 {
                     if props.show_explanations {
                         html! { <>{ props.processed_explanation.clone() }</> }
@@ -104,6 +134,7 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
     let review = use_reducer(|| ReviewState::welcome(get_timestamp_ms()));
     let drag = use_reducer(DragState::default);
     let animation = use_state(AnimationState::default);
+    let drag_surface = use_node_ref();
 
     {
         let content = content.clone();
@@ -127,8 +158,10 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
         let review = review.clone();
         let content = content.clone();
         let progress = progress.clone();
-        Callback::from(move |end: Point| {
-            if let Some(direction) = drag.completed_direction(end, &animation.direction()) {
+        Callback::from(move |(pointer_id, end): (i32, Point)| {
+            if let Some(direction) =
+                drag.completed_direction(pointer_id, end, &animation.direction())
+            {
                 animation.set(AnimationState::Swiping(direction.clone()));
                 match direction {
                     SwipeDirection::Up | SwipeDirection::Down => {
@@ -148,68 +181,65 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
                     SwipeDirection::None => {}
                 }
             }
-            drag.dispatch(DragAction::End);
+            drag.dispatch(DragAction::End(pointer_id));
         })
     };
 
-    let on_touch_event = {
+    let on_pointer_event = {
         let drag = drag.clone();
-        let on_swipe_completed = on_swipe_completed.clone();
-        Callback::from(move |event: TouchEvent| match event.type_().as_str() {
-            "touchstart" => {
-                if event
-                    .target()
-                    .as_ref()
-                    .is_some_and(should_enable_drag_for_event_target)
-                {
-                    let touch = get_first_touch(&event, "touches");
-                    drag.dispatch(DragAction::Start(Point {
-                        x: touch.client_x() as f64,
-                        y: touch.client_y() as f64,
-                    }));
-                }
-            }
-            "touchmove" if drag.is_moving() => {
-                let touch = get_first_touch(&event, "touches");
-                move_drag(
-                    &drag,
-                    Point {
-                        x: touch.client_x() as f64,
-                        y: touch.client_y() as f64,
-                    },
-                );
-            }
-            "touchend" if drag.is_moving() => {
-                let touch = get_first_touch(&event, "changedTouches");
-                on_swipe_completed.emit(Point {
-                    x: touch.client_x() as f64,
-                    y: touch.client_y() as f64,
-                });
-            }
-            _ => {}
-        })
-    };
-
-    let on_mouse_event = {
-        let drag = drag.clone();
-        Callback::from(move |event: MouseEvent| {
-            event.prevent_default();
+        let drag_surface = drag_surface.clone();
+        Callback::from(move |event: PointerEvent| {
+            let pointer_id = event.pointer_id();
             let position = Point {
                 x: event.client_x() as f64,
                 y: event.client_y() as f64,
             };
             match event.type_().as_str() {
-                "mousedown" => {
-                    if event
-                        .target()
-                        .as_ref()
-                        .is_some_and(should_enable_drag_for_event_target)
+                "pointerdown" => {
+                    if !event.is_primary()
+                        || event.button() != 0
+                        || drag.is_moving()
+                        || !event
+                            .target()
+                            .as_ref()
+                            .is_some_and(should_enable_drag_for_event_target)
                     {
-                        drag.dispatch(DragAction::Start(position));
+                        return;
                     }
+                    // Yew delegates listeners to the app root, so current_target()
+                    // is not this view. Capture on the node that owns our callbacks.
+                    let Some(surface) = drag_surface.cast::<Element>() else {
+                        return;
+                    };
+                    if let Err(error) = surface.set_pointer_capture(pointer_id) {
+                        web_sys::console::error_2(
+                            &"Could not capture the pointer; drag was not started".into(),
+                            &error,
+                        );
+                        return;
+                    }
+                    event.prevent_default();
+                    drag.dispatch(DragAction::Start {
+                        pointer_id,
+                        origin: position,
+                    });
                 }
-                "mousemove" if drag.is_moving() => move_drag(&drag, position),
-                "mouseup" if drag.is_moving() => on_swipe_completed.emit(position),
+                "pointermove" if drag.is_active_pointer(pointer_id) => {
+                    if event.buttons() & 1 == 0 {
+                        drag.dispatch(DragAction::End(pointer_id));
+                        return;
+                    }
+                    event.prevent_default();
+                    move_drag(&drag, pointer_id, position);
+                }
+                "pointerup" if drag.is_active_pointer(pointer_id) => {
+                    event.prevent_default();
+                    on_swipe_completed.emit((pointer_id, position));
+                    // The browser releases capture after pointerup; lost capture only cancels.
+                }
+                "pointercancel" | "lostpointercapture" => {
+                    drag.dispatch(DragAction::End(pointer_id))
+                }
                 _ => {}
             }
         })
@@ -302,14 +332,14 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
     html! {
         <>
             {progress_bars}
-            <div class="flashcard-view"
-                ontouchstart={on_touch_event.clone()}
-                ontouchmove={on_touch_event.clone()}
-                ontouchend={on_touch_event}
-                onmousedown={on_mouse_event.clone()}
-                onmousemove={on_mouse_event.clone()}
-                onmouseup={on_mouse_event}
+            <div ref={drag_surface} class="flashcard-view"
+                onpointerdown={on_pointer_event.clone()}
+                onpointermove={on_pointer_event.clone()}
+                onpointerup={on_pointer_event.clone()}
+                onpointercancel={on_pointer_event.clone()}
+                onlostpointercapture={on_pointer_event}
                 style={style.clone()}>
+                <div class="drag-surface" aria-hidden="true"></div>
                 <Flashcard
                     swipe_direction={animation.direction()}
                     is_moving={drag.is_moving()}
@@ -425,16 +455,18 @@ pub fn run_app() {
     yew::Renderer::<App>::new().render();
 }
 
-fn get_first_touch(event: &TouchEvent, property: &str) -> web_sys::Touch {
-    let touches = Reflect::get(event, &property.into()).unwrap();
-    let touch = Reflect::get(&touches, &0.into()).unwrap();
-    touch.dyn_into::<web_sys::Touch>().unwrap()
-}
-
-fn move_drag(drag: &UseReducerHandle<DragState>, position: Point) {
-    let window = web_sys::window().unwrap();
-    let viewport_width = window.inner_width().unwrap().as_f64().unwrap();
+fn move_drag(drag: &UseReducerHandle<DragState>, pointer_id: i32, position: Point) {
+    let Some(viewport_width) = window()
+        .and_then(|window| window.inner_width().ok())
+        .and_then(|width| width.as_f64())
+        .filter(|width| *width > 0.0)
+    else {
+        drag.dispatch(DragAction::End(pointer_id));
+        web_sys::console::error_1(&"Could not read viewport width; drag was cancelled".into());
+        return;
+    };
     drag.dispatch(DragAction::Move {
+        pointer_id,
         position,
         viewport_width,
     });
@@ -649,28 +681,17 @@ fn construct_processed_explanation(
     }
 }
 
-fn find_ancestor_with_class(mut element: Option<Element>, class_name: &str) -> Option<HtmlElement> {
-    while let Some(el) = element {
-        if let Some(html_el) = el.dyn_ref::<HtmlElement>() {
-            if html_el.class_list().contains(class_name) {
-                return Some(html_el.clone());
-            }
-        }
-        element = el.parent_element();
-    }
-    None
-}
-
 fn should_enable_drag_for_event_target(target: &EventTarget) -> bool {
-    if let Ok(elem) = target.clone().dyn_into::<web_sys::Element>() {
-        if let Some(_) = target.dyn_ref::<HtmlElement>() {
-            return find_ancestor_with_class(Some(elem.clone()), "flashcard-view").is_some()
-                && !find_ancestor_with_class(Some(elem.clone()), "explanation-div")
-                    .map(|card_elem| card_elem.scroll_height() > card_elem.client_height())
-                    .unwrap_or(false);
-        }
-    }
-    false
+    let Some(element) = target.dyn_ref::<Element>() else {
+        return false;
+    };
+    let in_view = element.closest(".flashcard-view").ok().flatten().is_some();
+    let scrollable_explanation = element
+        .closest(".explanation-div")
+        .ok()
+        .flatten()
+        .is_some_and(|explanation| explanation.scroll_height() > explanation.client_height());
+    in_view && !scrollable_explanation
 }
 
 #[cfg(test)]

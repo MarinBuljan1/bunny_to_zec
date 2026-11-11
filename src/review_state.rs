@@ -141,6 +141,7 @@ pub(super) enum DragState {
     #[default]
     Idle,
     Active {
+        pointer_id: i32,
         origin: Point,
         position: Point,
         viewport_width: f64,
@@ -148,17 +149,25 @@ pub(super) enum DragState {
 }
 
 pub(super) enum DragAction {
-    Start(Point),
+    Start {
+        pointer_id: i32,
+        origin: Point,
+    },
     Move {
+        pointer_id: i32,
         position: Point,
         viewport_width: f64,
     },
-    End,
+    End(i32),
 }
 
 impl DragState {
     pub fn is_moving(&self) -> bool {
         matches!(self, Self::Active { .. })
+    }
+
+    pub fn is_active_pointer(&self, pointer_id: i32) -> bool {
+        matches!(self, Self::Active { pointer_id: active, .. } if *active == pointer_id)
     }
 
     pub fn offset(&self) -> Point {
@@ -194,9 +203,13 @@ impl DragState {
 
     pub fn completed_direction(
         &self,
+        pointer_id: i32,
         end: Point,
         current: &SwipeDirection,
     ) -> Option<SwipeDirection> {
+        if !self.is_active_pointer(pointer_id) {
+            return None;
+        }
         let Self::Active { origin, .. } = self else {
             return None;
         };
@@ -223,17 +236,20 @@ impl Reducible for DragState {
 
     fn reduce(self: Rc<Self>, action: Self::Action) -> Rc<Self> {
         match action {
-            DragAction::Start(origin) => Self::Active {
+            DragAction::Start { pointer_id, origin } if !self.is_moving() => Self::Active {
+                pointer_id,
                 origin,
                 position: origin,
                 viewport_width: 1.0,
             }
             .into(),
             DragAction::Move {
+                pointer_id,
                 position,
                 viewport_width,
-            } => match *self {
+            } if self.is_active_pointer(pointer_id) => match *self {
                 Self::Active { origin, .. } => Self::Active {
+                    pointer_id,
                     origin,
                     position,
                     viewport_width,
@@ -241,7 +257,8 @@ impl Reducible for DragState {
                 .into(),
                 Self::Idle => self,
             },
-            DragAction::End => Self::Idle.into(),
+            DragAction::End(pointer_id) if self.is_active_pointer(pointer_id) => Self::Idle.into(),
+            _ => self,
         }
     }
 }

@@ -76,10 +76,16 @@ html, body {
   background: linear-gradient(var(--edge-angle), rgba(var(--edge-rgb), calc(var(--edge-alpha) * 0.8)) 0%, rgba(var(--edge-rgb), calc(var(--edge-alpha) * 0.5)) 12%, rgba(var(--edge-rgb), 0) 30%);
   transition: background 0.16s ease-out;
 }
+.flashcard-view .drag-surface {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+}
 .flashcard-view .card {
   width: 300px;
   min-height: 200px;
   max-height: 60vh;
+  touch-action: none;
   -webkit-overflow-scrolling: touch;
   padding: 1em;
   box-sizing: border-box;
@@ -98,6 +104,9 @@ html, body {
   transform: rotateY(calc(var(--pos_x) * 1deg)) translateY(calc(var(--pos_y) * 1px));
   transition: transform 0.4s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   backface-visibility: hidden;
+}
+.flashcard-view .card.explanation-scrollable {
+  touch-action: pan-y;
 }
 .flashcard-view .card.back-side {
   transform: rotateY(calc(180deg - var(--pos_x) * 1deg)) translateY(calc(var(--pos_y) * 1px));
