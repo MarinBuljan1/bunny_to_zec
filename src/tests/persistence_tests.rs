@@ -61,7 +61,7 @@ fn bad_legacy_timestamp_preserves_scores_and_resumes_decay_from_now() {
 fn corrupt_or_future_progress_is_never_overwritten() {
     for (key, raw) in [
         (PROGRESS_KEY, "broken"),
-        (PROGRESS_KEY, r#"{"version":2,"value":{}}"#),
+        (PROGRESS_KEY, r#"{"version":3,"value":{}}"#),
         ("card_scores", "broken"),
     ] {
         let mut store = MemoryStore::default();
@@ -90,6 +90,77 @@ fn failed_atomic_save_keeps_the_previous_snapshot_intact() {
     store.write_error = None;
     write_progress(&mut store, &updated).unwrap();
     assert_eq!(read_progress(&store, 3_000).unwrap().progress, updated);
+}
+
+#[test]
+fn version_one_progress_migrates_atomically_and_old_readers_reject_version_two() {
+    let mut store = MemoryStore::default();
+    // Literal old-format JSON is independent of the widened Rust model.
+    let original = r#"{"version":1,"value":{"scores":{"bok":{"score":2147483647,"last_review":1700000000}},"last_data_update":1700000001}}"#;
+    store.values.insert(PROGRESS_KEY.into(), original.into());
+    let mut restored = read_progress(&store, 1_700_000_100).unwrap().progress;
+    assert_eq!(restored.scores["bok"].score, i64::from(i32::MAX));
+    assert_eq!(store.values[PROGRESS_KEY], original); // Reading alone does not migrate.
+    restored.scores.get_mut("bok").unwrap().score += 1;
+    restored.last_data_update = 2_200_000_000;
+    store.write_error = Some(StorageError::WriteFailed);
+    assert_eq!(
+        write_progress(&mut store, &restored),
+        Err(StorageError::WriteFailed)
+    );
+    assert_eq!(store.values[PROGRESS_KEY], original);
+    store.write_error = None;
+    write_progress(&mut store, &restored).unwrap();
+    let envelope: serde_json::Value = serde_json::from_str(&store.values[PROGRESS_KEY]).unwrap();
+    assert_eq!(envelope["version"], 2);
+    assert_eq!(
+        read_progress(&store, 2_200_000_001).unwrap().progress,
+        restored
+    );
+    // The previous reader checked its supported version before decoding/writing.
+    assert!(matches!(
+        read_snapshot::<SavedProgress>(&store, PROGRESS_KEY, &[1]),
+        Err(StorageError::UnsupportedVersion(PROGRESS_KEY))
+    ));
+}
+
+#[test]
+fn full_i64_values_round_trip_exactly_without_javascript_number_conversion() {
+    let mut store = MemoryStore::default();
+    let expected = SavedProgress {
+        scores: HashMap::from([(
+            "bok".into(),
+            ScoreData {
+                score: i64::MAX,
+                last_review: i64::MAX - 1,
+            },
+        )]),
+        last_data_update: i64::MAX,
+    };
+    write_progress(&mut store, &expected).unwrap();
+    assert_eq!(read_progress(&store, i64::MAX).unwrap().progress, expected);
+    assert!(store.values[PROGRESS_KEY].contains("9223372036854775807"));
+}
+
+#[test]
+fn widened_progress_rejects_negative_and_out_of_range_values_without_overwriting() {
+    for value in ["-1", "9223372036854775808"] {
+        for field in ["score", "last_review", "last_data_update"] {
+            let mut store = MemoryStore::default();
+            let raw = r#"{"version":2,"value":{"scores":{"bok":{"score":500,"last_review":1000}},"last_data_update":1100}}"#;
+            let valid = match field {
+                "score" => "\"score\":500",
+                "last_review" => "\"last_review\":1000",
+                _ => "\"last_data_update\":1100",
+            };
+            let invalid = raw.replace(valid, &format!("\"{field}\":{value}"));
+            store.values.insert(PROGRESS_KEY.into(), invalid.clone());
+            assert!(read_progress(&store, 2_000).is_err());
+            assert!(write_progress(&mut store, &progress()).is_err());
+            assert_eq!(store.values[PROGRESS_KEY], invalid);
+            assert_eq!(store.writes, 0);
+        }
+    }
 }
 
 #[test]

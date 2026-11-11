@@ -1,7 +1,7 @@
 //! Learning rules without Yew, browser storage, clocks, or randomness.
 //!
 //! Scores measure seconds of retained learning. Stored review/update timestamps are
-//! Unix seconds (`i32`, the existing schema); recall duration is milliseconds.
+//! Unix seconds (`i64`); recall duration is milliseconds.
 //! Capture `now_s` once at the browser boundary for a complete calculation.
 
 use std::collections::HashMap;
@@ -10,8 +10,8 @@ use indexmap::IndexMap;
 
 use crate::model::{Card, CardList, SavedProgress, ScoreData};
 
-pub(crate) const LEARNED_INTERVAL_SECONDS: i32 = 10 * 86_400;
-const REVIEW_PRIORITY_INTERVAL_SECONDS: i32 = LEARNED_INTERVAL_SECONDS + 120;
+pub(crate) const LEARNED_INTERVAL_SECONDS: i64 = 10 * 86_400;
+const REVIEW_PRIORITY_INTERVAL_SECONDS: i64 = LEARNED_INTERVAL_SECONDS + 120;
 
 pub(crate) enum ReviewOutcome {
     Correct,
@@ -32,7 +32,7 @@ pub(crate) fn apply_review(
     progress: &SavedProgress,
     words: &[Card],
     attempt: &ReviewAttempt,
-    now_s: i32,
+    now_s: i64,
 ) -> Option<SavedProgress> {
     if attempt.elapsed_ms <= 1 {
         return None;
@@ -53,9 +53,10 @@ pub(crate) fn apply_review(
         .collect();
     let weights = review_weights(&raw_scores);
     let mut updated_scores = progress.scores.clone();
-    let decay_seconds = now_s - progress.last_data_update;
+    // A clock adjustment must not turn decay into extra learning credit.
+    let decay_seconds = now_s.saturating_sub(progress.last_data_update).max(0);
     for score in updated_scores.values_mut() {
-        score.score = (score.score - decay_seconds).max(0);
+        score.score = score.score.saturating_sub(decay_seconds).max(0);
     }
 
     // Reviewed words use their pre-decay values and then replace the decayed
@@ -97,13 +98,13 @@ fn calculate_raw_score(
     previous: &ScoreData,
     attempt: &ReviewAttempt,
     inverted_normalised_score: f32,
-    now_s: i32,
+    now_s: i64,
 ) -> ScoreData {
     let mut new_score = previous.score;
     let mut new_last_review = now_s;
     let seconds_for_review =
         (attempt.elapsed_ms as f64 / 1000.0) as f32 * inverted_normalised_score;
-    let mut seconds_since_last_review = (now_s - previous.last_review) as f32;
+    let mut seconds_since_last_review = now_s.saturating_sub(previous.last_review).max(0) as f32;
     let mut calculated_divisor =
         (seconds_for_review / 1.5) - attempt.character_length as f32 * 0.02;
 
@@ -114,12 +115,14 @@ fn calculate_raw_score(
     calculated_divisor = calculated_divisor.clamp(0.1, 10.0);
     match attempt.outcome {
         ReviewOutcome::Correct => {
-            new_score += (seconds_since_last_review / calculated_divisor) as i32;
+            // Retain the formula; only the representable i64 boundary caps growth.
+            new_score =
+                new_score.saturating_add((seconds_since_last_review / calculated_divisor) as i64);
         }
         ReviewOutcome::Incorrect if previous.last_review != 0 => {
             new_last_review = (previous.last_review as f64
                 + (seconds_since_last_review * inverted_normalised_score) as f64)
-                as i32;
+                as i64;
         }
         ReviewOutcome::Incorrect => {}
     }
@@ -129,11 +132,17 @@ fn calculate_raw_score(
     }
 }
 
-fn calculate_final_score(score: &ScoreData, now_s: i32) -> i32 {
+fn calculate_final_score(score: &ScoreData, now_s: i64) -> i128 {
     if score.last_review == 0 {
-        return LEARNED_INTERVAL_SECONDS;
+        return i128::from(LEARNED_INTERVAL_SECONDS);
     }
-    score.score + (score.last_review + REVIEW_PRIORITY_INTERVAL_SECONDS - now_s).max(0)
+    // Priority is a temporary sum, not a stored score. Wider intermediates keep
+    // even i64::MAX scores/timestamps ordered without overflow or artificial ties.
+    let remaining_interval = (i128::from(score.last_review)
+        + i128::from(REVIEW_PRIORITY_INTERVAL_SECONDS)
+        - i128::from(now_s))
+    .max(0);
+    i128::from(score.score) + remaining_interval
 }
 
 /// Exclude current review words, then select the lowest priority score.
@@ -142,7 +151,7 @@ pub(crate) fn find_key_of_lowest_score(
     cards: &IndexMap<String, CardList>,
     scores: &HashMap<String, ScoreData>,
     current_words: &[Card],
-    now_s: i32,
+    now_s: i64,
 ) -> Option<String> {
     cards
         .iter()
@@ -155,7 +164,7 @@ pub(crate) fn find_key_of_lowest_score(
             scores
                 .get(*key)
                 .map(|score| calculate_final_score(score, now_s))
-                .unwrap_or(LEARNED_INTERVAL_SECONDS)
+                .unwrap_or(i128::from(LEARNED_INTERVAL_SECONDS))
         })
         .map(|(key, _)| key.clone())
 }
@@ -163,7 +172,7 @@ pub(crate) fn find_key_of_lowest_score(
 pub(crate) fn calculate_progress_sum(scores: &HashMap<String, ScoreData>) -> i64 {
     scores
         .values()
-        .map(|score| i64::from(score.score.min(LEARNED_INTERVAL_SECONDS)))
+        .map(|score| score.score.min(LEARNED_INTERVAL_SECONDS))
         .sum()
 }
 

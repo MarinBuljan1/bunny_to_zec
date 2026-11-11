@@ -322,6 +322,14 @@ html, body {
         cursor: pointer;
 
         &[aria-disabled="true"] { opacity: 0.5; cursor: default; }
+
+        &.down {
+            border-color: red
+        }
+
+        &.up {
+            border-color: rgb(0, 185, 0)
+        }
     }
 }
 

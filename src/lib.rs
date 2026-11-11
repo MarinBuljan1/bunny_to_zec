@@ -511,9 +511,9 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
 
             </div>
             <nav class="review-controls" aria-label="Review actions">
-                <button type="button" aria-disabled={(!actions_enabled).to_string()} onclick={act.reform(|_| SwipeDirection::Down)}>{if review.is_question() { "Skip / next" } else { "Incorrect / next" }}</button>
-                <button type="button" aria-disabled={(!actions_enabled).to_string()} onclick={act.reform(|_| SwipeDirection::Left)}>{"Reveal / flip"}</button>
-                <button type="button" aria-disabled={(!actions_enabled).to_string()} onclick={act.reform(|_| SwipeDirection::Up)}>{if review.is_question() { "Start / next" } else { "Correct / next" }}</button>
+                <button type="button" class="down" aria-disabled={(!actions_enabled).to_string()} onclick={act.reform(|_| SwipeDirection::Down)}>{if review.is_question() { "Skip / next" } else { "Incorrect / next" }}</button>
+                <button type="button" class="side" aria-disabled={(!actions_enabled).to_string()} onclick={act.reform(|_| SwipeDirection::Left)}>{"Reveal / flip"}</button>
+                <button type="button" class="up" aria-disabled={(!actions_enabled).to_string()} onclick={act.reform(|_| SwipeDirection::Up)}>{if review.is_question() { "Start / next" } else { "Correct / next" }}</button>
             </nav>
             <div class="app-notices">
                 { if let ContentLoadState::Ready(loaded) = &*content {
@@ -607,7 +607,7 @@ fn calculate_review_result(
         progress,
         &review.presentation.review_words,
         &attempt,
-        (step.started_at_ms / 1000) as i32,
+        step.started_at_ms / 1000,
     )
 }
 
@@ -626,7 +626,7 @@ fn prepare_next_review(
     content: &LearningContent,
     scores: &HashMap<String, ScoreData>,
     previous_review_words: &[Card],
-    now_s: i32,
+    now_s: i64,
     sentence_sample: f64,
 ) -> Option<ReviewPresentation> {
     let key = find_key_of_lowest_score(&content.cards, scores, previous_review_words, now_s)?;
@@ -668,10 +668,10 @@ fn prepare_next_review(
     }
 }
 
-fn get_timestamp_s() -> i32 {
+fn get_timestamp_s() -> i64 {
     let now = Date::now();
     let duration = now / 1000.0; // Convert to seconds
-    duration as i32
+    duration as i64
 }
 
 fn get_timestamp_ms() -> i64 {

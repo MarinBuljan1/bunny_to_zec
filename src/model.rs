@@ -23,9 +23,10 @@ pub(crate) struct CardSentences {
 }
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, Debug)]
+/// Stored score in learning seconds and review time in Unix seconds, both i64.
 pub(crate) struct ScoreData {
-    pub(crate) score: i32,
-    pub(crate) last_review: i32,
+    pub(crate) score: i64,
+    pub(crate) last_review: i64,
 }
 
 #[derive(Serialize, Deserialize, Default, Debug, PartialEq)]
@@ -38,5 +39,5 @@ pub(crate) struct LearningContent {
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub(crate) struct SavedProgress {
     pub(crate) scores: HashMap<String, ScoreData>,
-    pub(crate) last_data_update: i32,
+    pub(crate) last_data_update: i64,
 }

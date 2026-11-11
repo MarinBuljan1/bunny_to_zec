@@ -60,16 +60,18 @@ accepted input timestamp, not a later timer/effect timestamp.
 
 ## Saved-data formats and recovery
 
-Browser local storage uses two versioned snapshots, each serialized as
-`{"version":1,"value":...}`:
+Browser local storage uses two snapshots with a `version` and `value` envelope:
 
-- `learning_content_v1`: vocabulary, sentences, and explanations together. Downloads
+- `learning_content_v1`: version 1; vocabulary, sentences, and explanations together. Downloads
   must have successful HTTP responses, parse correctly, and pass reference/order
   validation before a cache write. Any failed resource falls back to a whole saved
   dataset. A valid download remains usable if its cache write fails, with a warning.
-- `learning_progress_v1`: scores and their Unix-second update timestamp in one write.
-  Failed writes preserve the previous snapshot. Scoring formulas and timestamp units
-  remain unchanged.
+- `learning_progress_v1`: version 2; per-word scores, last-review timestamps, and
+  the decay-update timestamp in one write, now using `i64`. The existing key is
+  retained so previous version-1 clients reject the newer format before writing.
+  Readers accept version 1 or 2. A version-1 snapshot is migrated only on the next
+  successful save; failed writes preserve the original bytes. Content stays at
+  version 1. Timestamp units and normal scoring formulas remain unchanged.
 
 The legacy `cards`, `sentences`, and `explanations` content keys remain readable.
 Once a complete new content snapshot is saved successfully, those old content copies
@@ -189,17 +191,25 @@ Update/verify the JSON explicitly, run `cargo test --locked` (which validates th
 full dataset), then `build_and_sync.bat`. No workbook or existing JSON was changed
 by the maintenance refactors. Local certificates and root `pkg/` are ignored.
 
-## Timestamp compatibility follow-up
+## Score and timestamp ranges
 
-Saved Unix-second timestamps still use `i32`, whose positive range ends on
-2038-01-19 at 03:14:07 UTC. Widening was evaluated separately from the readability
-work: it must cover browser conversions, score/priority arithmetic, validation,
-and both legacy and snapshot decoding, rather than changing one field.
+Each word's score, last-review time, and the progress-update time use `i64`.
+Timestamps remain Unix seconds; recall timing remains milliseconds. Existing
+legacy/version-1 JSON integers are read exactly without rescaling or resetting
+scores. Serialization is performed in Rust, so values are not routed through
+JavaScript floating-point numbers.
 
-A future migration should accept existing integers into `i64`, preserve seconds
-and current scoring results, and write a version-2 progress envelope under the
-same progress key. Existing readers already refuse unsupported versions, which
-protects that snapshot from older open tabs. Test legacy/v1 imports, post-2038
-reviews, large intervals, failed writes, and old-client protection before enabling
-it. This schema change is deferred; no storage keys, units, or versions changed
-in R9/R10.
+Scores can grow past the old 2,147,483,647 limit. At the i64 representation limit
+(9,223,372,036,854,775,807), earned-score addition saturates instead of wrapping or
+panicking. Temporary selection priorities use i128 intermediates so adding a
+recent-review bonus preserves their order even at that boundary. The learned
+threshold and per-word contribution to displayed progress remain 864,000.
+
+Ordinary scoring still uses the existing floating-point weights and divisor.
+Negative elapsed intervals caused by a backward clock or future saved timestamp
+are treated as zero: decay cannot add points, and a correct review cannot subtract
+earned points. This is an explicit boundary correction, separate from the type
+widening. Normal forward-clock results are covered by the existing score tests.
+
+The version-2 progress envelope protects these wider values from older app tabs.
+The migration needs no manual reset and leaves legacy progress keys intact.

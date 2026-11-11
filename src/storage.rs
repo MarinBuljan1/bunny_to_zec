@@ -174,7 +174,7 @@ fn commit_content_load_to_store(
     })
 }
 
-pub(crate) fn load_progress(now_s: i32) -> Result<LoadedProgress, StorageError> {
+pub(crate) fn load_progress(now_s: i64) -> Result<LoadedProgress, StorageError> {
     persistence::read_progress(&BrowserStore, now_s)
 }
 

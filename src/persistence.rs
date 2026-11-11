@@ -8,6 +8,7 @@ use std::collections::HashMap;
 use std::fmt;
 
 const CONTENT_KEY: &str = "learning_content_v1";
+// Keep the existing key so version-1 clients refuse to overwrite wider progress.
 const PROGRESS_KEY: &str = "learning_progress_v1";
 
 #[derive(Clone, Debug, PartialEq)]
@@ -84,6 +85,7 @@ fn read_json<T: DeserializeOwned>(
 fn read_snapshot<T: DeserializeOwned>(
     store: &impl Store,
     key: &'static str,
+    supported_versions: &[u32],
 ) -> Result<Option<T>, StorageError> {
     let Some(raw) = store.get(key)? else {
         return Ok(None);
@@ -93,7 +95,7 @@ fn read_snapshot<T: DeserializeOwned>(
         version: u32,
     }
     let version: Version = serde_json::from_str(&raw).map_err(|_| StorageError::Invalid(key))?;
-    if version.version != 1 {
+    if !supported_versions.contains(&version.version) {
         return Err(StorageError::UnsupportedVersion(key));
     }
     let snapshot: Snapshot<T> =
@@ -104,9 +106,10 @@ fn read_snapshot<T: DeserializeOwned>(
 fn write_snapshot<T: Serialize>(
     store: &mut impl Store,
     key: &'static str,
+    version: u32,
     value: &T,
 ) -> Result<(), StorageError> {
-    let raw = serde_json::to_string(&Snapshot { version: 1, value })
+    let raw = serde_json::to_string(&Snapshot { version, value })
         .map_err(|_| StorageError::Invalid(key))?;
     store.set(key, &raw)
 }
@@ -136,7 +139,7 @@ pub(crate) fn validate_content(content: &LearningContent) -> Result<(), &'static
 }
 
 pub(crate) fn read_content(store: &impl Store) -> Result<LearningContent, StorageError> {
-    let content = match read_snapshot(store, CONTENT_KEY)? {
+    let content = match read_snapshot(store, CONTENT_KEY, &[1])? {
         Some(content) => content,
         None => LearningContent {
             cards: read_json(store, "cards")?.ok_or(StorageError::Missing("vocabulary"))?,
@@ -153,7 +156,7 @@ pub(crate) fn write_content(
     content: &LearningContent,
 ) -> Result<Option<String>, StorageError> {
     validate_content(content).map_err(|_| StorageError::Invalid("learning content"))?;
-    write_snapshot(store, CONTENT_KEY, content)?;
+    write_snapshot(store, CONTENT_KEY, 1, content)?;
     // Free duplicate content space for progress, but only after an atomic commit.
     for key in ["cards", "sentences", "explanations"] {
         if store.remove(key).is_err() {
@@ -182,9 +185,10 @@ fn validate_progress(progress: &SavedProgress) -> Result<(), StorageError> {
 
 pub(crate) fn read_progress(
     store: &impl Store,
-    now_s: i32,
+    now_s: i64,
 ) -> Result<LoadedProgress, StorageError> {
-    if let Some(progress) = read_snapshot(store, PROGRESS_KEY)? {
+    // Existing JSON integer values decode exactly into i64; no rescaling is needed.
+    if let Some(progress) = read_snapshot(store, PROGRESS_KEY, &[1, 2])? {
         validate_progress(&progress)?;
         return Ok(LoadedProgress {
             progress,
@@ -194,7 +198,7 @@ pub(crate) fn read_progress(
     let scores: HashMap<String, ScoreData> = read_json(store, "card_scores")?.unwrap_or_default();
     // Preserve readable scores when the separate legacy timestamp is bad. Using
     // now avoids inventing a large decay interval; legacy keys are left untouched.
-    let (last_data_update, warning) = match read_json::<i32>(store, "last_data_update") {
+    let (last_data_update, warning) = match read_json::<i64>(store, "last_data_update") {
         Ok(Some(timestamp)) if timestamp >= 0 => (timestamp, None),
         Ok(None) if scores.is_empty() => (now_s, None),
         Ok(_) | Err(StorageError::Invalid(_)) => (now_s, Some("Saved scores were restored, but their update time was missing or invalid. Decay resumes from now.".into())),
@@ -216,7 +220,7 @@ pub(crate) fn write_progress(
 ) -> Result<(), StorageError> {
     validate_progress(progress)?;
     read_progress(store, progress.last_data_update)?;
-    write_snapshot(store, PROGRESS_KEY, progress)
+    write_snapshot(store, PROGRESS_KEY, 2, progress)
 }
 
 #[cfg(test)]

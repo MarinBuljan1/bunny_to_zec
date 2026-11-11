@@ -1,6 +1,6 @@
 # Refactoring roadmap
 
-Status: R1–R8 implemented; browser smoke verification remains pending. Other tasks remain proposed except for supporting work explicitly recorded below.
+Status: R1-R10 implementation work is present. The score-overflow and timestamp-width follow-up is implemented (2026-11-12); browser/device verification remains pending. See the latest implementation record below.
 
 This document records the ten improvements from the project review so they can be implemented incrementally in future sessions. Follow `AGENTS.md` during implementation. The objective is clearer, easier-to-modify Rust while preserving the core flashcard and learning behavior.
 
@@ -586,4 +586,101 @@ Measure production-code lines separately from tests and generated output. Measur
 | R7 | Implemented; browser smoke pending | Canonical build/sync serialized across processes; fail-fast behavior and cache policy validated by 12 Node tests and an outside-directory build. |
 | R8 | Implemented; browser smoke pending | Removed in-memory wrappers/flags, runtime regex, temporary vectors, and redundant rendering work; 60 Rust tests and warning-free Clippy pass. |
 | R9 | Implemented; browser/device checks pending | 62 deterministic Rust tests and 12 Node checks; complete review-to-save/reload regression, timing boundaries, and a separate browser checklist. |
-| R10 | Implemented; browser/device checks pending | Semantic controls, native guide dialog, focus handling, shallower styles, unused logging removal, consistent app identity, clean generated output, and maintenance docs. Timestamp migration evaluated/deferred. |
+| R10 | Implemented; browser/device checks pending | Semantic controls, native guide dialog, focus handling, shallower styles, unused logging removal, consistent app identity, clean generated output, and maintenance docs. Score/timestamp i64 migration implemented in the 2026-11-12 follow-up. |
+
+## Final cross-task audit - 2026-11-11
+
+Audited the current implementation rather than treating previous passing checks
+as proof that every edge case is safe. No production learning rule was changed
+in this audit. The earlier implementation records are historical; the findings
+below qualify their completion status.
+
+| Task | Audit outcome |
+| --- | --- |
+| R1 | Local ownership and explicit phases are present; grouped replacement and derived drag/progress state are covered. Browser interaction checks remain pending. |
+| R2 | Learning/sentence rules take ordinary Rust values and explicit time/random inputs. Normal-case scoring tests pass; extreme arithmetic remains unsafe as detailed below. |
+| R3 | Selection borrows scores, preserves insertion-order ties/exclusions, and has no per-candidate score-map clone. Extreme priority addition can overflow. No speed benchmark was performed. |
+| R4 | One typed pointer path, explicit node capture, active-pointer guards, cancellation, and explanation-scroll policy are present. Real mouse/touch/pen verification remains pending. |
+| R5 | Whole-dataset fallback, versioned atomic saves, protected legacy progress, retry notices, and cancelled-load guards are covered. Positive maximum i32 scores pass validation but are unsafe in subsequent arithmetic. |
+| R6 | Phase-owned timeout cleanup and generation checks prevent stale transitions; 400/50/100 ms ordering and rapid input are covered natively. Browser timer/effect behavior remains unverified. |
+| R7 | Canonical build/sync, cross-process locking, failure propagation, relative asset paths, and offline policy pass automated checks. Actual browser install/upgrade/offline tests remain pending. |
+| R8 | Redundant wrappers and runtime regex are removed; scanner/reference comparisons include the corpus and boundary inputs. Only the intentional immutable score-update map clone remains. |
+| R9 | All 62 checked-in Rust tests pass, including complete review/save/reload coverage. The additional audit probe exposed an arithmetic boundary that the suite does not cover. |
+| R10 | Semantic controls, native guide dialog, cached rendering, simplified Sass, dependency cleanup, app identity, and maintenance docs are present. Native focus/layout/screen-reader checks and timestamp migration remain outstanding. |
+
+### Confirmed unresolved arithmetic issue
+
+`persistence::validate_progress` accepts nonnegative i32 scores up to 2,147,483,647.
+In `learning.rs`, both `calculate_final_score`'s priority addition and
+`calculate_raw_score`'s correct-answer addition can overflow for those accepted
+values. This is independent of waiting until 2038.
+
+A native probe compiled the actual production learning module with equivalent
+plain fixture model structs (serialization derives omitted solely to link the
+standalone probe). With score=i32::MAX, last_review=1,699,999,999, and
+now=1,700,000,000, selection panics with debug overflow checking. Applying a
+correct 1,500 ms review with character_length=0 also panics; with optimized
+release overflow settings its resulting score is -2,147,483,648. Browser saving
+would reject that negative result, leaving the in-memory learning state incorrect.
+The probe lives under ignored `target/roadmap-audit/`; it does not alter app code.
+
+This needs a separate correctness change and regression tests. Priority arithmetic
+can use wider intermediates without changing persisted values. Score growth needs
+an explicit policy: cap scores within the existing schema, or migrate the stored
+score type as well as the arithmetic. Do not silently choose a new learning rule
+inside a readability refactor. Include large valid scores, long intervals, future
+stored timestamps/clock rollback, debug/release behavior, and saved-data compatibility
+in that follow-up. No failing/ignored test was added merely to make the suite green.
+
+### Fresh verification
+
+- `cargo fmt --check`, `cargo check --locked`, `cargo test --locked` (62 passed),
+  and `cargo clippy --all-targets --all-features --locked` pass. Cargo emits an
+  environment path-canonicalization warning; no application Clippy warning occurs.
+- All 12 Node build/cache tests pass.
+- `build_and_sync.bat` succeeds with an optimized web-target WASM build. Runtime
+  source/deployment files match, every precache asset exists, the worker version
+  marker is replaced, obsolete crate-named output is absent, and .nojekyll exists.
+- No tracked certificate/private-key/editor artifacts were found. The source tree
+  was clean at audit start; generated rebuilding did not change tracked output.
+- Browser discovery returned no connected browser. The pending checks in
+  `BROWSER_CHECKLIST.md` were not performed and must not be reported as passed.
+- The existing i32 Unix-timestamp limitation and migration plan remain documented
+  in README; this audit does not implement a saved-schema migration.
+
+## Score and timestamp widening - 2026-11-12
+
+This record supersedes the unresolved numeric issue and deferred timestamp plan
+in the historical audit above. User authorized widening both per-word scores and
+timestamps; no manual progress reset is needed.
+
+- `ScoreData.score`, `last_review`, and `SavedProgress.last_data_update` now use
+  i64. Browser timestamp conversions, accepted animation-step seconds, learning
+  intervals, score growth, decay, and storage readers use the widened types.
+  Sentence indexes, pointer IDs, and the byte-length input retain their existing
+  types because they are not scores or timestamps.
+- Normal scoring weights, divisors, learned threshold, insertion-order ties,
+  sentence choices, review timing, and progress-display caps are unchanged.
+- Earned-score addition saturates only at i64::MAX instead of wrapping. Selection
+  priorities use temporary i128 arithmetic to preserve ordering without clipping
+  their review bonus. Negative elapsed intervals from clock rollback/future saved
+  timestamps are treated as zero; this explicitly corrects negative decay adding
+  points and negative recall intervals subtracting earned scores.
+- Progress readers accept legacy keys and version-1/version-2 envelopes. Saves
+  atomically write version 2 under the existing learning_progress_v1 key. Older
+  version-1 readers reject that envelope before writing, protecting wider values
+  from old tabs. Reads alone do not migrate; failed saves retain the prior snapshot
+  byte-for-byte. Legacy progress keys remain untouched and content stays version 1.
+- Added regression cases for the old i32 overflow, post-2038 correct/incorrect
+  reviews and accepted UI timestamps, i64 boundary growth/priority ordering,
+  long-interval decay, clock rollback, exact i64 JSON round trips, atomic v1-to-v2
+  migration/failure, old-reader rejection, and malformed/negative/out-of-range data.
+- Existing local edits to review-button classes and source Sass are retained.
+  Deployment artifacts are regenerated with the canonical build, not edited.
+- Validation: formatting, Cargo check, all 69 Rust tests in both debug and
+  release, all 12 Node build/cache tests, and Clippy pass. The canonical
+  Sass/wasm-pack web build and deployment sync succeed; runtime source/deployed
+  files match, worker asset paths exist, and the cache version is generated.
+  No new crate or Cargo.lock change was needed. Browser/device checks from the
+  earlier checklist remain pending; native tests do not verify actual browser
+  storage/UI operation.

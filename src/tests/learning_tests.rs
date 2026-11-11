@@ -16,7 +16,7 @@ fn derived_progress_caps_each_word_and_accumulates_beyond_i32() {
         .collect();
     assert_eq!(
         calculate_progress_sum(&scores),
-        3_000 * i64::from(LEARNED_INTERVAL_SECONDS)
+        3_000 * LEARNED_INTERVAL_SECONDS
     );
     assert_eq!(calculate_progress_sum(&HashMap::new()), 0);
 }
@@ -206,7 +206,177 @@ fn test_calculate_raw_score() {
     }
 }
 
-const NOW: i32 = 1_700_000_000;
+const NOW: i64 = 1_700_000_000;
+
+#[test]
+fn scores_cross_the_old_i32_limit_without_changing_selection_or_review_math() {
+    let score = i64::from(i32::MAX);
+    let progress = SavedProgress {
+        scores: HashMap::from([(
+            "bok".into(),
+            ScoreData {
+                score,
+                last_review: NOW - 1,
+            },
+        )]),
+        last_data_update: NOW,
+    };
+    let attempt = ReviewAttempt {
+        elapsed_ms: 1_500,
+        character_length: 0,
+        outcome: ReviewOutcome::Correct,
+    };
+    let updated = apply_review(&progress, &[review_word("bok")], &attempt, NOW).unwrap();
+    assert_eq!(updated.scores["bok"].score, score + 1);
+    assert_eq!(
+        calculate_final_score(&progress.scores["bok"], NOW),
+        i128::from(score + REVIEW_PRIORITY_INTERVAL_SECONDS - 1)
+    );
+    let cards = indexmap! {
+        "bok".into() => CardList { base_language: "hello".into(), sentence_indexes: vec![] },
+        "new".into() => CardList { base_language: "new".into(), sentence_indexes: vec![] },
+    };
+    assert_eq!(
+        find_key_of_lowest_score(&cards, &updated.scores, &[], NOW).as_deref(),
+        Some("new")
+    );
+}
+
+#[test]
+fn post_2038_correct_and_incorrect_reviews_preserve_seconds_and_decay() {
+    let now = 2_200_000_000; // After the old Unix-second limit.
+    let progress = SavedProgress {
+        scores: HashMap::from([
+            (
+                "bok".into(),
+                ScoreData {
+                    score: 100,
+                    last_review: now - 1_000,
+                },
+            ),
+            (
+                "other".into(),
+                ScoreData {
+                    score: 1_000,
+                    last_review: now - 10,
+                },
+            ),
+        ]),
+        last_data_update: now - 100,
+    };
+    for (outcome, expected_score, expected_review) in [
+        (ReviewOutcome::Correct, 1_100, now),
+        (ReviewOutcome::Incorrect, 100, now),
+    ] {
+        let attempt = ReviewAttempt {
+            elapsed_ms: 1_500,
+            character_length: 0,
+            outcome,
+        };
+        let updated = apply_review(&progress, &[review_word("bok")], &attempt, now).unwrap();
+        assert_eq!(
+            updated.scores["bok"],
+            ScoreData {
+                score: expected_score,
+                last_review: expected_review
+            }
+        );
+        assert_eq!(updated.scores["other"].score, 900);
+        assert_eq!(updated.last_data_update, now);
+    }
+}
+
+#[test]
+fn maximum_i64_values_do_not_wrap_or_flatten_selection_priorities() {
+    let progress = SavedProgress {
+        scores: HashMap::from([(
+            "bok".into(),
+            ScoreData {
+                score: i64::MAX,
+                last_review: i64::MAX - 1,
+            },
+        )]),
+        last_data_update: i64::MAX,
+    };
+    let attempt = ReviewAttempt {
+        elapsed_ms: 1_500,
+        character_length: 0,
+        outcome: ReviewOutcome::Correct,
+    };
+    let updated = apply_review(&progress, &[review_word("bok")], &attempt, i64::MAX).unwrap();
+    assert_eq!(updated.scores["bok"].score, i64::MAX);
+    assert_eq!(updated.scores["bok"].last_review, i64::MAX);
+    let recently_reviewed = ScoreData {
+        score: i64::MAX,
+        last_review: i64::MAX,
+    };
+    let older = ScoreData {
+        score: i64::MAX,
+        last_review: 1,
+    };
+    assert!(
+        calculate_final_score(&recently_reviewed, i64::MAX)
+            > calculate_final_score(&older, i64::MAX)
+    );
+    assert_eq!(
+        calculate_progress_sum(&updated.scores),
+        LEARNED_INTERVAL_SECONDS
+    );
+
+    // A very long interval also cannot overflow score growth, and decay floors at zero.
+    let long_interval = SavedProgress {
+        scores: HashMap::from([(
+            "bok".into(),
+            ScoreData {
+                score: 50,
+                last_review: 1,
+            },
+        )]),
+        last_data_update: 1,
+    };
+    let updated = apply_review(&long_interval, &[review_word("bok")], &attempt, i64::MAX).unwrap();
+    assert_eq!(updated.scores["bok"].score, i64::MAX);
+    assert_eq!(
+        apply_review(&long_interval, &[], &attempt, i64::MAX)
+            .unwrap()
+            .scores["bok"]
+            .score,
+        0
+    );
+}
+
+#[test]
+fn clock_rollback_does_not_inflate_decay_or_subtract_earned_scores() {
+    let progress = SavedProgress {
+        scores: HashMap::from([
+            (
+                "bok".into(),
+                ScoreData {
+                    score: 100,
+                    last_review: NOW + 100,
+                },
+            ),
+            (
+                "other".into(),
+                ScoreData {
+                    score: 200,
+                    last_review: NOW,
+                },
+            ),
+        ]),
+        last_data_update: NOW + 200,
+    };
+    for outcome in [ReviewOutcome::Correct, ReviewOutcome::Incorrect] {
+        let attempt = ReviewAttempt {
+            elapsed_ms: 1_500,
+            character_length: 0,
+            outcome,
+        };
+        let updated = apply_review(&progress, &[review_word("bok")], &attempt, NOW).unwrap();
+        assert_eq!(updated.scores["bok"].score, 100);
+        assert_eq!(updated.scores["other"].score, 200);
+    }
+}
 
 #[test]
 fn recall_duration_boundary_and_divisor_clamps_follow_the_production_formula() {
@@ -475,6 +645,6 @@ fn selection_uses_explicit_time_for_review_priority_and_unseen_words() {
             },
             NOW
         ),
-        LEARNED_INTERVAL_SECONDS
+        i128::from(LEARNED_INTERVAL_SECONDS)
     );
 }
