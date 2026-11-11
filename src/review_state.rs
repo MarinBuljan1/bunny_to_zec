@@ -283,4 +283,5 @@ impl AnimationState {
 }
 
 #[cfg(test)]
+#[path = "tests/review_state_tests.rs"]
 mod tests;
