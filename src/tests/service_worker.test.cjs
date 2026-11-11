@@ -57,7 +57,7 @@ test('successful first install provides offline navigation and assets below a re
   assert.equal(app.stats.skippedWaiting, false);
   assert.equal(app.stats.claimed, true);
   assert.match(await app.dispatch('fetch', { method: 'GET', mode: 'navigate', url: 'https://example.test/learner/' }), /index\.html$/);
-  assert.match(await app.dispatch('fetch', { method: 'GET', url: 'https://example.test/learner/pkg/yew_project_bg.wasm' }), /\.wasm$/);
+  assert.match(await app.dispatch('fetch', { method: 'GET', url: 'https://example.test/learner/pkg/bunny_to_zec_bg.wasm' }), /\.wasm$/);
   assert.equal(app.stats.network.length, 0);
 });
 
@@ -109,6 +109,6 @@ test('localhost retires existing workers and never caches or intercepts developm
   await app.dispatch('activate');
   assert.equal(app.stats.skippedWaiting, true);
   assert.equal(app.stats.unregistered, true);
-  assert.equal(await app.dispatch('fetch', { method: 'GET', url: 'http://localhost:3000/pkg/yew_project.js' }), undefined);
+  assert.equal(await app.dispatch('fetch', { method: 'GET', url: 'http://localhost:3000/pkg/bunny_to_zec.js' }), undefined);
   assert.equal(app.stores.size, 0);
 });

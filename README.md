@@ -6,6 +6,7 @@ A client-side Yew/WebAssembly flashcard app. Edit Rust in `src/`, styles in
 ## Rust source layout
 
 - `lib.rs`: UI rendering, browser events, clocks, randomness, and animation timers.
+- `guide.rs`: native guide dialog, Escape/backdrop closing, and focus restoration.
 - `model.rs`: shared vocabulary and progress structures, retaining the existing JSON schemas.
 - `learning.rs`: pure scoring, decay, progress, and card-selection rules. Time is an explicit input.
 - `sentences.rs`: pure tokenization, word matching, and sentence selection. Random samples are explicit inputs.
@@ -103,7 +104,9 @@ The scripts preserve `.nojekyll` and omit Sass sources and source maps from depl
 Build and sync commands share an exclusive file handle under `target/`, so an asset
 watcher cannot synchronize partially generated WASM output. A waiting command times
 out after two minutes. The OS releases the handle when its process exits; the lock
-file may remain and does not need to be deleted. Use the canonical commands rather
+file may remain and does not need to be deleted. A full build resets only the
+generated root `pkg/` directory while holding the lock, preventing obsolete
+crate-named files from surviving package renames; it refuses a linked output directory. Use the canonical commands rather
 than running a separate `wasm-pack` process against the same output concurrently.
 
 ## Local development
@@ -136,9 +139,8 @@ development-tool requests are not cached; failed asset requests do not become HT
 responses. Cache cleanup is restricted to this app's scope. Saved learning progress
 continues to use browser local storage and is not removed during cache upgrades.
 
-The guide's Font Awesome stylesheet/fonts are externally hosted; their icons may be
-unavailable offline if the browser has not retained them. The learning app and its
-JSON content are precached locally. Browser storage can be cleared or evicted, so
+The app, guide, styles, and JSON content are served locally and precached.
+The guide has no external icon-font dependency. Browser storage can be cleared or evicted, so
 offline availability is not a backup of saved progress.
 
 ## Checks
@@ -146,11 +148,58 @@ offline availability is not a backup of saved progress.
 - `cargo fmt --check`
 - `cargo check --locked`
 - `cargo test --locked`
+- `cargo clippy --all-targets --all-features --locked`
 - `node --test src/tests/service_worker.test.cjs src/tests/build_scripts.test.cjs`
   (offline-cache behavior and Windows build-script checks)
 - `build_and_sync.bat` (Sass, WASM, deployment synchronization)
 
-Unit tests live in `src/tests/`. See `REFACTORING_ROADMAP.md` for planned improvements
-and completed work. Editable content workbooks (`croatian.xlsx`, `croatian.xlsm`) and
-the Krita icon source (`icon.kra`) are retained; their export workflow is not yet
-documented. Local certificates and generated root `pkg/` output are ignored by Git.
+Unit tests live in `src/tests/`, attached to their owning modules so private
+functions remain testable. Tests use explicit times/random samples and production
+calculations; no browser-only test branch substitutes the learning formulas.
+See [BROWSER_CHECKLIST.md](BROWSER_CHECKLIST.md) for browser/device regression
+checks and [REFACTORING_ROADMAP.md](REFACTORING_ROADMAP.md) for implementation records.
+
+## Review controls
+
+Use the visible Start/next, Skip/next, Reveal / flip, Correct/next, and Incorrect/next
+buttons, or swipe as before. Tab to buttons and use Enter/Space; with the card region
+focused, Left/Right reveals/flips, Up advances correct, and Down advances incorrect.
+Arrows inside focused explanations keep native scrolling. Controls ignore input
+while loading, dragging, advancing, or showing Guide. Guide is a native modal dialog:
+Escape/Close/backdrop dismiss it and focus returns to the opener. Current browsers
+with HTML dialog support are required. Review buttons retain focus during animation.
+
+## Editing learning content
+
+The runtime reads only these UTF-8 JSON files in `assets/`:
+
+- `croatian.json`: vocabulary object in selection order. Each Croatian key has
+  `base_language` and `sentence_indexes` (ascending, zero-based references into
+  the sentence array). Order determines selection ties; do not sort casually.
+- `croatian_sentences.json`: array of objects with `target_language` (Croatian)
+  and `base_language` (English). Reordering it requires updating all indexes.
+- `croatian_explanations.json`: English base-word keys mapping Croatian forms to
+  their explanation text.
+
+Editable `croatian.xlsx`, `croatian.xlsm`, and the Krita icon source `icon.kra`
+are retained. There is no repository script that exports those workbooks to the
+three JSON files, so a repeatable spreadsheet export workflow cannot yet be
+established from the source. Do not assume editing a workbook updates the app.
+Update/verify the JSON explicitly, run `cargo test --locked` (which validates the
+full dataset), then `build_and_sync.bat`. No workbook or existing JSON was changed
+by the maintenance refactors. Local certificates and root `pkg/` are ignored.
+
+## Timestamp compatibility follow-up
+
+Saved Unix-second timestamps still use `i32`, whose positive range ends on
+2038-01-19 at 03:14:07 UTC. Widening was evaluated separately from the readability
+work: it must cover browser conversions, score/priority arithmetic, validation,
+and both legacy and snapshot decoding, rather than changing one field.
+
+A future migration should accept existing integers into `i64`, preserve seconds
+and current scoring results, and write a version-2 progress envelope under the
+same progress key. Existing readers already refuse unsupported versions, which
+protects that snapshot from older open tabs. Test legacy/v1 imports, post-2038
+reviews, large intervals, failed writes, and old-client protection before enabling
+it. This schema change is deferred; no storage keys, units, or versions changed
+in R9/R10.

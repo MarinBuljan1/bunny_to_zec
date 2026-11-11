@@ -208,6 +208,27 @@ fn test_calculate_raw_score() {
 
 const NOW: i32 = 1_700_000_000;
 
+#[test]
+fn recall_duration_boundary_and_divisor_clamps_follow_the_production_formula() {
+    let progress = SavedProgress {
+        scores: HashMap::new(),
+        last_data_update: NOW,
+    };
+    for (elapsed_ms, character_length, expected_score) in [
+        (2, 0, 8_640_000),       // First duration that scores, with the minimum divisor.
+        (1_500, 100, 8_640_000), // Byte-length adjustment also hits the minimum.
+        (150_000, 0, 86_400),    // Slow answers use the maximum divisor of ten.
+    ] {
+        let attempt = ReviewAttempt {
+            elapsed_ms,
+            character_length,
+            outcome: ReviewOutcome::Correct,
+        };
+        let updated = apply_review(&progress, &[review_word("bok")], &attempt, NOW).unwrap();
+        assert_eq!(updated.scores["bok"].score, expected_score);
+    }
+}
+
 fn review_word(target: &str) -> Card {
     Card {
         base_language: "translation".into(),

@@ -48,11 +48,14 @@ test('Sass failure preserves its exit code and prevents a WASM build', { skip: p
 
 test('WASM failure preserves its exit code and prevents synchronization', { skip: process.platform !== 'win32' }, t => {
   const { dir, bin } = fixture(t);
+  fs.mkdirSync(path.join(dir, 'pkg'));
+  fs.writeFileSync(path.join(dir, 'pkg/obsolete_crate.js'), 'old output');
   fs.writeFileSync(path.join(bin, 'sass.cmd'), '@exit /b 0\r\n');
   fs.writeFileSync(path.join(bin, 'wasm-pack.cmd'), '@exit /b 9\r\n');
   const result = runBatch(dir, bin, 'build_and_sync.bat');
   assert.equal(result.status, 9, result.stdout + result.stderr);
   assert.equal(fs.existsSync(path.join(dir, 'docs')), false);
+  assert.equal(fs.existsSync(path.join(dir, 'pkg/obsolete_crate.js')), false);
 });
 
 test('missing required deployment sources fail instead of reporting a successful sync', { skip: process.platform !== 'win32' }, t => {

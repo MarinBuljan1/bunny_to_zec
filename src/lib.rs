@@ -10,6 +10,7 @@ use web_sys::{window, Element, EventTarget, PointerEvent};
 use yew::prelude::*;
 
 mod animation;
+mod guide;
 mod learning;
 mod model;
 mod persistence;
@@ -17,6 +18,7 @@ mod review_state;
 mod sentences;
 mod storage;
 use animation::AnimationStepKind;
+use guide::Guide;
 use learning::{
     apply_review, calculate_progress_sum, find_key_of_lowest_score, ReviewAttempt, ReviewOutcome,
     LEARNED_INTERVAL_SECONDS,
@@ -90,6 +92,10 @@ fn flashcard(props: &FlashcardProps) -> Html {
     } else {
         "front-side"
     };
+    let back_visible = matches!(
+        props.swipe_direction,
+        SwipeDirection::Left | SwipeDirection::Right
+    );
     let style = format!("--pos_x: {}; --pos_y: {};", props.pos_x, props.pos_y);
 
     let mut class_name = match props.swipe_direction {
@@ -111,7 +117,7 @@ fn flashcard(props: &FlashcardProps) -> Html {
 
     html! {
         <>
-            <div ref={front} class={format!("{class_name} {front_class}")} style={style.clone()}>
+            <div ref={front} inert={back_visible.then_some("")} aria-hidden={back_visible.to_string()} class={format!("{class_name} {front_class}")} style={style.clone()}>
                 {
                     if props.show_explanations {
                         html! { <>{ props.processed_explanation.clone() }</> }
@@ -125,8 +131,11 @@ fn flashcard(props: &FlashcardProps) -> Html {
                     }
                 }
             </div>
-            <div class={format!("{} back-side", class_name.clone())} style={style.clone()}>
-                <p class="top">{ props.processed_sentence.clone() }</p>
+            <div inert={(!back_visible).then_some("")} aria-hidden={(!back_visible).to_string()} class={format!("{} back-side", class_name.clone())} style={style.clone()}>
+                <p class="top">
+                    <span aria-hidden="true">{ props.processed_sentence.clone() }</span>
+                    <span class="sr-only">{ &props.current_card.target_language }</span>
+                </p>
                 <p class="bottom">{ format!("( {} )", props.current_card.base_language.clone()) }</p>
             </div>
         </>
@@ -136,6 +145,7 @@ fn flashcard(props: &FlashcardProps) -> Html {
 #[derive(Properties, PartialEq, Clone)]
 struct FlashcardViewProps {
     open_settings: Callback<()>,
+    guide_open: bool,
 }
 
 #[function_component(FlashcardView)]
@@ -407,31 +417,68 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
         Callback::from(move |_| cb.emit(()))
     };
 
-    let progress_bars = (0..2).map(|i| {
-        html! {
-            <div class={format!("progress-bar bar-{}", i + 1)}
-                 style={format!("--progress:{progress_percentage}%")}
-                 onclick={open_settings_cb.clone()}>
+    let actions_enabled = matches!(&*content, ContentLoadState::Ready(_))
+        && review.animation.accepts_swipes()
+        && !drag.is_moving()
+        && !props.guide_open;
+    let act = {
+        let review = review.clone();
+        Callback::from(move |direction| {
+            if actions_enabled {
+                let direction = if matches!(direction, SwipeDirection::Left | SwipeDirection::Right)
+                    && review.animation.direction() != SwipeDirection::None
                 {
-                    if is_initial_state {
-                        html! { <p>{"Guide"}</p> }
-                    } else {
-                        html! {
-                            <>
-                                <p>{format!("{}", skill_level)}</p>
-                                <p>{format!("{}/{}", rounded_progress_card_number, next_skill_level)}</p>
-                            </>
-                        }
-                    }
-                }
-            </div>
-        }
-    }).collect::<Html>();
+                    SwipeDirection::None
+                } else {
+                    direction
+                };
+                review.dispatch(ReviewAction::Swipe {
+                    direction,
+                    at_ms: get_timestamp_ms(),
+                });
+            }
+        })
+    };
+    let on_key = {
+        let act = act.clone();
+        let drag_surface = drag_surface.clone();
+        Callback::from(move |event: KeyboardEvent| {
+            if event
+                .target()
+                .and_then(|target| target.dyn_into::<Element>().ok())
+                != drag_surface.cast::<Element>()
+                || event.repeat()
+                || event.alt_key()
+                || event.ctrl_key()
+                || event.meta_key()
+            {
+                return;
+            }
+            let direction = match event.key().as_str() {
+                "ArrowLeft" => SwipeDirection::Left,
+                "ArrowRight" => SwipeDirection::Right,
+                "ArrowUp" => SwipeDirection::Up,
+                "ArrowDown" => SwipeDirection::Down,
+                _ => return,
+            };
+            event.prevent_default();
+            act.emit(direction);
+        })
+    };
+    let progress_label = if is_initial_state {
+        "Guide".to_owned()
+    } else {
+        format!("{skill_level}: {rounded_progress_card_number}/{next_skill_level} | Guide")
+    };
 
     html! {
         <>
-            {progress_bars}
-            <div ref={drag_surface} class="flashcard-view"
+            <button type="button" class="progress-bar" onclick={open_settings_cb}
+                aria-haspopup="dialog" aria-label={format!("Open guide. {progress_label}")}
+                style={format!("--progress:{progress_percentage}%")}>
+                <span>{progress_label}</span>
+            </button>
+            <div ref={drag_surface} class="flashcard-view" tabindex="0" role="region" aria-label="Flashcard. Use arrow keys to review." onkeydown={on_key}
                 onpointerdown={on_pointer_event.clone()}
                 onpointermove={on_pointer_event.clone()}
                 onpointerup={on_pointer_event.clone()}
@@ -440,7 +487,7 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
                 style={style.clone()}>
                 <div class="drag-surface" aria-hidden="true"></div>
                 { match &*content {
-                    ContentLoadState::Loading => html! { <section class="load-panel" role="status"><h2>{"Loading flashcards?"}</h2></section> },
+                    ContentLoadState::Loading => html! { <section class="load-panel" role="status"><h2>{"Loading flashcards..."}</h2></section> },
                     ContentLoadState::Failed(message) => html! {
                         <section class="load-panel" role="alert">
                             <h2>{"Flashcards could not be loaded"}</h2><p>{message}</p>
@@ -463,6 +510,11 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
                 } }
 
             </div>
+            <nav class="review-controls" aria-label="Review actions">
+                <button type="button" aria-disabled={(!actions_enabled).to_string()} onclick={act.reform(|_| SwipeDirection::Down)}>{if review.is_question() { "Skip / next" } else { "Incorrect / next" }}</button>
+                <button type="button" aria-disabled={(!actions_enabled).to_string()} onclick={act.reform(|_| SwipeDirection::Left)}>{"Reveal / flip"}</button>
+                <button type="button" aria-disabled={(!actions_enabled).to_string()} onclick={act.reform(|_| SwipeDirection::Up)}>{if review.is_question() { "Start / next" } else { "Correct / next" }}</button>
+            </nav>
             <div class="app-notices">
                 { if let ContentLoadState::Ready(loaded) = &*content {
                     loaded.notice.as_ref().map(|notice| html! { <aside class="app-notice" role="status">{notice}</aside> }).unwrap_or_default()
@@ -484,91 +536,16 @@ fn app() -> Html {
 
     html! {
             <div class="app-container">
-                <FlashcardView open_settings={{
+                <FlashcardView guide_open={*show_settings} open_settings={{
                     let show_settings = show_settings.clone();
                     Callback::from(move |_| show_settings.set(true))
                 }} />
 
-                { if *show_settings { html! { <SettingsModal on_close={{
+                { if *show_settings { html! { <Guide on_close={{
                     let show_settings = show_settings.clone();
                     Callback::from(move |_| show_settings.set(false))
                 }} /> } } else { html!{} } }
             </div>
-    }
-}
-
-#[derive(Properties, PartialEq, Clone)]
-struct SettingsModalProps {
-    on_close: Callback<()>,
-}
-
-#[function_component(SettingsModal)]
-fn settings_modal(props: &SettingsModalProps) -> Html {
-    html! {
-        <div class="modal-overlay" onclick={{
-            let cb = props.on_close.clone();
-            Callback::from(move |_| cb.emit(()))
-        }}>
-            <div class="settings-modal" onclick={
-                Callback::from(|e: MouseEvent| e.stop_propagation())
-            }>
-                <div class="modal-header">
-                    <h3>{"Guide"}</h3>
-                    <button class="close-button" onclick={{
-                        let cb = props.on_close.clone();
-                        Callback::from(move |_| cb.emit(()))
-                    }} aria-label="Close">
-                        { html!{ <i class="fas fa-times"></i> } }
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="instructions">
-                        <div class="instruction-row">
-                            <i class="fas fa-arrow-up instruction-icon" aria-hidden="true"></i>
-                            <p class="instruction-text">
-                                {"Swipe up or down to show the next card. A short timer starts as soon as it appears."}
-                            </p>
-                        </div>
-                        <div class="instruction-row">
-                            <i class="fas fa-arrows-left-right instruction-icon" aria-hidden="true"></i>
-                            <p class="instruction-text">
-                                {"When you think of the missing word, swipe left or right to reveal the answer and explanations. The timer stops the moment it's revealed."}
-                            </p>
-                        </div>
-                        <div class="instruction-row">
-                            <i class="fas fa-check instruction-icon" aria-hidden="true"></i>
-                            <p class="instruction-text">
-                                {"Ready to move on? Swipe up if you were correct, or down if not."}
-                            </p>
-                        </div>
-                        <div class="instruction-row">
-                            <i class="fas fa-chart-line instruction-icon" aria-hidden="true"></i>
-                            <p class="instruction-text">
-                                {"Each word’s progress score blends three things: how long since you last saw it, how quickly you recalled it, and whether you got it right. This drops over time."}
-                            </p>
-                        </div>
-                        <div class="instruction-row philosophy">
-                            <i class="fas fa-bolt instruction-icon" aria-hidden="true"></i>
-                            <p class="instruction-text">
-                                {"Real conversations are fast. So we consider words ‘learnt’ when you can recall them quickly especially after longer breaks."}
-                            </p>
-                        </div>
-                        <div class="instruction-row app-install">
-                            <i class="fas fa-mobile-screen-button instruction-icon" aria-hidden="true"></i>
-                            <p class="instruction-text">
-                                {"Install the app:"}
-                                <br/>
-                                {"• iPhone/iPad (Safari): Tap the Share icon, then \"Add to Home Screen\", then \"Add\"."}
-                                <br/>
-                                {"• Android (Chrome): Tap the three-dots menu, then \"Add to Home screen\" or \"Install\"."}
-                                <br/>
-                                {"The app opens full screen and can work offline after the first load."}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     }
 }
 
@@ -600,8 +577,20 @@ fn save_review_result(
     step: &animation::AnimationStep,
     save_status: &UseStateHandle<SaveStatus>,
 ) {
+    if let Some(updated) = calculate_review_result(progress, review, step) {
+        save_progress_and_update_status(&updated, save_status);
+        progress.set(updated);
+    }
+}
+
+/// Translate an accepted review into learning inputs without browser effects.
+fn calculate_review_result(
+    progress: &SavedProgress,
+    review: &ReviewState,
+    step: &animation::AnimationStep,
+) -> Option<SavedProgress> {
     let AnimationStepKind::Advance(direction) = &step.kind else {
-        return;
+        return None;
     };
     let attempt = ReviewAttempt {
         elapsed_ms: review.duration(),
@@ -614,16 +603,12 @@ fn save_review_result(
             ReviewOutcome::Incorrect
         },
     };
-    let Some(updated) = apply_review(
+    apply_review(
         progress,
         &review.presentation.review_words,
         &attempt,
         (step.started_at_ms / 1000) as i32,
-    ) else {
-        return;
-    };
-    save_progress_and_update_status(&updated, save_status);
-    progress.set(updated);
+    )
 }
 
 fn save_progress_and_update_status(progress: &SavedProgress, status: &UseStateHandle<SaveStatus>) {
@@ -702,8 +687,8 @@ fn construct_processed_sentence(tokens: &[ProcessedToken]) -> Html {
                 let padding = (translation.len() + 2).saturating_sub(token.text.len()) / 2;
                 let spaces = "\u{00A0}".repeat(padding);
                 html! {
-                    <span class="hidden-word" data-translation={translation.clone()}>
-                        {spaces.clone()}{&token.text}{spaces}
+                    <span class="hidden-word" role="img" aria-label={format!("Missing word: {translation}")} data-translation={translation.clone()}>
+                        <span aria-hidden="true">{spaces.clone()}{&token.text}{spaces}</span>
                     </span>
                 }
             } else {
@@ -741,7 +726,7 @@ fn construct_processed_explanation(
             }
         }
     }
-    html! { <div class="explanation-div">{for nodes}</div> }
+    html! { <div class="explanation-div" tabindex="0" role="region" aria-label="Word explanations">{for nodes}</div> }
 }
 
 fn should_enable_drag_for_event_target(target: &EventTarget) -> bool {

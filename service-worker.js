@@ -6,7 +6,7 @@ const LOCAL_DEVELOPMENT = ['localhost', '127.0.0.1', '[::1]', '::1']
 const APP_FILES = [
   'index.html', 'manifest.json',
   'assets/croatian.json', 'assets/croatian_sentences.json', 'assets/croatian_explanations.json',
-  'pkg/yew_project_bg.wasm', 'pkg/yew_project.js',
+  'pkg/bunny_to_zec_bg.wasm', 'pkg/bunny_to_zec.js',
   'icons/icon-192x192.png', 'icons/icon-512x512.png', 'icons/icon-1024x1024.png',
   'static/style.css',
 ];

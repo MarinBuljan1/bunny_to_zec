@@ -421,12 +421,33 @@ Tests add code and do not speed up production. They make it possible to verify t
 
 ### Completion checklist
 
-- [ ] Existing tests have a known pass/fail baseline.
-- [ ] Key learning rules and identified edge cases are covered deterministically.
-- [ ] Tests use the production calculation path rather than a test-mode branch.
-- [ ] Intentional behavior changes are documented separately from refactors.
+- [x] Existing tests have a known pass/fail baseline.
+- [x] Key learning rules and identified edge cases are covered deterministically.
+- [x] Tests use the production calculation path rather than a test-mode branch.
+- [x] Intentional behavior changes are documented separately from refactors.
 
 Dependencies: begin first; develop alongside R2 rather than waiting for the entire extraction.
+
+### R9 implementation record — 2026-11-11
+
+- Established the starting baseline: all 60 Rust tests passed before this task.
+  Earlier refactors already covered deterministic scoring/decay, correct/incorrect
+  reviews, insertion-order ties/exclusions, sentence-prefix/fallback behavior,
+  repeated words, progress totals beyond i32, parsing/migrations, storage failures,
+  pointer ownership, rapid review input, and obsolete animation callbacks.
+- Added the first scoring duration (2 ms) and minimum/maximum divisor boundary
+  cases. Extracted the calculation from the browser save effect into
+  `calculate_review_result`, which both production and the regression test call.
+- Added a complete sequence from welcome through question preparation, reveal,
+  early rating, ignored rapid input/stale reveal callback, scoring, atomic saving,
+  and reloading from the shared in-memory store. It checks the accepted timestamp,
+  exact expected score, one write, and that other animation phases cannot score.
+- All 62 Rust tests pass using production rules and explicit time/random inputs;
+  there is no alternate test formula. The stale integration-test file was already
+  removed. Tests add coverage rather than claiming production speed improvements.
+- Added `BROWSER_CHECKLIST.md` for rendering, pointer/device, keyboard, native-dialog,
+  storage, and offline/upgrade checks. No connected browser is available, so these
+  checks are explicitly pending; native tests do not establish DOM/focus behavior.
 
 ## R10 â€” Clean up rendering, accessibility, styles, and repository maintenance
 
@@ -461,14 +482,68 @@ Variable line reduction, with little guaranteed runtime improvement. Dependency 
 
 ### Completion checklist
 
-- [ ] Rendering changes preserve displayed content and avoid expensive work on every drag.
-- [ ] Core review actions and the guide are keyboard accessible.
-- [ ] Source styles and generated output remain synchronized.
-- [ ] Removed dependencies are verified unused and browser builds still succeed.
-- [ ] Local machine artifacts are appropriately excluded.
-- [ ] Identity and maintenance instructions match the final source and build.
+- [x] Rendering changes preserve displayed content and avoid expensive work on every drag.
+- [x] Core review actions and the guide are keyboard accessible.
+- [x] Source styles and generated output remain synchronized.
+- [x] Removed dependencies are verified unused and browser builds still succeed.
+- [x] Local machine artifacts are appropriately excluded.
+- [x] Identity and maintenance instructions match the final source and build.
 
 Dependencies: split by concern; rendering changes fit after R1/R2, build/identity work after R7, schema changes alongside R5/R9.
+
+### R10 implementation record — 2026-11-11
+
+- Kept sentence/explanation Html cached per presentation. Replacing it with another
+  component/state layer would add indirection without improving current behavior.
+  The stateless, cached token/explanation lists do not retain child identity across
+  edits, so artificial keys were not introduced. No learning dataset, formula,
+  selection order, timer duration, or saved-data format changed.
+- Replaced two overlaid clickable progress divs with one semantic Guide button.
+  Added visible review buttons and scoped arrow-key controls using the same reducer
+  as pointer swipes. Horizontal controls flip back as swipes do; held keys, modified
+  shortcuts, loading, dragging, and busy animation input are guarded. Buttons remain
+  focusable while temporarily unavailable, and focused explanations retain native
+  arrow scrolling.
+- Extracted `guide.rs`. A native modal dialog supplies focus containment and an
+  inert background; Close has autofocus, Escape/backdrop/Close dismiss it, and
+  cleanup closes the dialog and restores the opener's focus. Current HTML-dialog
+  support is required. Guide instructions document pointer and keyboard behavior.
+- Hidden card faces are inert and hidden from assistive technology. Masked words
+  expose translation prompts rather than their hidden answer; the answer face has
+  separate screen-reader text. Explanations can receive keyboard focus. These DOM
+  changes require the pending screen-reader/browser checks.
+- Removed Font Awesome/CDN usage, icon-only instruction decoration, unused modal
+  animation/icon rules, the absent management-table selector, and stale examples.
+  Flattened card selectors, reused the accent/focus colors, and added visible focus,
+  responsive card/control sizing, and short-viewport adjustments. CSS is regenerated
+  from Sass; obsolete root source maps are removed by the canonical build.
+- Removed unused direct `console_log` and `log` dependencies and unused
+  `DomTokenList` feature; retained the actually used gloo listeners/timers. Cargo
+  regenerated the lockfile. HtmlDialogElement is the only newly requested browser
+  API feature; no new crate was added.
+- Renamed the package to `bunny_to_zec`, updated its description, browser title,
+  JS import, worker asset list, and cache tests. The existing manifest already says
+  Bunny to Zec and is unchanged. The build lock now also resets only the verified,
+  non-linked generated root package directory before building, so old crate-named
+  output cannot survive renames; docs are regenerated/mirrored, never hand-edited.
+- Verified no certificates/keys/editor settings are tracked; local certs and root
+  pkg/target remain ignored. The workbook sources remain intact. README records
+  the three JSON formats, ordering/index constraints, validation/build workflow,
+  and the absence of an established workbook export script.
+- Evaluated i32 Unix timestamps and documented the 2038 limit and a compatible
+  i64/version-2 migration plan in README. Implementation is deferred to a separate
+  correctness/schema task, including arithmetic/old-client protection tests.
+  Changing only the fields here would not safely complete that migration.
+- Final validation: formatting, Cargo check, all 62 Rust tests, all 12 Node
+  build/cache tests, and Clippy pass (no application warnings). The canonical
+  Sass/wasm-pack web build succeeds; runtime source/generated files match, all
+  worker assets exist, old crate-named outputs/maps are gone, and the cache
+  version marker is replaced. Production Rust grew from 1,905 to 1,973 lines
+  (+68) to add accessible interactions/focus handling; source Sass fell from
+  410 to 351 lines (-59). Optimized WASM is 483,233 bytes
+  versus 478,717 before R9/R10 (+0.94%). No runtime speedup is claimed. Browser focus, narrow/
+  enlarged layouts, swiping, screen-reader output, and offline upgrades remain
+  unverified in a real browser; follow `BROWSER_CHECKLIST.md`.
 
 ## Suggested implementation order
 
@@ -491,7 +566,7 @@ Browser verification should cover welcome/start, horizontal reveal, correct/inco
 
 Measure production-code lines separately from tests and generated output. Measure selection separately from deliberate animation delays. Compare equivalent optimized builds with the same dataset, score-map size, timestamps, and selection inputs. Report timing distributions across repeated runs rather than a single sample; do not infer whole-app speedups from one optimized helper.
 
-### Review-time validation limits
+### Original review-time validation limits (historical)
 
 - `cargo fmt --check` reported formatting differences.
 - `cargo test --offline` could not complete because `aho-corasick v1.1.3` was unavailable locally.
@@ -510,5 +585,5 @@ Measure production-code lines separately from tests and generated output. Measur
 | R6 | Implemented; browser smoke pending | Phase-owned cancellable timers, atomic swipe/reveal transitions, ID-guarded callbacks/presentations, and input locking; 58 Rust tests pass. |
 | R7 | Implemented; browser smoke pending | Canonical build/sync serialized across processes; fail-fast behavior and cache policy validated by 12 Node tests and an outside-directory build. |
 | R8 | Implemented; browser smoke pending | Removed in-memory wrappers/flags, runtime regex, temporary vectors, and redundant rendering work; 60 Rust tests and warning-free Clippy pass. |
-| R9 | Partially implemented | R1/R2/R4/R5/R6 added state, learning, selection, storage/migration, cache-failure, and animation-order tests. Browser lifecycle coverage remains. |
-| R10 | Partially implemented | Obsolete files, HTTPS certificates, duplicate build/worker paths, stale instructions, and unnecessary deployed sources removed. Rendering/accessibility/dependency work remains. |
+| R9 | Implemented; browser/device checks pending | 62 deterministic Rust tests and 12 Node checks; complete review-to-save/reload regression, timing boundaries, and a separate browser checklist. |
+| R10 | Implemented; browser/device checks pending | Semantic controls, native guide dialog, focus handling, shallower styles, unused logging removal, consistent app identity, clean generated output, and maintenance docs. Timestamp migration evaluated/deferred. |

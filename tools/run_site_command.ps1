@@ -27,6 +27,18 @@ try {
         }
     }
 
+    if ($Operation -eq 'Build') {
+        # wasm-pack leaves obsolete crate-named files behind after package renames.
+        # Only reset this project's generated package while holding the build lock.
+        $packageDirectory = [System.IO.Path]::GetFullPath((Join-Path $projectRoot 'pkg'))
+        if ((Split-Path -Parent $packageDirectory) -ne $projectRoot) { throw 'Package output must be inside the project.' }
+        if (Test-Path -LiteralPath $packageDirectory) {
+            if ((Get-Item -LiteralPath $packageDirectory).Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
+                throw 'Refusing to reset a linked package output directory.'
+            }
+            Remove-Item -LiteralPath $packageDirectory -Recurse -Force
+        }
+    }
     $scriptName = if ($Operation -eq 'Build') { 'build_and_sync.bat' } else { 'sync_docs.bat' }
     & (Join-Path $projectRoot $scriptName) --lock-held
     $exitCode = $LASTEXITCODE

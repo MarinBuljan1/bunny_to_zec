@@ -16,6 +16,8 @@ endlocal & exit /b %RC%
 :Build
 call sass --no-source-map "static/style.scss" "static/style.css"
 if errorlevel 1 exit /b %ERRORLEVEL%
+if exist "static\style.css.map" del /Q "static\style.css.map"
+if errorlevel 1 exit /b %ERRORLEVEL%
 
 call wasm-pack build --target web -- --locked
 if errorlevel 1 exit /b %ERRORLEVEL%

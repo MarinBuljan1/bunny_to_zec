@@ -9,13 +9,13 @@ export interface InitOutput {
     readonly memory: WebAssembly.Memory;
     readonly run_app: () => void;
     readonly wasm_bindgen__convert__closures_____invoke__hec68c6ddc5f8f393: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures________invoke__h0ebe4ebd86841457: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__hf86edb55a3aca243: (a: number, b: number) => void;
+    readonly wasm_bindgen__convert__closures________invoke__hb4469187ab011d5b: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h30110bc3f7a6e373: (a: number, b: number) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
-    readonly __wbindgen_exn_store: (a: number) => void;
     readonly __externref_table_alloc: () => number;
     readonly __wbindgen_externrefs: WebAssembly.Table;
+    readonly __wbindgen_exn_store: (a: number) => void;
     readonly __externref_drop_slice: (a: number, b: number) => void;
     readonly __wbindgen_free: (a: number, b: number, c: number) => void;
     readonly __wbindgen_destroy_closure: (a: number, b: number) => void;

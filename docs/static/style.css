@@ -15,44 +15,27 @@ html, body {
   width: 100%;
 }
 
-.flashcard-view, .management-table {
-  transition: opacity 0.3s ease-in-out;
-}
-
 .progress-bar {
   position: absolute;
   top: 5%;
   left: 10%;
   width: 80%;
-  background-color: white;
+  min-height: 3.5rem;
+  padding: 0.75rem;
   z-index: 1000;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  border-radius: 2em;
   border: 0.2em solid #007bff;
+  border-radius: 2em;
+  background: linear-gradient(to right, #d7eaff var(--progress), white var(--progress));
+  color: #111;
+  font: inherit;
   cursor: pointer;
-  transition: box-shadow 0.15s ease, transform 0.05s ease;
-}
-.progress-bar p {
-  color: black;
-}
-.progress-bar.bar-1 {
-  z-index: 1001;
-  clip-path: inset(0 calc(100% - var(--progress)) 0 0);
-  background-color: #007bff;
-}
-.progress-bar.bar-1 p {
-  color: white;
 }
 .progress-bar:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
-.progress-bar:active {
-  transform: translateY(1px);
-}
 
 .flashcard-view {
+  transition: opacity 0.3s ease-in-out;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -76,13 +59,15 @@ html, body {
   background: linear-gradient(var(--edge-angle), rgba(var(--edge-rgb), calc(var(--edge-alpha) * 0.8)) 0%, rgba(var(--edge-rgb), calc(var(--edge-alpha) * 0.5)) 12%, rgba(var(--edge-rgb), 0) 30%);
   transition: background 0.16s ease-out;
 }
-.flashcard-view .drag-surface {
+
+.drag-surface {
   position: absolute;
   inset: 0;
   touch-action: none;
 }
-.flashcard-view .card {
-  width: 300px;
+
+.card {
+  width: min(300px, 90vw);
   min-height: 200px;
   max-height: 60vh;
   touch-action: none;
@@ -98,53 +83,53 @@ html, body {
   align-items: center;
   text-align: center;
   flex-direction: column;
-  user-select: none; /* Prevent text selection */
+  user-select: none;
   position: absolute;
   z-index: 1;
   transform: rotateY(calc(var(--pos_x) * 1deg)) translateY(calc(var(--pos_y) * 1px));
   transition: transform 0.4s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   backface-visibility: hidden;
 }
-.flashcard-view .card.explanation-scrollable {
+.card.explanation-scrollable {
   touch-action: pan-y;
 }
-.flashcard-view .card.back-side {
+.card.back-side {
   transform: rotateY(calc(180deg - var(--pos_x) * 1deg)) translateY(calc(var(--pos_y) * 1px));
 }
-.flashcard-view .card.back-side .hidden-word {
+.card.back-side .hidden-word {
   color: black;
 }
-.flashcard-view .card.move-up {
+.card.move-up {
   transform: translateY(calc(-50vh - 100%));
 }
-.flashcard-view .card.move-down {
+.card.move-down {
   transform: translateY(calc(50vh + 100%));
 }
-.flashcard-view .card.move-left, .flashcard-view .card.move-right {
+.card.move-left, .card.move-right {
   transform: rotateY(calc(180deg - var(--pos_x) * 1deg)) translateY(calc(var(--pos_y) * 1px));
 }
-.flashcard-view .card.move-left.back-side, .flashcard-view .card.move-right.back-side {
+.card.move-left.back-side, .card.move-right.back-side {
   transform: rotateY(calc(var(--pos_x) * 1deg)) translateY(calc(var(--pos_y) * 1px));
 }
-.flashcard-view .card.moving {
+.card.moving {
   transition: transform 0s;
 }
-.flashcard-view .card.fast-move {
+.card.fast-move {
   transition: transform 0s ease;
 }
-.flashcard-view .card p {
+.card p {
   margin: 0;
 }
-.flashcard-view .card .top {
+.card .top {
   line-height: 2em;
   margin-bottom: 1em;
 }
-.flashcard-view .card .hidden-word {
+.card .hidden-word {
   color: transparent;
   position: relative;
   white-space: nowrap;
 }
-.flashcard-view .card .hidden-word::after {
+.card .hidden-word::after {
   content: "";
   position: absolute;
   left: 0;
@@ -154,7 +139,7 @@ html, body {
   background-color: black;
   opacity: 0.4;
 }
-.flashcard-view .card .hidden-word::before {
+.card .hidden-word::before {
   content: "(" attr(data-translation) ")";
   position: absolute;
   top: 0;
@@ -164,19 +149,20 @@ html, body {
   font-size: 0.8em;
   transform: translate(-50%, -65%);
 }
-.flashcard-view .card .explanation-div {
+.card .explanation-div {
+  min-height: 0;
   max-height: 60vh;
   overflow-y: auto;
   align-self: flex-start;
 }
-.flashcard-view .card .explanation {
+.card .explanation {
   margin: 0.5em 0.2em;
   text-align: left;
 }
-.flashcard-view .card .explanation.base-word {
+.card .explanation.base-word {
   text-decoration: underline;
 }
-.flashcard-view .card .explanation.target-word {
+.card .explanation.target-word {
   padding-left: 3em;
   text-indent: -1.5em;
 }
@@ -196,7 +182,7 @@ html, body {
 
 .app-notices {
   position: fixed;
-  bottom: 1rem;
+  bottom: 5rem;
   left: 50%;
   transform: translateX(-50%);
   width: min(90vw, 40rem);
@@ -234,150 +220,119 @@ html, body {
   outline-offset: 3px;
 }
 
-/* Modal overlay for settings */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
+/* Native dialog keeps focus inside and makes the background inert. */
+.guide-dialog {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  max-width: 95vw;
+  max-height: 92vh;
+}
+.guide-dialog::backdrop {
   background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-  backdrop-filter: blur(4px) saturate(120%);
-  -webkit-backdrop-filter: blur(4px) saturate(120%);
-  animation: fadeIn 0.18s ease-out;
 }
 
 .settings-modal {
   background: #fff;
   width: min(90vw, 520px);
-  max-width: 95vw;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-  animation: popIn 0.22s cubic-bezier(0.2, 0.7, 0.3, 1);
   display: flex;
   flex-direction: column;
   max-height: 90vh;
+  overflow: hidden;
 }
 
-.settings-modal .modal-header {
+.modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1rem 0.5rem 1rem;
-  border-bottom: 1px solid #eee;
-  position: sticky;
-  top: 0;
-  background: #fff;
-  z-index: 1;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #ddd;
 }
-
-.settings-modal .modal-header h3 {
+.modal-header h2 {
   margin: 0;
 }
 
-.settings-modal .close-button {
+.close-button {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   background: transparent;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: #304861;
-  padding: 0.25rem;
+  border: 0;
   border-radius: 8px;
-  transition: background 0.15s ease;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.close-button:hover {
+  background: #eee;
 }
 
-.settings-modal .modal-body {
+.modal-body {
   padding: 1rem;
   line-height: 1.5;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
-/* Instructions layout */
-.instructions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+.instructions p {
+  margin: 0 0 1rem;
 }
-.instructions .instruction-row {
+
+.review-controls {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(95vw, 34rem);
   display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  background: rgba(0, 123, 255, 0.02);
-  border: 1px solid rgba(0, 123, 255, 0.1);
-  border-radius: 10px;
-  padding: 0.75rem 0.9rem;
-}
-.instructions .instruction-row .instruction-icon {
-  color: #007bff;
-  flex: 0 0 1.6rem;
-  width: 1.6rem;
-  height: 1.6rem;
-  display: inline-flex;
-  align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  line-height: 1;
-  text-align: center;
-  margin-top: 0.1rem;
-  background: linear-gradient(120deg, rgba(0, 123, 255, 0.1), rgba(0, 123, 255, 0.02));
-  border: 1px solid rgba(0, 123, 255, 0.25);
-  border-radius: 50%;
+  gap: 0.5rem;
+  z-index: 1000;
 }
-.instructions .instruction-row .instruction-text {
-  margin: 0;
+.review-controls button {
+  flex: 1;
+  min-height: 2.75rem;
+  padding: 0.5rem;
+  border: 1px solid #007bff;
+  border-radius: 8px;
+  background: white;
+  font: inherit;
+  cursor: pointer;
 }
-.instructions .philosophy {
-  padding-top: 0.5rem;
-  margin-top: 0.25rem;
-  background: rgba(255, 145, 0, 0.04);
-  border: 1px solid rgba(255, 145, 0, 0.2);
-}
-.instructions .philosophy .instruction-icon {
-  color: rgb(255, 145, 0);
-  background: linear-gradient(120deg, rgba(255, 145, 0, 0.1), rgba(255, 145, 0, 0.02));
-  border: 1px solid rgba(255, 145, 0, 0.25);
-}
-.instructions .app-install {
-  background: rgba(46, 197, 0, 0.04);
-  border: 1px solid rgba(46, 197, 0, 0.2);
-}
-.instructions .app-install .instruction-icon {
-  color: rgb(46, 197, 0);
-  background: linear-gradient(120deg, rgba(46, 197, 0, 0.1), rgba(46, 197, 0, 0.02));
-  border: 1px solid rgba(46, 197, 0, 0.25);
+.review-controls button[aria-disabled=true] {
+  opacity: 0.5;
+  cursor: default;
 }
 
-.settings-modal .close-button:hover {
-  background: rgba(0, 0, 0, 0.06);
+button:focus-visible, [tabindex="0"]:focus-visible {
+  outline: 3px solid #a34b00;
+  outline-offset: 3px;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+.flashcard-view:focus-visible {
+  outline-offset: -4px;
 }
-@keyframes popIn {
-  from {
-    transform: translateY(8px) scale(0.985);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
-@media (max-width: 480px) {
-  .settings-modal {
-    width: 94vw;
-    max-height: 92vh;
+
+@media (max-height: 500px) {
+  .progress-bar {
+    top: 0.5rem;
+    min-height: 2.75rem;
   }
-  .instructions .instruction-row {
-    padding: 0.65rem 0.8rem;
+  .review-controls {
+    bottom: 0.5rem;
+  }
+  .card {
+    max-height: 50vh;
+    min-height: 100px;
   }
 }
