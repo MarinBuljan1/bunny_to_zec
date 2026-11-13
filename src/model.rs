@@ -36,8 +36,10 @@ pub(crate) struct LearningContent {
     pub(crate) explanations: HashMap<String, HashMap<String, String>>,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
 pub(crate) struct SavedProgress {
     pub(crate) scores: HashMap<String, ScoreData>,
     pub(crate) last_data_update: i64,
+    #[serde(default)]
+    pub(crate) conversations: crate::conversations::ConversationProgress,
 }

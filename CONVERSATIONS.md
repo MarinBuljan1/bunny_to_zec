@@ -42,8 +42,8 @@ batches add independently written stories about misunderstandings, memories,
 relationships, school, travel, community life, and work. Hotel arrivals include
 separate early-arrival, late-arrival, noise, and facilities scenarios.
 
-This content is not connected to the current review UI. It does not change scoring,
-or sentence selection. The vocabulary corrections below do migrate the affected
+The chat UI now selects and presents these conversations. It preserves the existing
+scoring formulas and defers vocabulary absent from learner replies. The vocabulary corrections below do migrate the affected
 saved score keys. Browser-model code removed earlier has not been restored.
 The conversations are authored directly in this session, without other models or
 external APIs. Earlier local-model probes contributed no library content, and the
@@ -94,11 +94,13 @@ The earlier policy of leaving retired gaps was superseded by this compaction.
 Renumbering requires rebuilding every `c_id` in the word index and updating document
 references. The three approved samples now have IDs `0070`, `0071` and `0072`.
 Historical audit tables retain their old snapshot IDs and should be matched by title.
-Conversation progress is not integrated yet; any later renumbering after ID-based
-read counts exist would also require migrating those stored references.
+Conversation IDs now identify saved cursors and completed-read counts. Future
+renumbering requires migrating those persistent references; retain IDs when editing.
 
 Each exchange presents the partner
-first, followed by the learner after a tap. Only then does recall timing start.
+first, followed by learner typing dots for 1.2–4 seconds, then the learner reply.
+Recall timing starts only when that reply appears. Tapping a message toggles
+English for every message; it does not reveal the reply early.
 Both messages have independent Croatian text and contextual English translations,
 supporting the global translation toggle without regenerating content.
 
@@ -116,8 +118,7 @@ this shared content file.
 Lookup lowercases Unicode text without changing display text. It does not remove
 diacritics or merge grammatical forms: `Kruh` maps to `kruh`, but `kruha` remains a
 separate entry, and `čaj` does not become `caj`. The index uses the existing Rust
-token separators. The current review UI's tokenizer has not been changed to use
-this new library/matching policy yet.
+token separators. The chat UI and index validation use this same matching policy.
 
 `CONVERSATION_COVERAGE.json` records every missing form and unlisted learner token.
 Nothing is counted just because it appears in a partner message, English
@@ -145,7 +146,8 @@ Progress readers and writers map those three former spellings to the corrected
 key. When both have scores, the most recently reviewed record wins; equal review
 times retain the higher score. Scores are not added together. Reading does not
 write storage; failed saves preserve the existing stored snapshot, and legacy
-progress keys remain intact. The snapshot schema and normal scoring are unchanged.
+progress keys remain intact. The chat update adds conversation state in progress snapshot version 3; normal scoring
+formulas are unchanged. Versions 1 and 2 remain readable.
 
 ## Checking and editing
 

@@ -220,6 +220,7 @@ fn scores_cross_the_old_i32_limit_without_changing_selection_or_review_math() {
             },
         )]),
         last_data_update: NOW,
+        conversations: Default::default(),
     };
     let attempt = ReviewAttempt {
         elapsed_ms: 1_500,
@@ -263,6 +264,7 @@ fn post_2038_correct_and_incorrect_reviews_preserve_seconds_and_decay() {
             ),
         ]),
         last_data_update: now - 100,
+        conversations: Default::default(),
     };
     for (outcome, expected_score, expected_review) in [
         (ReviewOutcome::Correct, 1_100, now),
@@ -297,6 +299,7 @@ fn maximum_i64_values_do_not_wrap_or_flatten_selection_priorities() {
             },
         )]),
         last_data_update: i64::MAX,
+        conversations: Default::default(),
     };
     let attempt = ReviewAttempt {
         elapsed_ms: 1_500,
@@ -333,6 +336,7 @@ fn maximum_i64_values_do_not_wrap_or_flatten_selection_priorities() {
             },
         )]),
         last_data_update: 1,
+        conversations: Default::default(),
     };
     let updated = apply_review(&long_interval, &[review_word("bok")], &attempt, i64::MAX).unwrap();
     assert_eq!(updated.scores["bok"].score, i64::MAX);
@@ -365,6 +369,7 @@ fn clock_rollback_does_not_inflate_decay_or_subtract_earned_scores() {
             ),
         ]),
         last_data_update: NOW + 200,
+        conversations: Default::default(),
     };
     for outcome in [ReviewOutcome::Correct, ReviewOutcome::Incorrect] {
         let attempt = ReviewAttempt {
@@ -383,6 +388,7 @@ fn recall_duration_boundary_and_divisor_clamps_follow_the_production_formula() {
     let progress = SavedProgress {
         scores: HashMap::new(),
         last_data_update: NOW,
+        conversations: Default::default(),
     };
     for (elapsed_ms, character_length, expected_score) in [
         (2, 0, 8_640_000),       // First duration that scores, with the minimum divisor.
@@ -433,6 +439,7 @@ fn review_decays_other_words_but_uses_original_scores_for_reviewed_words() {
             ),
         ]),
         last_data_update: NOW - 100,
+        conversations: Default::default(),
     };
     let attempt = ReviewAttempt {
         elapsed_ms: 1_500,
@@ -466,6 +473,7 @@ fn skipped_reviews_do_not_apply_decay_or_produce_progress_to_save() {
     let progress = SavedProgress {
         scores: HashMap::new(),
         last_data_update: NOW - 100,
+        conversations: Default::default(),
     };
     for elapsed_ms in [-1, 0, 1] {
         let attempt = ReviewAttempt {
@@ -497,6 +505,7 @@ fn incorrect_multiword_review_retains_scores_and_distributes_review_timestamps()
             ),
         ]),
         last_data_update: NOW - 100,
+        conversations: Default::default(),
     };
     let attempt = ReviewAttempt {
         elapsed_ms: 3_000,
@@ -526,6 +535,7 @@ fn unseen_words_use_ten_day_initial_interval_for_correct_answers() {
     let progress = SavedProgress {
         scores: HashMap::new(),
         last_data_update: NOW,
+        conversations: Default::default(),
     };
     for (outcome, expected_score) in [
         (ReviewOutcome::Correct, LEARNED_INTERVAL_SECONDS),
@@ -558,6 +568,7 @@ fn empty_review_word_list_still_decays_existing_progress_as_before() {
             },
         )]),
         last_data_update: NOW - 20,
+        conversations: Default::default(),
     };
     let attempt = ReviewAttempt {
         elapsed_ms: 1_500,

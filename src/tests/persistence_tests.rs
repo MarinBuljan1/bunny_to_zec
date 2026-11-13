@@ -11,6 +11,7 @@ fn progress() -> SavedProgress {
             },
         )]),
         last_data_update: 1_100,
+        conversations: Default::default(),
     }
 }
 
@@ -88,6 +89,7 @@ fn spelling_corrections_also_apply_to_snapshots_and_stale_saves() {
             },
         )]),
         last_data_update: 1100,
+        conversations: Default::default(),
     };
     let mut store = MemoryStore::default();
     store.insert_json(
@@ -160,7 +162,7 @@ fn bad_legacy_timestamp_preserves_scores_and_resumes_decay_from_now() {
 fn corrupt_or_future_progress_is_never_overwritten() {
     for (key, raw) in [
         (PROGRESS_KEY, "broken"),
-        (PROGRESS_KEY, r#"{"version":3,"value":{}}"#),
+        (PROGRESS_KEY, r#"{"version":4,"value":{}}"#),
         ("card_scores", "broken"),
     ] {
         let mut store = MemoryStore::default();
@@ -192,7 +194,7 @@ fn failed_atomic_save_keeps_the_previous_snapshot_intact() {
 }
 
 #[test]
-fn version_one_progress_migrates_atomically_and_old_readers_reject_version_two() {
+fn version_one_progress_migrates_atomically_and_old_readers_reject_version_three() {
     let mut store = MemoryStore::default();
     // Literal old-format JSON is independent of the widened Rust model.
     let original = r#"{"version":1,"value":{"scores":{"bok":{"score":2147483647,"last_review":1700000000}},"last_data_update":1700000001}}"#;
@@ -211,7 +213,7 @@ fn version_one_progress_migrates_atomically_and_old_readers_reject_version_two()
     store.write_error = None;
     write_progress(&mut store, &restored).unwrap();
     let envelope: serde_json::Value = serde_json::from_str(&store.values[PROGRESS_KEY]).unwrap();
-    assert_eq!(envelope["version"], 2);
+    assert_eq!(envelope["version"], 3);
     assert_eq!(
         read_progress(&store, 2_200_000_001).unwrap().progress,
         restored
@@ -235,6 +237,7 @@ fn full_i64_values_round_trip_exactly_without_javascript_number_conversion() {
             },
         )]),
         last_data_update: i64::MAX,
+        conversations: Default::default(),
     };
     write_progress(&mut store, &expected).unwrap();
     assert_eq!(read_progress(&store, i64::MAX).unwrap().progress, expected);

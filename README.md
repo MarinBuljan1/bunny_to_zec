@@ -1,29 +1,33 @@
 # Bunny to Zec
 
-A client-side Yew/WebAssembly flashcard app. Edit Rust in `src/`, styles in
+A client-side Yew/WebAssembly app for learning Croatian through conversations. Edit Rust in `src/`, styles in
 `static/style.scss`, and learning content in `assets/`.
 
 Pre-generated conversation drafts are in `assets/conversations.json`. See
 [CONVERSATIONS.md](CONVERSATIONS.md) for the JSON format, current coverage gaps,
-validation, and authoring workflow. This is a partial draft library; the current
-flashcard UI does not consume it yet.
+validation, and authoring workflow. The chat screen uses this partial draft library;
+forms absent from learner replies are deferred until coverage expands.
 
 ## Rust source layout
 
-- `lib.rs`: UI rendering, browser events, clocks, randomness, and animation timers.
+- `lib.rs`: app entry point and guide integration; the previous flashcard implementation remains as a compatibility reference.
+- `chat.rs`: conversation UI, loading/saving, clocks, and typing/feedback timers.
+- `conversations.rs`: pure selection, review targets, and persistent conversation transitions.
+- `gestures.rs`: review-message swipes and native history scrolling with a bottom pull.
 - `guide.rs`: native guide dialog, Escape/backdrop closing, and focus restoration.
 - `model.rs`: shared vocabulary and progress structures, retaining the existing JSON schemas.
 - `learning.rs`: pure scoring, decay, progress, and card-selection rules. Time is an explicit input.
 - `sentences.rs`: pure tokenization, word matching, and sentence selection. Random samples are explicit inputs.
 - `storage.rs`: network loading and browser persistence, separated from learning calculations.
 - `persistence.rs`: dataset validation, versioned snapshots, and legacy-data migration.
-- `review_state.rs`: local review, drag, and animation state.
-- `animation.rs`: pure animation ordering, input locking, and transition IDs.
+- `review_state.rs`: previous flashcard state, retained with its regression tests.
+- `animation.rs`: previous flashcard animation ordering and regression tests.
 - `tests/`: unit tests attached to their owning modules, plus build/cache checks.
 
-Review words are a plain `Vec<Card>` inside the current presentation; processed
-sentence tokens use `Option<String>` for their translation. These are in-memory
-UI values and are not part of the persisted snapshot format.
+Conversation review words are a plain `Vec<Card>` and are stored with the current
+message so a reload preserves exactly what was being tested. Matching lowercases
+Unicode while retaining accents and distinct grammatical forms. Every occurrence
+of a selected form is blanked, but each distinct form is scored once.
 
 The tokenizer is a small UTF-8 scanner. It preserves punctuation, individual spaces,
 apostrophes, and the previous behavior for tabs/newlines and discarded pipe characters.
@@ -33,35 +37,45 @@ inputs. Browser builds do not include the regex engine.
 
 Content has explicit loading, ready, and failed states. When there is no usable
 network or cached dataset, a **Try again** button restarts loading. Swipes are enabled
-only after validated content is ready. Saved progress is restored independently of
-network success and is not reloaded on content retries.
+only after validated content is ready. Saved progress is restored after content validation, including an unfinished
+conversation; failed loading attempts cannot write learning content or progress.
 
 Saving failures show a visible warning and **Retry saving** button. Learning can
 continue in memory, but unsaved changes may be lost on reload. If existing progress
 cannot be read or uses a newer format, it is left unchanged and the session becomes
 read-only for persistence; no automatic reset or overwrite is performed.
 
-Mouse, touch, and pen input share one pointer-event path. Only the active primary
-pointer can move or finish its drag; cancellation or lost capture resets the drag
-without rating the card. Capture keeps releases outside the card connected to the
-original gesture. Overflowing explanations keep native vertical scrolling, while
-short explanations and the card/background remain swipeable. Overflow is measured
-when explanations change and on window resize so the CSS touch policy is set before
-the gesture begins, as required by the [Pointer Events standard](https://www.w3.org/TR/pointerevents/#the-touch-action-css-property).
+Partner messages appear first, with three animated learner typing dots for
+1.2–4 seconds, based on partner-message length. Recall timing begins when the
+learner reply replaces the dots, and stops on the first reveal. Later flips do
+not change that duration. Tap any message to toggle English for all messages.
 
-Animations retain the 400 ms reveal/outgoing delay, 50 ms offscreen reposition,
-and 100 ms pause before the next recall timer starts. The first horizontal reveal
-stops recall timing immediately; flipping back does not restart its reveal delay.
-Advancing before explanations appear cancels that pending reveal. Further swipes
-are ignored during advancement until the next question is ready, preventing a
-second score update or overlapping card replacement.
+An active learner reply accepts horizontal swipes to flip, and vertical swipes
+after revealing to grade. The bubble moves a little and settles in place over
+280 ms; it never flies offscreen. Past messages remain in the current conversation.
+After rating, native touch scrolling, mouse dragging, or the wheel scroll history.
+A 72 px upward pull beyond the bottom (120 px accumulated wheel motion) requests
+the next exchange. Buttons and keyboard controls provide alternatives. Replacing
+the conversation clears the previous conversation's visible history.
 
-One phase-owned `gloo-timers` timeout drives the current step. Phase changes or
-view teardown drop the handle and cancel it; transition IDs also reject obsolete
-callbacks already queued. The review reducer applies timing and swipe acceptance
-together, while the UI performs scoring/persistence once on entering the advance
-phase and prepares the next card on entering repositioning. Scoring uses the
-accepted input timestamp, not a later timer/effect timestamp.
+Timers are cancelled when their phase/view changes; queued callbacks check the
+conversation and exchange identity. Repeated ratings are rejected by the pure
+state machine. A resumed question starts a fresh recall clock, excluding time
+away; a resumed answer keeps its already-frozen duration. Completed replies are
+never graded again on reload. The guide pauses a pending typing/feedback timeout.
+
+Conversation selection restricts candidates to forms in the learner index, then
+uses the existing vocabulary priorities. Among conversations containing the target,
+only those with the fewest completed reads are eligible; actual occurrence counts
+weight the random choice. A conversation's read count increases only after its last
+learner reply is rated/read. No read count is awarded for starting or abandoning it.
+
+For each learner reply, an already-introduced form below 864,000 raw score takes
+priority. Otherwise the next unseen form in the reply is introduced using existing
+review priorities. All previously introduced forms plus the target are blanked.
+When every form is known, all are blanked. Replies with no vocabulary forms are
+readable without grading. Scoring/decay formulas and the learning-level display
+remain unchanged.
 
 ## Saved-data formats and recovery
 
@@ -71,12 +85,20 @@ Browser local storage uses two snapshots with a `version` and `value` envelope:
   must have successful HTTP responses, parse correctly, and pass reference/order
   validation before a cache write. Any failed resource falls back to a whole saved
   dataset. A valid download remains usable if its cache write fails, with a warning.
-- `learning_progress_v1`: version 2; per-word scores, last-review timestamps, and
-  the decay-update timestamp in one write, now using `i64`. The existing key is
-  retained so previous version-1 clients reject the newer format before writing.
-  Readers accept version 1 or 2. A version-1 snapshot is migrated only on the next
-  successful save; failed writes preserve the original bytes. Content stays at
-  version 1. Timestamp units and normal scoring formulas remain unchanged.
+- `learning_progress_v1`: version 3; i64 per-word scores, last-review timestamps,
+  decay-update timestamp, completed conversation read counts, English visibility,
+  and the current conversation cursor/masked words/completed replies in one atomic
+  write. Readers accept versions 1, 2, and 3; missing conversation state defaults
+  to empty. Migration happens only on a successful save. Failed writes preserve
+  the original snapshot. Old readers reject version 3 before writing. Content
+  stays at version 1, and timestamp units/scoring formulas remain unchanged.
+
+The conversation JSON is fetched as a relative asset and validated against the
+vocabulary and its actual learner occurrences before selection. It is covered by
+the existing service-worker cache and is not duplicated in local storage. If a
+content update invalidates a saved cursor, only that cursor is reset; word scores
+and completed conversation counts are kept. Conversation IDs must remain stable
+now that persistent counts refer to them.
 
 The legacy `cards`, `sentences`, and `explanations` content keys remain readable.
 Once a complete new content snapshot is saved successfully, those old content copies

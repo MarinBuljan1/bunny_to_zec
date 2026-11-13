@@ -193,7 +193,8 @@ fn correct_progress_spellings(progress: &mut SavedProgress) {
 }
 
 fn validate_progress(progress: &SavedProgress) -> Result<(), StorageError> {
-    if progress.last_data_update < 0
+    if !progress.conversations.structurally_valid()
+        || progress.last_data_update < 0
         || progress
             .scores
             .values()
@@ -209,7 +210,7 @@ pub(crate) fn read_progress(
     now_s: i64,
 ) -> Result<LoadedProgress, StorageError> {
     // Existing JSON integer values decode exactly into i64; no rescaling is needed.
-    if let Some(mut progress) = read_snapshot(store, PROGRESS_KEY, &[1, 2])? {
+    if let Some(mut progress) = read_snapshot(store, PROGRESS_KEY, &[1, 2, 3])? {
         validate_progress(&progress)?;
         correct_progress_spellings(&mut progress);
         return Ok(LoadedProgress {
@@ -229,6 +230,7 @@ pub(crate) fn read_progress(
     let mut progress = SavedProgress {
         scores,
         last_data_update,
+        conversations: Default::default(),
     };
     validate_progress(&progress)?;
     correct_progress_spellings(&mut progress);
@@ -250,11 +252,12 @@ pub(crate) fn write_progress(
         let mut corrected = SavedProgress {
             scores: progress.scores.clone(),
             last_data_update: progress.last_data_update,
+            conversations: progress.conversations.clone(),
         };
         correct_progress_spellings(&mut corrected);
-        return write_snapshot(store, PROGRESS_KEY, 2, &corrected);
+        return write_snapshot(store, PROGRESS_KEY, 3, &corrected);
     }
-    write_snapshot(store, PROGRESS_KEY, 2, progress)
+    write_snapshot(store, PROGRESS_KEY, 3, progress)
 }
 
 #[cfg(test)]

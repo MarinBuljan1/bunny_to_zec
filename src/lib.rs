@@ -10,6 +10,9 @@ use web_sys::{window, Element, EventTarget, PointerEvent};
 use yew::prelude::*;
 
 mod animation;
+mod chat;
+mod conversations;
+mod gestures;
 mod guide;
 mod learning;
 mod model;
@@ -156,6 +159,7 @@ fn flashcard_view(props: &FlashcardViewProps) -> Html {
     let progress = use_state(|| SavedProgress {
         scores: HashMap::new(),
         last_data_update: get_timestamp_s(),
+        conversations: Default::default(),
     });
     let review = use_reducer(|| ReviewState::welcome(get_timestamp_ms()));
     let drag = use_reducer(DragState::default);
@@ -536,7 +540,7 @@ fn app() -> Html {
 
     html! {
             <div class="app-container">
-                <FlashcardView guide_open={*show_settings} open_settings={{
+                <chat::ConversationView guide_open={*show_settings} open_settings={{
                     let show_settings = show_settings.clone();
                     Callback::from(move |_| show_settings.set(true))
                 }} />

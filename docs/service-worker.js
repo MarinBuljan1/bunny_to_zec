@@ -1,6 +1,6 @@
 // The build replaces this marker with a hash of the deployed files.
 const CACHE_PREFIX = `language-learner:${self.registration.scope}:`;
-const CACHE_NAME = `${CACHE_PREFIX}9c626a05f3ac6b5c0d3702b9d8062d819a4386c0aaf0105f3e904c1635e7e349`;
+const CACHE_NAME = `${CACHE_PREFIX}522d0923fc6d9a9e5068f7a6979285b5c2a752f694214f598627ee21079387f2`;
 const LOCAL_DEVELOPMENT = ['localhost', '127.0.0.1', '[::1]', '::1']
   .includes(new URL(self.registration.scope).hostname);
 const APP_FILES = [

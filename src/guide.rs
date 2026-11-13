@@ -70,9 +70,9 @@ pub(super) fn guide(props: &GuideProps) -> Html {
                 </div>
                 <div class="modal-body">
                     <div class="instructions">
-                        <p>{"Swipe up or down to start or skip a question. Use Reveal / flip (or swipe left or right) when you recall the word; this stops the recall timer immediately."}</p>
-                        <p>{"After revealing, choose Correct (swipe up) or Incorrect (swipe down) to rate your answer and continue."}</p>
-                        <p>{"Keyboard: Tab to a control and press Enter or Space. Focus the card area and use Left/Right to reveal or flip, Up for correct/next, and Down for incorrect/next. Escape closes this guide."}</p>
+                        <p>{"Read the partner message while the three dots show your reply being typed. The recall timer starts only when your reply appears. Recall the missing words, then use Reveal / flip or swipe left or right to stop the timer."}</p>
+                        <p>{"After revealing, choose Correct (swipe up) or Incorrect (swipe down). Your message settles back into place. Scroll through earlier messages; pull up at the bottom or choose Next messages to continue. Earlier conversations disappear when a new one begins. Tap any message to toggle English for every message."}</p>
+                        <p>{"Keyboard: Tab to a control and press Enter or Space. Focus the conversation area and use Left/Right to reveal or flip, Up for correct or next at the bottom, and Down for incorrect. Escape closes this guide."}</p>
                         <p>{"Each word’s progress blends how long since you last saw it, how quickly you recalled it, and whether you got it right. Scores decrease over time. Quick recall after longer breaks counts toward learning."}</p>
                         <p>{"Install the app using Add to Home Screen in Safari’s Share menu, or Install / Add to Home screen in Chrome’s menu. Offline use is available after the first successful online load."}</p>
                     </div>

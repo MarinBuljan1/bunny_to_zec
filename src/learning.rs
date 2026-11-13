@@ -70,6 +70,7 @@ pub(crate) fn apply_review(
     Some(SavedProgress {
         scores: updated_scores,
         last_data_update: now_s,
+        conversations: progress.conversations.clone(),
     })
 }
 
@@ -132,7 +133,7 @@ fn calculate_raw_score(
     }
 }
 
-fn calculate_final_score(score: &ScoreData, now_s: i64) -> i128 {
+pub(crate) fn calculate_final_score(score: &ScoreData, now_s: i64) -> i128 {
     if score.last_review == 0 {
         return i128::from(LEARNED_INTERVAL_SECONDS);
     }

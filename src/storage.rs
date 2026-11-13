@@ -98,6 +98,14 @@ async fn fetch_json<T: DeserializeOwned>(
         .map_err(|_| DownloadError::InvalidJson(label))
 }
 
+/// The PWA precaches this relative asset; unlike scores it is not duplicated in local storage.
+pub(crate) async fn load_conversations() -> Result<crate::conversations::ConversationLibrary, String>
+{
+    fetch_json("assets/conversations.json", "conversations")
+        .await
+        .map_err(|e| format!("{e} Connect and retry if this is your first visit."))
+}
+
 async fn download_content() -> Result<LearningContent, DownloadError> {
     let content = LearningContent {
         cards: fetch_json("assets/croatian.json", "vocabulary").await?,
