@@ -3,6 +3,11 @@
 A client-side Yew/WebAssembly flashcard app. Edit Rust in `src/`, styles in
 `static/style.scss`, and learning content in `assets/`.
 
+Pre-generated conversation drafts are in `assets/conversations.json`. See
+[CONVERSATIONS.md](CONVERSATIONS.md) for the JSON format, current coverage gaps,
+validation, and authoring workflow. This is a partial draft library; the current
+flashcard UI does not consume it yet.
+
 ## Rust source layout
 
 - `lib.rs`: UI rendering, browser events, clocks, randomness, and animation timers.
@@ -84,6 +89,11 @@ snapshot exists. The first successful save migrates them, leaving the old progre
 keys intact. Readable legacy scores with a missing/invalid update time are preserved;
 their decay resumes from the current time with a warning. Malformed scores, negative
 score/timestamp values, and unsupported snapshot versions are not silently replaced.
+
+The reviewed spellings `covek`, `pomoči`, and `o.k.` are merged into `čovjek`,
+`pomoći`, and `okej` in the vocabulary and saved progress. If both spellings have
+scores, the most recent review wins; equal review times retain the higher score.
+See [CONVERSATIONS.md](CONVERSATIONS.md) for the correction manifest and content status.
 
 Load cleanup invalidates pending work when the view is removed or a load is replaced.
 An in-flight request may finish, but cancelled loads cannot write caches or update the

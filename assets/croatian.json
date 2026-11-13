@@ -19692,6 +19692,7 @@
       4096,
       4175,
       4879,
+      4934,
       5026,
       5058,
       5264,
@@ -20445,6 +20446,7 @@
       4332,
       5102,
       5479,
+      8868,
       8963
     ]
   },
@@ -39835,7 +39837,8 @@
   "okej": {
     "base_language": "okay",
     "sentence_indexes": [
-      2354
+      2354,
+      6983
     ]
   },
   "jednoj": {
@@ -72454,12 +72457,6 @@
       6982
     ]
   },
-  "o.k.": {
-    "base_language": "ok",
-    "sentence_indexes": [
-      6983
-    ]
-  },
   "ručku": {
     "base_language": "the handle",
     "sentence_indexes": [
@@ -85085,12 +85082,6 @@
       8867
     ]
   },
-  "covek": {
-    "base_language": "man",
-    "sentence_indexes": [
-      8868
-    ]
-  },
   "autoritet": {
     "base_language": "authority",
     "sentence_indexes": [
@@ -85413,12 +85404,6 @@
     "base_language": "papers",
     "sentence_indexes": [
       1770
-    ]
-  },
-  "pomoči": {
-    "base_language": "help",
-    "sentence_indexes": [
-      4934
     ]
   },
   "listopada": {

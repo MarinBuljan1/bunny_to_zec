@@ -208,7 +208,7 @@
   },
   "ok": {
     "redu": "Part of the common phrase 'u redu', which means 'OK' or 'alright'.",
-    "o.k.": "An informal abbreviation for 'okay'."
+    "okej": "Informal Croatian form of 'okay'."
   },
   "either": {
     "bilo": "The neuter past tense of 'to be', also used to mean 'any' or 'whatever'."
@@ -792,8 +792,7 @@
     "pomogni": "Informal imperative singular of 'pomoći', meaning 'help!'.",
     "pomagati": "The infinitive form 'to help' (imperfective).",
     "pomognete": "Formal or plural present/future subjunctive of 'pomoći', meaning 'you help'.",
-    "pomognu": "Third-person plural of 'pomoći', meaning 'they help'.",
-    "pomoči": "Misspelling or dialectal of 'pomoći', not standard."
+    "pomognu": "Third-person plural of 'pomoći', meaning 'they help'."
   },
   "go": {
     "ići": "The infinitive 'to go'.",

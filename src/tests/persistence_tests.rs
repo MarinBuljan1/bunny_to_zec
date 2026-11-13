@@ -23,6 +23,105 @@ fn new_users_start_without_progress_or_warnings() {
 }
 
 #[test]
+fn spelling_corrections_keep_the_latest_review_without_inflating_scores() {
+    let mut store = MemoryStore::default();
+    let scores = HashMap::from([
+        (
+            "covek".to_owned(),
+            ScoreData {
+                score: 200,
+                last_review: 1100,
+            },
+        ),
+        (
+            "čovjek".to_owned(),
+            ScoreData {
+                score: 900,
+                last_review: 1000,
+            },
+        ),
+        (
+            "pomoči".to_owned(),
+            ScoreData {
+                score: 300,
+                last_review: 1200,
+            },
+        ),
+        (
+            "pomoći".to_owned(),
+            ScoreData {
+                score: 500,
+                last_review: 1200,
+            },
+        ),
+        (
+            "o.k.".to_owned(),
+            ScoreData {
+                score: 700,
+                last_review: 1000,
+            },
+        ),
+    ]);
+    store.insert_json("card_scores", &scores);
+    store.insert_json("last_data_update", &1300);
+    let before = store.values.clone();
+    let restored = read_progress(&store, 1400).unwrap().progress;
+    assert_eq!(restored.scores.len(), 3);
+    assert_eq!(restored.scores["čovjek"], scores["covek"]);
+    assert_eq!(restored.scores["pomoći"], scores["pomoći"]);
+    assert_eq!(restored.scores["okej"], scores["o.k."]);
+    assert_eq!(restored.last_data_update, 1300);
+    assert_eq!(store.values, before); // Reading does not rewrite the stored data.
+    write_progress(&mut store, &restored).unwrap();
+    assert_eq!(read_progress(&store, 1500).unwrap().progress, restored);
+    assert_eq!(store.values["card_scores"], before["card_scores"]);
+}
+
+#[test]
+fn spelling_corrections_also_apply_to_snapshots_and_stale_saves() {
+    let original = SavedProgress {
+        scores: HashMap::from([(
+            "o.k.".to_owned(),
+            ScoreData {
+                score: 123,
+                last_review: 1000,
+            },
+        )]),
+        last_data_update: 1100,
+    };
+    let mut store = MemoryStore::default();
+    store.insert_json(
+        PROGRESS_KEY,
+        &Snapshot {
+            version: 2,
+            value: &original,
+        },
+    );
+    let restored = read_progress(&store, 1200).unwrap().progress;
+    assert_eq!(restored.scores["okej"], original.scores["o.k."]);
+    write_progress(&mut store, &original).unwrap();
+    let saved: Snapshot<SavedProgress> = serde_json::from_str(&store.values[PROGRESS_KEY]).unwrap();
+    assert!(!saved.value.scores.contains_key("o.k."));
+    assert_eq!(saved.value, restored);
+}
+
+#[test]
+fn spelling_manifest_matches_progress_aliases_and_corrected_content() {
+    let manifest: serde_json::Value =
+        serde_json::from_str(include_str!("../../assets/vocabulary_corrections.json")).unwrap();
+    let cards: HashMap<String, serde_json::Value> =
+        serde_json::from_str(include_str!("../../assets/croatian.json")).unwrap();
+    let entries = manifest["corrections"].as_array().unwrap();
+    assert_eq!(entries.len(), VOCABULARY_CORRECTIONS.len());
+    for ((original, corrected), entry) in VOCABULARY_CORRECTIONS.iter().zip(entries) {
+        assert_eq!(entry["original"].as_str(), Some(*original));
+        assert_eq!(entry["corrected"].as_str(), Some(*corrected));
+        assert!(!cards.contains_key(*original));
+        assert!(cards.contains_key(*corrected));
+    }
+}
+
+#[test]
 fn legacy_progress_migrates_on_one_successful_save_without_removing_old_keys() {
     let mut store = MemoryStore::default();
     let expected = progress();

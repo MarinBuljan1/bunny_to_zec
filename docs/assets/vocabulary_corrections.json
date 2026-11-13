@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "corrections": [
+    {
+      "original": "covek",
+      "corrected": "čovjek",
+      "action": "merged",
+      "sentence_indexes": [
+        8868
+      ]
+    },
+    {
+      "original": "pomoči",
+      "corrected": "pomoći",
+      "action": "merged",
+      "sentence_indexes": [
+        4934
+      ]
+    },
+    {
+      "original": "o.k.",
+      "corrected": "okej",
+      "action": "merged",
+      "sentence_indexes": [
+        6983
+      ]
+    }
+  ]
+}

@@ -11,6 +11,11 @@ const CONTENT_KEY: &str = "learning_content_v1";
 // Keep the existing key so version-1 clients refuse to overwrite wider progress.
 const PROGRESS_KEY: &str = "learning_progress_v1";
 
+// Reviewed spelling corrections; the asset manifest is checked against this list.
+// These aliases name the same word, not different grammatical forms.
+const VOCABULARY_CORRECTIONS: [(&str, &str); 3] =
+    [("covek", "čovjek"), ("pomoči", "pomoći"), ("o.k.", "okej")];
+
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) enum StorageError {
     Unavailable,
@@ -171,6 +176,22 @@ pub(crate) struct LoadedProgress {
     pub warning: Option<String>,
 }
 
+/// Keep the latest actual review when two former spellings have separate scores.
+/// Equal review times use the higher score; summing would invent learning credit.
+fn correct_progress_spellings(progress: &mut SavedProgress) {
+    for (original, corrected) in VOCABULARY_CORRECTIONS {
+        let Some(previous) = progress.scores.remove(original) else {
+            continue;
+        };
+        let keep_previous = progress.scores.get(corrected).is_none_or(|existing| {
+            (previous.last_review, previous.score) > (existing.last_review, existing.score)
+        });
+        if keep_previous {
+            progress.scores.insert(corrected.to_owned(), previous);
+        }
+    }
+}
+
 fn validate_progress(progress: &SavedProgress) -> Result<(), StorageError> {
     if progress.last_data_update < 0
         || progress
@@ -188,8 +209,9 @@ pub(crate) fn read_progress(
     now_s: i64,
 ) -> Result<LoadedProgress, StorageError> {
     // Existing JSON integer values decode exactly into i64; no rescaling is needed.
-    if let Some(progress) = read_snapshot(store, PROGRESS_KEY, &[1, 2])? {
+    if let Some(mut progress) = read_snapshot(store, PROGRESS_KEY, &[1, 2])? {
         validate_progress(&progress)?;
+        correct_progress_spellings(&mut progress);
         return Ok(LoadedProgress {
             progress,
             warning: None,
@@ -204,11 +226,12 @@ pub(crate) fn read_progress(
         Ok(_) | Err(StorageError::Invalid(_)) => (now_s, Some("Saved scores were restored, but their update time was missing or invalid. Decay resumes from now.".into())),
         Err(error) => return Err(error),
     };
-    let progress = SavedProgress {
+    let mut progress = SavedProgress {
         scores,
         last_data_update,
     };
     validate_progress(&progress)?;
+    correct_progress_spellings(&mut progress);
     Ok(LoadedProgress { progress, warning })
 }
 
@@ -220,6 +243,17 @@ pub(crate) fn write_progress(
 ) -> Result<(), StorageError> {
     validate_progress(progress)?;
     read_progress(store, progress.last_data_update)?;
+    if VOCABULARY_CORRECTIONS
+        .iter()
+        .any(|(original, _)| progress.scores.contains_key(*original))
+    {
+        let mut corrected = SavedProgress {
+            scores: progress.scores.clone(),
+            last_data_update: progress.last_data_update,
+        };
+        correct_progress_spellings(&mut corrected);
+        return write_snapshot(store, PROGRESS_KEY, 2, &corrected);
+    }
     write_snapshot(store, PROGRESS_KEY, 2, progress)
 }
 
