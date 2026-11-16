@@ -98,7 +98,8 @@ Conversation IDs now identify saved cursors and completed-read counts. Future
 renumbering requires migrating those persistent references; retain IDs when editing.
 
 Each exchange presents the partner
-first, followed by learner typing dots for 1.2–4 seconds, then the learner reply.
+after a one-second partner typing bubble, followed by learner typing dots for
+1.2–4 seconds, then the learner reply.
 Recall timing starts only when that reply appears. Tapping a message toggles
 English for every message; it does not reveal the reply early.
 Both messages have independent Croatian text and contextual English translations,
@@ -111,8 +112,12 @@ learner replies. Each compact entry has `c_id` (the conversation's `id`) and
 `hits` (the actual learner occurrence count). Keep these short keys when
 regenerating the index. Partner messages never
 contribute. For example, the approved `0070` has three learner occurrences of
-`kavu`; `0071` has one. This supports 3:1 weighting after filtering to the
-lowest completed-read count. User read counts belong in progress storage, not in
+`kavu`; `0071` has one. This supplies the occurrence component of weighting after filtering to the
+lowest completed-read count. Runtime weight is `hits / average vocabulary rank`;
+3:1 remains the ratio when conversation difficulties are equal. The average
+counts every Croatian word occurrence in both speakers’ messages. Unknown forms
+use the final vocabulary rank; English and punctuation are excluded. The app
+computes these averages on load rather than adding redundant fields to the JSON. User read counts belong in progress storage, not in
 this shared content file.
 
 Lookup lowercases Unicode text without changing display text. It does not remove
@@ -146,8 +151,8 @@ Progress readers and writers map those three former spellings to the corrected
 key. When both have scores, the most recently reviewed record wins; equal review
 times retain the higher score. Scores are not added together. Reading does not
 write storage; failed saves preserve the existing stored snapshot, and legacy
-progress keys remain intact. The chat update adds conversation state in progress snapshot version 3; normal scoring
-formulas are unchanged. Versions 1 and 2 remain readable.
+progress keys remain intact. The chat update adds conversation state in progress snapshot version 4; normal scoring
+formulas are unchanged. Versions 1, 2, and 3 remain readable.
 
 ## Checking and editing
 

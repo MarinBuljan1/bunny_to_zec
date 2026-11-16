@@ -210,7 +210,7 @@ pub(crate) fn read_progress(
     now_s: i64,
 ) -> Result<LoadedProgress, StorageError> {
     // Existing JSON integer values decode exactly into i64; no rescaling is needed.
-    if let Some(mut progress) = read_snapshot(store, PROGRESS_KEY, &[1, 2, 3])? {
+    if let Some(mut progress) = read_snapshot(store, PROGRESS_KEY, &[1, 2, 3, 4])? {
         validate_progress(&progress)?;
         correct_progress_spellings(&mut progress);
         return Ok(LoadedProgress {
@@ -255,9 +255,9 @@ pub(crate) fn write_progress(
             conversations: progress.conversations.clone(),
         };
         correct_progress_spellings(&mut corrected);
-        return write_snapshot(store, PROGRESS_KEY, 3, &corrected);
+        return write_snapshot(store, PROGRESS_KEY, 4, &corrected);
     }
-    write_snapshot(store, PROGRESS_KEY, 3, progress)
+    write_snapshot(store, PROGRESS_KEY, 4, progress)
 }
 
 #[cfg(test)]

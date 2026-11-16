@@ -36,11 +36,13 @@ pub(crate) struct ConversationLibrary {
     translation_language: String,
     pub conversations: Vec<Conversation>,
     word_index: HashMap<String, Vec<Hit>>,
+    #[serde(skip)]
+    difficulties: HashMap<String, f64>,
 }
 
 impl ConversationLibrary {
     /// Verify the supplied index against the actual learner text before using weights.
-    pub fn validate(&self, vocabulary: &LearningContent) -> Result<(), String> {
+    pub fn validate_and_rank(&mut self, vocabulary: &LearningContent) -> Result<(), String> {
         if self.schema_version != 1
             || self.source_language != "hr"
             || self.translation_language != "en"
@@ -92,6 +94,16 @@ impl ConversationLibrary {
         if actual != self.word_index {
             return Err("Conversation selection index does not match the learner messages.".into());
         }
+        self.difficulties = self
+            .conversations
+            .iter()
+            .map(|conversation| {
+                (
+                    conversation.id.clone(),
+                    conversation_difficulty(conversation, vocabulary),
+                )
+            })
+            .collect();
         Ok(())
     }
 
@@ -129,20 +141,51 @@ impl ConversationLibrary {
         };
         let minimum = hits.iter().map(count).min()?;
         let eligible: Vec<_> = hits.iter().filter(|hit| count(hit) == minimum).collect();
-        let total: u64 = eligible.iter().map(|hit| u64::from(hit.hits)).sum();
+        let weight = |hit: &Hit| {
+            f64::from(hit.hits) / self.difficulties.get(&hit.c_id).copied().unwrap_or(1.0)
+        };
+        let total: f64 = eligible.iter().map(|hit| weight(hit)).sum();
         let sample = if sample.is_finite() {
             sample.clamp(0.0, 1.0 - f64::EPSILON)
         } else {
             0.0
         };
-        let mut choice = (sample * total as f64) as u64;
+        let mut choice = sample * total;
         for hit in eligible {
-            if choice < u64::from(hit.hits) {
+            if choice < weight(hit) {
                 return self.get(&hit.c_id);
             }
-            choice -= u64::from(hit.hits);
+            choice -= weight(hit);
         }
         None
+    }
+}
+
+/// Every Croatian word occurrence on either side contributes; punctuation and English do not.
+fn conversation_difficulty(conversation: &Conversation, content: &LearningContent) -> f64 {
+    let hardest = content.cards.len().max(1) as f64;
+    let mut total = 0.0;
+    let mut count = 0;
+    for exchange in &conversation.exchanges {
+        for message in [&exchange.partner, &exchange.learner] {
+            for token in split_text(&message.hr) {
+                if !token.chars().any(char::is_alphanumeric) {
+                    continue;
+                }
+                let rank = content
+                    .cards
+                    .get_index_of(&token.to_lowercase())
+                    .map(|index| (index + 1) as f64)
+                    .unwrap_or(hardest);
+                total += rank;
+                count += 1;
+            }
+        }
+    }
+    if count == 0 {
+        hardest
+    } else {
+        total / f64::from(count)
     }
 }
 
@@ -213,9 +256,11 @@ pub(crate) fn review_words(
 pub(crate) enum AnswerFace {
     Masked,
     Revealed,
+    Notes,
 }
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
 pub(crate) enum SessionPhase {
+    PartnerTyping,
     Typing,
     Question,
     Answer { elapsed_ms: i64, face: AnswerFace },
@@ -261,6 +306,7 @@ impl ConversationProgress {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) enum ChatAction {
     Next,
+    PartnerAppears,
     LearnerAppears,
     Flip,
     Rate(Rating),
@@ -273,6 +319,7 @@ pub(crate) struct ConversationReview {
     pub progress: SavedProgress,
     pub settling: Option<Rating>,
     started_at_ms: Option<i64>,
+    notes_visible: bool,
 }
 
 impl ConversationReview {
@@ -319,6 +366,7 @@ impl ConversationReview {
                 progress,
                 settling: None,
                 started_at_ms,
+                notes_visible: false,
             },
             notice,
         )
@@ -338,6 +386,29 @@ impl ConversationReview {
             && self
                 .session()
                 .is_some_and(|s| matches!(s.phase, SessionPhase::Answer { .. }))
+    }
+
+    pub fn can_flip(&self) -> bool {
+        self.settling.is_none()
+            && self.session().is_some_and(|s| {
+                matches!(
+                    s.phase,
+                    SessionPhase::Question | SessionPhase::Answer { .. } | SessionPhase::Ready
+                )
+            })
+    }
+
+    pub fn showing_notes(&self) -> bool {
+        self.session().is_some_and(|s| {
+            matches!(
+                s.phase,
+                SessionPhase::Answer {
+                    face: AnswerFace::Notes,
+                    ..
+                }
+            ) || (matches!(s.phase, SessionPhase::Answer { .. } | SessionPhase::Ready)
+                && self.notes_visible)
+        })
     }
 
     pub fn act(
@@ -393,11 +464,24 @@ impl ConversationReview {
                     conversation_id: conversation.id.clone(),
                     exchange_index: index,
                     learner_text: text.clone(),
-                    phase: SessionPhase::Typing,
+                    phase: SessionPhase::PartnerTyping,
                     words,
                     completed,
                 });
                 self.started_at_ms = None;
+                self.notes_visible = false;
+            }
+            ChatAction::PartnerAppears => {
+                let Some(session) = self
+                    .progress
+                    .conversations
+                    .session
+                    .as_mut()
+                    .filter(|s| s.phase == SessionPhase::PartnerTyping)
+                else {
+                    return false;
+                };
+                session.phase = SessionPhase::Typing;
             }
             ChatAction::LearnerAppears => {
                 let Some(session) = self
@@ -415,7 +499,7 @@ impl ConversationReview {
                     return self.finish_reply(Rating::Read, library, now_ms);
                 }
             }
-            ChatAction::Flip => {
+            ChatAction::Flip if self.can_flip() => {
                 let Some(session) = self.progress.conversations.session.as_mut() else {
                     return false;
                 };
@@ -426,13 +510,22 @@ impl ConversationReview {
                             .max(0),
                         face: AnswerFace::Revealed,
                     },
-                    SessionPhase::Answer { elapsed_ms, face } => SessionPhase::Answer {
-                        elapsed_ms,
-                        face: match face {
-                            AnswerFace::Masked => AnswerFace::Revealed,
-                            AnswerFace::Revealed => AnswerFace::Masked,
-                        },
-                    },
+                    SessionPhase::Answer { elapsed_ms, face } => {
+                        // Opening details is a view change, not a new progress snapshot.
+                        // Keep reading old snapshots that stored the Notes/Masked faces.
+                        self.notes_visible = match face {
+                            AnswerFace::Revealed => !self.notes_visible,
+                            AnswerFace::Masked | AnswerFace::Notes => false,
+                        };
+                        SessionPhase::Answer {
+                            elapsed_ms,
+                            face: AnswerFace::Revealed,
+                        }
+                    }
+                    SessionPhase::Ready => {
+                        self.notes_visible = !self.notes_visible;
+                        SessionPhase::Ready
+                    }
                     _ => return false,
                 };
             }
@@ -490,6 +583,7 @@ impl ConversationReview {
             *count = count.saturating_add(1);
         }
         self.settling = (rating != Rating::Read).then_some(rating);
+        self.notes_visible = false;
         true
     }
 }

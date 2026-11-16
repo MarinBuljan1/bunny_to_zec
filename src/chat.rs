@@ -4,6 +4,7 @@ use crate::conversations::{
     SessionPhase,
 };
 use crate::gestures::at_bottom;
+use crate::message_bubble::MessageBubble;
 use crate::model::{LearningContent, SavedProgress};
 use crate::storage::{self, ContentLoadState};
 use gloo_timers::callback::Timeout;
@@ -132,8 +133,8 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
                 wasm_bindgen_futures::spawn_local(async move {
                     let loaded = async {
                         let content = storage::load_learning_content().await?;
-                        let conversations = storage::load_conversations().await?;
-                        conversations.validate(&content.content)?;
+                        let mut conversations = storage::load_conversations().await?;
+                        conversations.validate_and_rank(&content.content)?;
                         Ok::<_, String>((content, conversations))
                     }
                     .await;
@@ -202,9 +203,10 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
     let turn = ready
         .and_then(|r| r.review.session())
         .map(|s| (s.conversation_id.clone(), s.exchange_index));
-    let typing = ready
+    let typing_phase = ready
         .and_then(|r| r.review.session())
-        .is_some_and(|s| s.phase == SessionPhase::Typing);
+        .map(|s| s.phase.clone())
+        .filter(|phase| matches!(phase, SessionPhase::PartnerTyping | SessionPhase::Typing));
     let settling = ready.and_then(|r| r.review.settling);
     {
         let screen = screen.clone();
@@ -219,17 +221,16 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
             })
             .unwrap_or(1200);
         use_effect_with_deps(
-            move |(turn, typing, settling, guide_open)| {
+            move |(turn, typing_phase, settling, guide_open)| {
                 let timer = if *guide_open {
                     None
                 } else {
                     turn.clone().and_then(|turn| {
-                        let (delay, action) = if *typing {
-                            (delay, ChatAction::LearnerAppears)
-                        } else if settling.is_some() {
-                            (280, ChatAction::Settled)
-                        } else {
-                            return None;
+                        let (delay, action) = match typing_phase {
+                            Some(SessionPhase::PartnerTyping) => (1000, ChatAction::PartnerAppears),
+                            Some(SessionPhase::Typing) => (delay, ChatAction::LearnerAppears),
+                            _ if settling.is_some() => (280, ChatAction::Settled),
+                            _ => return None,
                         };
                         Some(Timeout::new(delay, move || {
                             screen.dispatch(Action::Timed { turn, action })
@@ -238,14 +239,19 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
                 };
                 move || drop(timer)
             },
-            (turn.clone(), typing, settling, props.guide_open),
+            (
+                turn.clone(),
+                typing_phase.clone(),
+                settling,
+                props.guide_open,
+            ),
         );
     }
     {
         let timeline = timeline.clone();
         let following = following.clone();
         // New exchanges always follow the conversation; an arriving reply respects a reader scrolling back.
-        let force = typing;
+        let force = typing_phase == Some(SessionPhase::PartnerTyping);
         use_effect_with_deps(
             move |_| {
                 if let Some(element) = timeline.cast::<HtmlElement>() {
@@ -257,14 +263,15 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
             },
             (
                 turn.clone(),
+                typing_phase.clone(),
                 ready
                     .and_then(|r| r.review.session())
-                    .map(|s| s.phase.clone()),
+                    .is_some_and(|s| s.phase == SessionPhase::Ready),
                 ready.map(|r| r.review.progress.conversations.show_english),
             ),
         );
     }
-    crate::gestures::use_conversation_scroll(
+    let pull = crate::gestures::use_conversation_scroll(
         timeline.clone(),
         ready.is_some(),
         if *can_pull.borrow() {
@@ -287,31 +294,54 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
     };
     let onscroll = {
         let following = following.clone();
+        let timeline = timeline.clone();
         Callback::from(move |event: Event| {
             if let Some(element) = event.target_dyn_into::<HtmlElement>() {
-                *following.borrow_mut() = at_bottom(&element);
+                if timeline.cast::<HtmlElement>().as_ref() == Some(&element) {
+                    *following.borrow_mut() = at_bottom(&element);
+                }
             }
         })
     };
     let crate::gestures::ReviewGestures {
-        offset,
+        motion,
+        hint,
         onpointerdown,
         onpointermove,
         onpointerup,
         cancel,
         tap: toggle,
         tap_start,
-    } = crate::gestures::use_review_gestures(props.guide_open, send.clone());
+    } = crate::gestures::use_review_gestures(
+        if props.guide_open
+            || !ready.is_some_and(|r| {
+                r.review.can_flip()
+                    || r.review
+                        .session()
+                        .is_some_and(|s| s.phase == SessionPhase::Ready)
+            })
+        {
+            crate::gestures::GestureMode::Disabled
+        } else if ready.is_some_and(|r| r.review.can_rate()) {
+            crate::gestures::GestureMode::Rate
+        } else {
+            crate::gestures::GestureMode::Flip
+        },
+        send.clone(),
+        pull.clone(),
+    );
     let keyboard = {
         let send = send.clone();
         let can_rate = ready.is_some_and(|r| r.review.can_rate());
         let can_next = ready.is_some_and(|r| r.review.can_next());
         let timeline = timeline.clone();
         Callback::from(move |event: KeyboardEvent| {
-            if event
-                .target_dyn_into::<HtmlElement>()
-                .is_some_and(|e| e.tag_name() == "BUTTON")
-            {
+            if event.repeat() {
+                return;
+            }
+            if event.target_dyn_into::<HtmlElement>().is_some_and(|e| {
+                e.tag_name() == "BUTTON" || e.closest(".message-notes").ok().flatten().is_some()
+            }) {
                 return;
             }
             let action = match event.key().as_str() {
@@ -331,6 +361,17 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
             if let Some(action) = action {
                 event.prevent_default();
                 send.emit(action);
+            }
+        })
+    };
+    let bubble_resized = {
+        let timeline = timeline.clone();
+        let following = following.clone();
+        Callback::from(move |_| {
+            if *following.borrow() {
+                if let Some(element) = timeline.cast::<HtmlElement>() {
+                    element.set_scroll_top(element.scroll_height());
+                }
             }
         })
     };
@@ -366,77 +407,106 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
         html! {<button type="button" disabled={props.guide_open || settling.is_some()} onclick={Callback::from(move |_| send.emit(action))}>{label}</button>}
     };
     html! {
-        <main class="chat-app" onkeydown={keyboard}>
+        <main class={classes!("chat-app", ((ready.review.can_flip() || session.is_some_and(|s| s.phase == SessionPhase::Ready)) && !props.guide_open).then_some("gesture-active"))}
+            onkeydown={keyboard}
+            {onpointerdown} {onpointermove} {onpointerup} onpointercancel={cancel.clone()} onlostpointercapture={cancel}>
             <header class="chat-header"><div><h1>{"Bunny to Zec"}</h1><p>{conversation.map(|c| c.title.as_str()).unwrap_or("Croatian conversations")}</p></div>
                 <button type="button" onclick={props.open_settings.clone()} aria-label="Learning progress and guide">{format!("{skill_level}: {learned_words:.1}/{next_level} · Guide")}</button>
             </header>
             <div class="chat-toolbar"><button type="button" aria-pressed={english.to_string()} onclick={{ let send = send.clone(); Callback::from(move |_| send.emit(ChatAction::ToggleEnglish)) }}>{if english { "English on" } else { "English off" }}</button>
                 {session.map(|s| html!{<span>{format!("Reply {} of {}", s.exchange_index + 1, conversation.map_or(0, |c| c.exchanges.len()))}</span>}).unwrap_or_default()}
             </div>
+            <div class="chat-history">
             <section ref={timeline} class="chat-timeline" tabindex="0" aria-label="Conversation messages" {onscroll}>
                 {if let (Some(session), Some(conversation)) = (session, conversation) {
                     conversation.exchanges.iter().take(session.exchange_index + 1).enumerate().map(|(index, exchange)| {
                         let active = index == session.exchange_index;
-                        let typing = active && session.phase == SessionPhase::Typing;
-                        let reviewing = active && matches!(session.phase, SessionPhase::Question | SessionPhase::Answer {..});
-                        let revealed = matches!(session.phase, SessionPhase::Answer { face: AnswerFace::Revealed, .. });
-                        let masked = reviewing && !revealed;
-                        let rating = session.completed.get(index).map(|r| r.rating);
-                        let bounce = if active { settling } else { None };
-                        let class = classes!("chat-message", "learner-message", reviewing.then_some("reviewing"),
-                            (bounce == Some(Rating::Correct)).then_some("rated-correct"), (bounce == Some(Rating::Incorrect)).then_some("rated-incorrect"));
+                        let partner_typing = active && session.phase == SessionPhase::PartnerTyping;
+                        let learner_typing = active && session.phase == SessionPhase::Typing;
+                        let masked = active && matches!(session.phase, SessionPhase::Question | SessionPhase::Answer { face: AnswerFace::Masked, .. });
+                        let words = if active { session.words.as_slice() } else { session.completed.get(index).map_or(&[] as &[_], |reply| reply.words.as_slice()) };
+                        let notes_open = active && ready.review.showing_notes();
+                        let motion_class = classes!("message-motion", "learner-motion");
                         html!{<div class="chat-exchange" key={format!("{}-{index}", conversation.id)}>
-                            <article class="chat-message partner-message"><span class="speaker">{"Partner"}</span>
-                                <button class="message-text" type="button" onpointerdown={tap_start.clone()} onclick={toggle.clone()} title="Toggle English for all messages" aria-pressed={english.to_string()}><span lang="hr">{&exchange.partner.hr}</span>
-                                    {if english { html!{<span class="message-translation" lang="en">{&exchange.partner.en}</span>} } else { Html::default() }}</button>
-                            </article>
-                            <article class={class} style={if reviewing {format!("transform: translate({}px, {}px)", offset.0, offset.1)} else {String::new()}}
-                                onpointerdown={reviewing.then(|| onpointerdown.clone())} onpointermove={reviewing.then(|| onpointermove.clone())}
-                                onpointerup={reviewing.then(|| onpointerup.clone())} onpointercancel={cancel.clone()} onlostpointercapture={cancel.clone()}>
-                                <span class="speaker">{"You"}</span>
-                                {if typing { html!{<div class="typing-indicator" role="status" aria-label="Learner is typing"><i/><i/><i/></div>} } else { html!{
-                                    <button class={classes!("message-text", revealed.then_some("answer-visible"))} type="button" onpointerdown={tap_start.clone()} onclick={toggle.clone()} title="Toggle English for all messages" aria-pressed={english.to_string()}>
-                                        <span lang="hr">{if masked { masked_message(&exchange.learner.hr, &session.words) } else {html!{&exchange.learner.hr}}}</span>
-                                        {if english { html!{<span class="message-translation" lang="en">{&exchange.learner.en}</span>} } else { Html::default() }}
+                            <div class="message-motion partner-motion"><MessageBubble typing={partner_typing} class={classes!("partner-message")} label="Partner message" layout_key={format!("{partner_typing}-{english}")} start_size={partner_typing.then_some((36.0, 36.0))} on_resized={bubble_resized.clone()}>
+                                {if partner_typing { typing_indicator("Partner is typing") } else { html!{
+                                    <button class="message-text" type="button" onpointerdown={tap_start.clone()} onclick={toggle.clone()} title="Toggle English for all messages" aria-pressed={english.to_string()}>
+                                        <span lang="hr">{&exchange.partner.hr}</span>
+                                        {if english { html!{<span class="message-translation" lang="en">{&exchange.partner.en}</span>} } else { Html::default() }}
                                     </button>
                                 }}}
-                                {rating.map(|rating| html!{<span class="rating-label">{match rating { Rating::Correct => "✓ Correct", Rating::Incorrect => "↻ Practice again", Rating::Read => "Read" }}</span>}).unwrap_or_default()}
-                            </article>
-                            {if active && revealed { html!{<aside class="learner-notes" aria-label="Review words">
-                                <dl class="review-glossary">{for session.words.iter().map(|word| html!{<div key={word.target_language.clone()}><dt lang="hr">{&word.target_language}</dt><dd>{&word.base_language}</dd></div>})}</dl>
-                                <details><summary>{"Word notes"}</summary>{crate::construct_processed_explanation(&session.words, &ready.content.vocabulary.explanations, &ready.review.progress.scores)}</details>
-                            </aside>} } else { Html::default() }}
+                            </MessageBubble></div>
+                            {if partner_typing { Html::default() } else { html!{
+                                <div ref={if active { motion.clone() } else { NodeRef::default() }} class={motion_class}>
+                                <MessageBubble typing={learner_typing} class={classes!("learner-message")} label="Learner message" layout_key={format!("{learner_typing}-{masked}-{english}-{notes_open}")} on_resized={bubble_resized.clone()}>
+                                    {if learner_typing { typing_indicator("Learner is typing") } else { html!{
+                                        <button class="message-text" type="button" onpointerdown={tap_start.clone()} onclick={toggle.clone()} title="Toggle English for all messages" aria-pressed={english.to_string()}>
+                                            <span lang="hr">{annotated_message(&exchange.learner.hr, words, masked)}</span>
+                                            {if english { html!{<span class="message-translation" lang="en">{&exchange.learner.en}</span>} } else { Html::default() }}
+                                        </button>
+                                    }}}
+                                    {if notes_open { html!{
+                                        <div class="message-notes" tabindex="0" aria-label="Word explanations">
+                                            {for crate::word_notes::word_notes(words, &ready.content.vocabulary, &ready.review.progress.scores).iter().map(|note| html!{
+                                                <p class="word-note" key={note.form.clone()}><strong lang="hr">{&note.form}</strong>{" — "}<span class="note-translation">{&note.translation}</span>
+                                                    {note.explanation.as_ref().map(|explanation| html!{<>{": "}{explanation}</>}).unwrap_or_default()}
+                                                </p>
+                                            })}
+                                        </div>
+                                    }} else { Html::default() }}
+                                </MessageBubble></div>
+                            }}}
                         </div>}
                     }).collect::<Html>()
                 } else { html!{<div class="chat-welcome"><h2>{"Learn through conversation"}</h2><p>{"Read your partner’s message, recall the missing Croatian words, then reveal and rate your reply."}</p></div>} }}
+            {if session.is_some_and(|s| s.phase == SessionPhase::Ready) { html!{
+                <div class="pull-preview" ref={pull.preview.clone()} aria-hidden="true" role="status" aria-label="Pull for next messages">
+                    <div class="pull-dot"></div>
+                </div>
+            }} else { Html::default() }}
             </section>
+            </div>
             <footer class="chat-footer">
                 {ready.notice.as_ref().map(|notice| html!{<p class="chat-notice" role="status">{notice}</p>}).unwrap_or_default()}
                 {ready.save_error.as_ref().map(|error| { let screen = screen.clone(); html!{<div class="chat-notice" role="alert"><p>{format!("Progress has not been saved: {error}")}</p><button onclick={Callback::from(move |_| screen.dispatch(Action::RetrySave))}>{"Retry saving"}</button></div>} }).unwrap_or_default()}
                 <div class="chat-controls">{match session.map(|s| &s.phase) {
                     None => button("Start conversation", ChatAction::Next),
+                    Some(SessionPhase::PartnerTyping) => html!{<p role="status">{"A message is being typed…"}</p>},
                     Some(SessionPhase::Typing) => html!{<p role="status">{"Your reply is being typed…"}</p>},
                     Some(SessionPhase::Question) => button("Reveal / flip", ChatAction::Flip),
                     Some(SessionPhase::Answer {..}) => html!{<>{button("Incorrect ↓", ChatAction::Rate(Rating::Incorrect))}{button("Flip", ChatAction::Flip)}{button("Correct ↑", ChatAction::Rate(Rating::Correct))}</>},
-                    Some(SessionPhase::Ready) => button(if conversation.is_some_and(|c| session.is_some_and(|s| s.exchange_index + 1 == c.exchanges.len())) { "Next conversation" } else { "Next messages" }, ChatAction::Next),
+                    Some(SessionPhase::Ready) => html!{<>{button("Flip", ChatAction::Flip)}{button(if conversation.is_some_and(|c| session.is_some_and(|s| s.exchange_index + 1 == c.exchanges.len())) { "Next conversation" } else { "Next messages" }, ChatAction::Next)}</>},
                 }}</div>
-                <p class="chat-hint">{match session.map(|s| &s.phase) {
-                    Some(SessionPhase::Ready) => "Scroll back to read. Pull up at the bottom for the next messages.",
-                    Some(SessionPhase::Answer {..}) => "Swipe up for correct, down to practice again. Tap any message to toggle English.",
-                    Some(SessionPhase::Question) => "Swipe left or right to reveal. Tap any message to toggle English.",
-                    _ => "Tap any message to turn English on or off for every message.",
-                }}</p>
+                <p ref={hint} class="chat-hint" role="status">
+                    <span class="normal-gesture-hint">
+                        {if ready.review.can_rate() && ready.review.showing_notes() { "Swipe sideways on the message or notes to flip. Long notes scroll; other up/down swipes rate." } else { match session.map(|s| &s.phase) {
+                            Some(SessionPhase::Ready) => "Swipe sideways for word explanations. Pull up at the bottom for the next messages.",
+                            Some(SessionPhase::Answer {..}) => "Swipe up for correct, down to practice again. Tap any message to toggle English.",
+                            Some(SessionPhase::Question) => "Swipe left or right to reveal. Tap any message to toggle English.",
+                            _ => "Tap any message to turn English on or off for every message.",
+                        }}}
+                    </span>
+                    <span class="gesture-release-hint" aria-hidden="true"></span>
+                </p>
             </footer>
         </main>
     }
 }
 
-fn masked_message(text: &str, words: &[crate::model::Card]) -> Html {
+fn annotated_message(text: &str, words: &[crate::model::Card], masked: bool) -> Html {
     crate::sentences::split_text(text).into_iter().map(|token| {
         let key = token.to_lowercase();
         match words.iter().find(|word| word.target_language == key) {
-            Some(word) => html!{<span class="masked-word"><span class="word-hint">{&word.base_language}</span><span aria-label={format!("Missing Croatian word: {}", word.base_language)}>{"____"}</span></span>},
+            Some(word) => html!{<span class="review-word"><span class="word-hint">{&word.base_language}</span>
+                <span class="word-line" aria-label={if masked { format!("Missing Croatian word: {}", word.base_language) } else { token.clone() }}>
+                    <span class={masked.then_some("concealed-word")} aria-hidden={masked.to_string()}>{token}</span>
+                </span>
+            </span>},
             None => html!{token},
         }
     }).collect()
+}
+
+fn typing_indicator(label: &str) -> Html {
+    html! {<div class="typing-indicator" role="status" aria-label={label.to_owned()}><i/><i/><i/></div>}
 }

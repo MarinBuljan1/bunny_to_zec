@@ -31,7 +31,7 @@ fn library() -> ConversationLibrary {
         (0..5)
             .map(|_| Exchange {
                 partner: Message {
-                    hr: "Što želite?".into(),
+                    hr: "Kavu?".into(),
                     en: "What would you like?".into(),
                 },
                 learner: Message {
@@ -41,7 +41,7 @@ fn library() -> ConversationLibrary {
             })
             .collect()
     };
-    ConversationLibrary {
+    let mut library = ConversationLibrary {
         schema_version: 1,
         source_language: "hr".into(),
         translation_language: "en".into(),
@@ -57,6 +57,7 @@ fn library() -> ConversationLibrary {
                 exchanges: exchanges("Kavu."),
             },
         ],
+        difficulties: HashMap::new(),
         word_index: HashMap::from([(
             "kavu".into(),
             vec![
@@ -70,15 +71,17 @@ fn library() -> ConversationLibrary {
                 },
             ],
         )]),
-    }
+    };
+    library.validate_and_rank(&content()).unwrap();
+    library
 }
 
 #[test]
 fn index_is_verified_against_actual_learner_messages() {
     let mut library = library();
-    library.validate(&content()).unwrap();
+    library.validate_and_rank(&content()).unwrap();
     library.word_index.get_mut("kavu").unwrap()[0].hits += 1;
-    assert!(library.validate(&content()).is_err());
+    assert!(library.validate_and_rank(&content()).is_err());
 }
 #[test]
 fn selection_weights_occurrences_only_among_least_read_conversations() {
@@ -160,6 +163,7 @@ fn typing_does_not_count_as_recall_and_completion_is_counted_only_once() {
     for index in 0..5 {
         assert!(review.act(ChatAction::Next, &library, &content, 1000000, 0.0));
         assert!(!review.act(ChatAction::Flip, &library, &content, 1001000, 0.0));
+        assert!(review.act(ChatAction::PartnerAppears, &library, &content, 1010000, 0.0));
         assert!(review.act(ChatAction::LearnerAppears, &library, &content, 1010000, 0.0));
         assert!(!review.act(
             ChatAction::Rate(Rating::Correct),
@@ -215,6 +219,7 @@ fn resuming_question_restarts_clock_and_resuming_answer_keeps_frozen_duration() 
     let content = content();
     let (mut review, _) = ConversationReview::restore(progress(), &library, &content, 1000000);
     review.act(ChatAction::Next, &library, &content, 1000000, 0.0);
+    review.act(ChatAction::PartnerAppears, &library, &content, 1001000, 0.0);
     review.act(ChatAction::LearnerAppears, &library, &content, 1001000, 0.0);
     let (mut resumed, _) =
         ConversationReview::restore(review.progress, &library, &content, 2000000);
@@ -230,11 +235,11 @@ fn resuming_question_restarts_clock_and_resuming_answer_keeps_frozen_duration() 
 }
 #[test]
 fn actual_corpus_matches_the_runtime_tokenizer_and_vocabulary() {
-    let library: ConversationLibrary =
+    let mut library: ConversationLibrary =
         serde_json::from_str(include_str!("../../assets/conversations.json")).unwrap();
     let cards = serde_json::from_str(include_str!("../../assets/croatian.json")).unwrap();
     library
-        .validate(&LearningContent {
+        .validate_and_rank(&LearningContent {
             cards,
             ..Default::default()
         })
@@ -253,6 +258,7 @@ fn conversation_progress_and_scores_commit_atomically_and_resume_without_regradi
     write_progress(&mut store, &review.progress).unwrap();
     let before = store.values.clone();
     review.act(ChatAction::Next, &library, &content, 1000000, 0.0);
+    review.act(ChatAction::PartnerAppears, &library, &content, 1002000, 0.0);
     review.act(ChatAction::LearnerAppears, &library, &content, 1002000, 0.0);
     review.act(ChatAction::Flip, &library, &content, 1002500, 0.0);
     review.act(
@@ -299,7 +305,7 @@ fn version_two_scores_migrate_without_losing_any_values() {
     write_progress(&mut store, &progress).unwrap();
     let snapshot: serde_json::Value =
         serde_json::from_str(&store.values["learning_progress_v1"]).unwrap();
-    assert_eq!(snapshot["version"], 3);
+    assert_eq!(snapshot["version"], 4);
     assert_eq!(read_progress(&store, 1200).unwrap().progress, progress);
 }
 
@@ -352,10 +358,203 @@ fn read_only_messages_advance_without_grading_and_delay_has_readable_bounds() {
     let (mut review, _) = ConversationReview::restore(progress(), &library, &content, 1000000);
     review.act(ChatAction::Next, &library, &content, 1000000, 0.0);
     assert!(review.session().unwrap().words.is_empty());
+    review.act(ChatAction::PartnerAppears, &library, &content, 1002000, 0.0);
     review.act(ChatAction::LearnerAppears, &library, &content, 1002000, 0.0);
     assert!(review.can_next());
     assert_eq!(review.session().unwrap().completed[0].rating, Rating::Read);
     assert!(review.progress.scores.is_empty());
     assert_eq!(typing_delay_ms("Bok!"), 1200);
     assert_eq!(typing_delay_ms(&"word ".repeat(100)), 4000);
+}
+
+#[test]
+fn difficulty_counts_both_speakers_repetitions_case_and_unknown_words() {
+    let content = content();
+    let mut conversation = library().conversations.remove(0);
+    for exchange in &mut conversation.exchanges {
+        exchange.partner.hr = "KAVU, čaj!".into(); // ranks 1 and 4
+        exchange.learner.hr = "Kava, molim, unknown, kavu.".into(); // 2, 3, 4, 1
+        exchange.partner.en = "English never affects the rank.".into();
+    }
+    assert_eq!(conversation_difficulty(&conversation, &content), 15.0 / 6.0);
+    for exchange in &mut conversation.exchanges {
+        exchange.partner.hr = "...".into();
+        exchange.learner.hr = "???".into();
+    }
+    assert_eq!(conversation_difficulty(&conversation, &content), 4.0);
+}
+
+#[test]
+fn easier_conversations_get_more_weight_but_read_count_is_always_the_first_filter() {
+    let content = content();
+    let mut library = library();
+    let mut progress = progress();
+    for exchange in &mut library.conversations[0].exchanges {
+        exchange.learner.hr = "Kavu.".into();
+    }
+    for exchange in &mut library.conversations[1].exchanges {
+        exchange.partner.hr = "Čaj?".into();
+    }
+    library.word_index.get_mut("kavu").unwrap()[0].hits = 5;
+    library.validate_and_rank(&content).unwrap();
+    assert_eq!(library.difficulties["0001"], 1.0);
+    assert_eq!(library.difficulties["0002"], 2.5);
+    // Equal occurrence counts: 5/1 vs 5/2.5 gives the easy conversation 5/7 probability.
+    assert_eq!(
+        library
+            .choose(&content, &progress, &[], 1000, 0.70)
+            .unwrap()
+            .id,
+        "0001"
+    );
+    assert_eq!(
+        library
+            .choose(&content, &progress, &[], 1000, 0.72)
+            .unwrap()
+            .id,
+        "0002"
+    );
+    progress.conversations.read_counts.insert("0001".into(), 1);
+    assert_eq!(
+        library
+            .choose(&content, &progress, &[], 1000, 0.0)
+            .unwrap()
+            .id,
+        "0002"
+    );
+}
+
+#[test]
+fn both_typing_stages_are_ordered_resumable_and_excluded_from_recall() {
+    let library = library();
+    let content = content();
+    let (mut review, _) = ConversationReview::restore(progress(), &library, &content, 1000000);
+    review.act(ChatAction::Next, &library, &content, 1000000, 0.0);
+    assert_eq!(review.session().unwrap().phase, SessionPhase::PartnerTyping);
+    assert!(!review.act(ChatAction::LearnerAppears, &library, &content, 1000500, 0.0));
+    assert!(!review.can_flip());
+    let (mut review, _) = ConversationReview::restore(review.progress, &library, &content, 2000000);
+    assert!(review.act(ChatAction::PartnerAppears, &library, &content, 2001000, 0.0));
+    assert_eq!(review.session().unwrap().phase, SessionPhase::Typing);
+    let (mut review, _) = ConversationReview::restore(review.progress, &library, &content, 3000000);
+    assert!(!review.act(ChatAction::PartnerAppears, &library, &content, 3001000, 0.0));
+    review.act(ChatAction::LearnerAppears, &library, &content, 3004000, 0.0);
+    assert!(!review.act(ChatAction::LearnerAppears, &library, &content, 3004200, 0.0));
+    review.act(ChatAction::Flip, &library, &content, 3004500, 0.0);
+    assert_eq!(
+        review.session().unwrap().phase,
+        SessionPhase::Answer {
+            elapsed_ms: 500,
+            face: AnswerFace::Revealed
+        }
+    );
+}
+
+#[test]
+fn extra_flips_show_notes_without_restarting_recall_or_regrading_a_completed_reply() {
+    let library = library();
+    let content = content();
+    let (mut review, _) = ConversationReview::restore(progress(), &library, &content, 1000000);
+    for (action, time) in [
+        (ChatAction::Next, 1000000),
+        (ChatAction::PartnerAppears, 1001000),
+        (ChatAction::LearnerAppears, 1003000),
+        (ChatAction::Flip, 1003500),
+    ] {
+        assert!(review.act(action, &library, &content, time, 0.0));
+    }
+    assert!(!review.showing_notes());
+    let revealed_progress = review.progress.clone();
+    review.act(ChatAction::Flip, &library, &content, 1004000, 0.0);
+    assert!(review.showing_notes());
+    assert_eq!(review.progress, revealed_progress);
+    assert_eq!(
+        review.session().unwrap().phase,
+        SessionPhase::Answer {
+            elapsed_ms: 500,
+            face: AnswerFace::Revealed
+        }
+    );
+    review.act(
+        ChatAction::Rate(Rating::Correct),
+        &library,
+        &content,
+        1004500,
+        0.0,
+    );
+    assert!(!review.showing_notes());
+    review.act(ChatAction::Settled, &library, &content, 1004800, 0.0);
+    let saved = review.progress.clone();
+    assert!(review.can_flip());
+    review.act(ChatAction::Flip, &library, &content, 1005000, 0.0);
+    assert!(review.showing_notes());
+    review.act(ChatAction::Flip, &library, &content, 1005500, 0.0);
+    assert!(!review.showing_notes());
+    assert_eq!(review.progress, saved);
+}
+
+#[test]
+fn legacy_saved_notes_face_can_close_without_losing_the_frozen_duration() {
+    let library = library();
+    let content = content();
+    let (mut review, _) = ConversationReview::restore(progress(), &library, &content, 1000000);
+    for (action, time) in [
+        (ChatAction::Next, 1000000),
+        (ChatAction::PartnerAppears, 1001000),
+        (ChatAction::LearnerAppears, 1002000),
+        (ChatAction::Flip, 1002500),
+    ] {
+        review.act(action, &library, &content, time, 0.0);
+    }
+    review
+        .progress
+        .conversations
+        .session
+        .as_mut()
+        .unwrap()
+        .phase = SessionPhase::Answer {
+        elapsed_ms: 500,
+        face: AnswerFace::Notes,
+    };
+    let (mut restored, notice) =
+        ConversationReview::restore(review.progress, &library, &content, 2000000);
+    assert!(notice.is_none());
+    assert!(restored.showing_notes());
+    restored.act(ChatAction::Flip, &library, &content, 2001000, 0.0);
+    assert!(!restored.showing_notes());
+    assert_eq!(
+        restored.session().unwrap().phase,
+        SessionPhase::Answer {
+            elapsed_ms: 500,
+            face: AnswerFace::Revealed
+        }
+    );
+    let saved = restored.progress.clone();
+    restored.act(ChatAction::Flip, &library, &content, 2002000, 0.0);
+    assert!(restored.showing_notes());
+    assert_eq!(restored.progress, saved);
+}
+
+#[test]
+fn version_three_in_progress_typing_session_is_kept_and_migrates_on_save() {
+    use crate::memory_store::MemoryStore;
+    use crate::persistence::{read_progress, write_progress};
+    let library = library();
+    let content = content();
+    let raw = r#"{"version":3,"value":{"scores":{"kavu":{"score":500,"last_review":1000}},"last_data_update":1100,"conversations":{"read_counts":{"0002":3},"show_english":true,"session":{"conversation_id":"0001","exchange_index":0,"learner_text":"Kavu, kavu, kavu.","phase":"Typing","words":[{"target_language":"kavu","base_language":"kavu"}],"completed":[]}}}}"#;
+    let mut store = MemoryStore::default();
+    store
+        .values
+        .insert("learning_progress_v1".into(), raw.into());
+    let saved = read_progress(&store, 1200).unwrap().progress;
+    let (review, notice) = ConversationReview::restore(saved.clone(), &library, &content, 1200000);
+    assert!(notice.is_none());
+    assert_eq!(review.progress, saved);
+    assert_eq!(review.session().unwrap().phase, SessionPhase::Typing);
+    assert_eq!(store.values["learning_progress_v1"], raw);
+    write_progress(&mut store, &review.progress).unwrap();
+    let snapshot: serde_json::Value =
+        serde_json::from_str(&store.values["learning_progress_v1"]).unwrap();
+    assert_eq!(snapshot["version"], 4);
+    assert_eq!(read_progress(&store, 1300).unwrap().progress, saved);
 }

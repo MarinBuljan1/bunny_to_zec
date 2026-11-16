@@ -13,7 +13,13 @@ forms absent from learner replies are deferred until coverage expands.
 - `lib.rs`: app entry point and guide integration; the previous flashcard implementation remains as a compatibility reference.
 - `chat.rs`: conversation UI, loading/saving, clocks, and typing/feedback timers.
 - `conversations.rs`: pure selection, review targets, and persistent conversation transitions.
-- `gestures.rs`: review-message swipes and native history scrolling with a bottom pull.
+- `gestures.rs`: one pointer controller for review swipes, history/notes scrolling, and bottom pulls.
+- `scroll_drag.rs`: independent horizontal displacement, vertical scrolling, and release velocity.
+- `drag_motion.rs`: frame-scheduled movement/glow updates for the active bubble.
+- `gesture_hint.rs`: release-instruction painting without a conversation render.
+- `scroll_motion.rs`: frame-coalesced mouse scrolling and pull-dot painting.
+- `message_bubble.rs`: cancellable bubble entry/resize animations, separate from dragging.
+- `word_notes.rs`: distinct tested/introduced forms and compact explanation entries.
 - `guide.rs`: native guide dialog, Escape/backdrop closing, and focus restoration.
 - `model.rs`: shared vocabulary and progress structures, retaining the existing JSON schemas.
 - `learning.rs`: pure scoring, decay, progress, and card-selection rules. Time is an explicit input.
@@ -45,18 +51,68 @@ continue in memory, but unsaved changes may be lost on reload. If existing progr
 cannot be read or uses a newer format, it is left unchanged and the session becomes
 read-only for persistence; no automatic reset or overwrite is performed.
 
-Partner messages appear first, with three animated learner typing dots for
+A partner typing bubble appears for one second before each partner message.
+The partner message then appears, with three animated learner typing dots for
 1.2–4 seconds, based on partner-message length. Recall timing begins when the
 learner reply replaces the dots, and stops on the first reveal. Later flips do
 not change that duration. Tap any message to toggle English for all messages.
 
-An active learner reply accepts horizontal swipes to flip, and vertical swipes
-after revealing to grade. The bubble moves a little and settles in place over
-280 ms; it never flies offscreen. Past messages remain in the current conversation.
-After rating, native touch scrolling, mouse dragging, or the wheel scroll history.
+Swipes can start on the conversation background as well as a message. Horizontal
+swipes reveal the active reply or toggle its word explanations, including after
+rating. Vertical swipes grade after revealing. A soft green/red/blue glow follows the moving learner bubble and builds toward
+the acceptance threshold; the release hint indicates acceptance. The message list itself disables
+native touch panning during interactive scroll/flip/review gestures, so a browser
+cannot cancel pointer delivery at that scroll-container boundary. Word explanations accept sideways flips too. Short notes accept vertical ratings;
+overflowing notes scroll vertically with touch or mouse dragging instead. The overflow decision is made when the gesture starts. The bubble follows the pointer directly in both directions without locking an axis, with smooth
+resistance limiting its travel. Small drags track close to finger distance before
+easing toward the 32 px travel limit. A single 170 ms transition settles it on release;
+there is no competing rating bounce. The 280 ms rating input lock remains. Past messages remain in the current conversation.
+After rating, touch dragging, mouse dragging, or the wheel scroll history.
 A 72 px upward pull beyond the bottom (120 px accumulated wheel motion) requests
-the next exchange. Buttons and keyboard controls provide alternatives. Replacing
+the next exchange. A partner-coloured dot grows below the conversation during the pull. It stops
+growing at the acceptance threshold; release expands a dot-sized partner bubble
+into the typing message. A fixed preview slot prevents the dot from changing the
+scroll boundary. Cancelling/reversing shrinks the preview, and the accessible
+release hint remains available without a progress bar. Buttons and keyboard controls provide alternatives. Replacing
 the conversation clears the previous conversation's visible history.
+
+Drag visuals are coalesced to one `requestAnimationFrame` callback and update only
+the active bubble's inline visual properties. They do not put pointer coordinates
+in Yew state. Release instructions and dot readiness are also painted directly;
+crossing a threshold does not schedule a conversation render. Instruction text
+updates only when it changes, retains its original layout space, and updates
+accessibility attributes along with the visible label. The glow animates opacity on a separate layer.
+`gloo-render`, already pinned in the dependency tree, is now a direct dependency
+for cancellable frame callbacks. Pending frames are cancelled on release, pointer
+cancellation, mode changes, and unmount; weak callback ownership avoids cycles.
+
+Interactive scrolling and sideways flips share one pointer owner, with independent
+axes. Every vertical delta scrolls the list or notes, and horizontal displacement
+from the original press moves the card. Both work simultaneously during diagonal
+movement. There is no scroll/flip mode switch, turn threshold, or horizontal reset
+when vertical movement begins. The card settles only when released or cancelled.
+Long notes use the same controller.
+Wheel and keyboard scrolling remain native. Touch release adds decaying momentum,
+which never triggers Next; touching again or changing modes cancels the glide.
+
+Scroll writes and pull-dot painting are coalesced to browser frames. Reversing a
+pull first shrinks its stored distance, capped at the 72 px visible threshold.
+Only movement left after shrinking it to zero scrolls history backward. A pull
+already in progress survives a transient bottom measurement. Horizontal movement
+does not clear the dot. On release, an armed horizontal flip takes priority over
+Next; one release performs only one action, and the instruction reflects that.
+Wheel pulls use the equivalent 120 px threshold. Pointer cancellation, mode
+changes, and view teardown cancel queued movement and preview frames.
+
+Typing bubbles grow in and morph to message size over 160 ms with a brief shrink/
+grow animation. Bubble size/opacity animate separately from the outer drag
+transform. Info changes animate only transform/opacity, with one normal content
+layout rather than interpolating width/height. Opening or closing explanations
+does not force history to the bottom; automatic following remains for arriving
+messages and completing a review. Reduced-motion preferences disable this animation. Obsolete animations
+and resize-follow callbacks are cancelled on replacement/unmount. Animation setup
+failure falls back to normally rendered content. Readers at the bottom continue
+following the resized message; scrolling notes does not change history-follow state.
 
 Timers are cancelled when their phase/view changes; queued callbacks check the
 conversation and exchange identity. Repeated ratings are rejected by the pure
@@ -66,8 +122,14 @@ never graded again on reload. The guide pauses a pending typing/feedback timeout
 
 Conversation selection restricts candidates to forms in the learner index, then
 uses the existing vocabulary priorities. Among conversations containing the target,
-only those with the fewest completed reads are eligible; actual occurrence counts
-weight the random choice. A conversation's read count increases only after its last
+only those with the fewest completed reads are eligible. Their selection weight
+is `target occurrences / average vocabulary rank`. The average uses every Croatian
+word occurrence on both sides, lowercased with grammatical forms kept separate.
+Ranks start at 1 in vocabulary order; unknown words get the last rank, while
+punctuation and English do not contribute. Difficulty is computed once when the
+validated library loads. Equal occurrence counts and half the average rank mean
+twice the weight. This biases choices toward easier dialogue without overriding
+read-count fairness or vocabulary-review priorities. A conversation's read count increases only after its last
 learner reply is rated/read. No read count is awarded for starting or abandoning it.
 
 For each learner reply, an already-introduced form below 864,000 raw score takes
@@ -85,12 +147,14 @@ Browser local storage uses two snapshots with a `version` and `value` envelope:
   must have successful HTTP responses, parse correctly, and pass reference/order
   validation before a cache write. Any failed resource falls back to a whole saved
   dataset. A valid download remains usable if its cache write fails, with a warning.
-- `learning_progress_v1`: version 3; i64 per-word scores, last-review timestamps,
+- `learning_progress_v1`: version 4; i64 per-word scores, last-review timestamps,
   decay-update timestamp, completed conversation read counts, English visibility,
   and the current conversation cursor/masked words/completed replies in one atomic
-  write. Readers accept versions 1, 2, and 3; missing conversation state defaults
+  write. Readers accept versions 1, 2, 3, and 4; missing conversation state defaults
   to empty. Migration happens only on a successful save. Failed writes preserve
-  the original snapshot. Old readers reject version 3 before writing. Content
+  the original snapshot. Old readers reject version 4 before writing. Version 4 adds the partner typing
+  phase and the optional answer-explanation face; version-3 unfinished sessions
+  retain their phase, words, scores, and completed counts. Content
   stays at version 1, and timestamp units/scoring formulas remain unchanged.
 
 The conversation JSON is fetched as a relative asset and validated against the
@@ -195,13 +259,25 @@ checks and [REFACTORING_ROADMAP.md](REFACTORING_ROADMAP.md) for implementation r
 
 ## Review controls
 
-Use the visible Start/next, Skip/next, Reveal / flip, Correct/next, and Incorrect/next
-buttons, or swipe as before. Tab to buttons and use Enter/Space; with the card region
-focused, Left/Right reveals/flips, Up advances correct, and Down advances incorrect.
-Arrows inside focused explanations keep native scrolling. Controls ignore input
-while loading, dragging, advancing, or showing Guide. Guide is a native modal dialog:
-Escape/Close/backdrop dismiss it and focus returns to the opener. Current browsers
-with HTML dialog support are required. Review buttons retain focus during animation.
+Use Start conversation, Reveal / flip, Correct/Incorrect, Flip, and Next messages
+buttons, or swipe across the conversation area. Tab to controls and press Enter or
+Space; with the conversation focused, Left/Right reveals/flips, Up rates correct
+or requests the next exchange at the bottom, and Down rates incorrect. Repeated
+held-arrow events are ignored. Arrows inside focused word explanations scroll.
+
+The first reveal fills the blanks while retaining each tested word's English hint,
+underline, and layout. A further flip shows compact word explanations inside the learner bubble, below
+a divider after the optional English translation. Each form appears once, with
+Croatian, English, and its explanation flowing in a single paragraph. Introduced
+related forms remain available in vocabulary order; untranslated grammar forms
+are not introduced merely by opening notes.
+Rating hides this section; a later flip can reopen it without changing any scores.
+Info visibility is now session-local before and after rating. Extra info flips
+keep the same progress snapshot, so they do not trigger serialization/storage
+writes; the first reveal still saves the frozen recall duration. Older saved
+`Notes` answer faces remain readable and convert when closed.
+Visible speaker labels and per-message rating labels are omitted. Guide remains
+a native modal dialog with keyboard focus containment and Escape/backdrop closing.
 
 ## Editing learning content
 
@@ -214,6 +290,8 @@ The runtime reads only these UTF-8 JSON files in `assets/`:
   and `base_language` (English). Reordering it requires updating all indexes.
 - `croatian_explanations.json`: English base-word keys mapping Croatian forms to
   their explanation text.
+- `conversations.json`: partner/learner exchanges, English translations, and the
+  exact-form learner occurrence index described in [CONVERSATIONS.md](CONVERSATIONS.md).
 
 Editable `croatian.xlsx`, `croatian.xlsm`, and the Krita icon source `icon.kra`
 are retained. There is no repository script that exports those workbooks to the
