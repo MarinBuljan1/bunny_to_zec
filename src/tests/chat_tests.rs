@@ -104,3 +104,81 @@ fn score_bar_puts_the_percentage_on_a_visible_fill_element() {
         );
     }
 }
+
+#[test]
+fn learner_borders_follow_saved_ratings_and_leave_ungraded_messages_neutral() {
+    for (rating, class) in [
+        (None, "learner-message"),
+        (Some(Rating::Read), "learner-message"),
+        (Some(Rating::Correct), "learner-message rated-correct"),
+        (Some(Rating::Incorrect), "learner-message rated-incorrect"),
+    ] {
+        assert_eq!(learner_message_class(rating).to_string(), class);
+    }
+}
+
+#[test]
+fn conversation_exit_is_only_requested_after_the_last_reply_has_settled() {
+    let screen = ready_screen();
+    let Screen::Ready(original) = screen.as_ref() else {
+        panic!("ready fixture");
+    };
+    let mut ready = original.clone();
+    let vocabulary = crate::memory_store::content();
+    let exchange = serde_json::json!({
+        "partner": { "hr": "Bok?", "en": "Hello?" },
+        "learner": { "hr": "Bok!", "en": "Hello!" },
+    });
+    let mut conversations: ConversationLibrary = serde_json::from_value(serde_json::json!({
+        "schema_version": 1, "source_language": "hr", "translation_language": "en",
+        "conversations": [{ "id": "0001", "title": "Hello", "exchanges": vec![exchange; 5] }],
+        "word_index": { "bok": [{ "c_id": "0001", "hits": 5 }] },
+    }))
+    .unwrap();
+    conversations.validate_and_rank(&vocabulary).unwrap();
+    ready.content = Rc::new(Content {
+        vocabulary,
+        conversations,
+    });
+    assert!(!starts_new_conversation(&ready));
+    for index in 0..5 {
+        for (step, action) in [
+            ChatAction::Next,
+            ChatAction::PartnerAppears,
+            ChatAction::LearnerAppears,
+            ChatAction::Flip,
+            ChatAction::Rate(Rating::Correct),
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            assert!(ready.review.act(
+                action,
+                &ready.content.conversations,
+                &ready.content.vocabulary,
+                1000000 + index * 10000 + step as i64 * 1000,
+                0.0
+            ));
+        }
+        assert!(!starts_new_conversation(&ready));
+        ready.review.act(
+            ChatAction::Settled,
+            &ready.content.conversations,
+            &ready.content.vocabulary,
+            1005000 + index * 10000,
+            0.0,
+        );
+        assert_eq!(starts_new_conversation(&ready), index == 4);
+    }
+    // A new run of the same ID still leaves the completed conversation behind.
+    ready.review.act(
+        ChatAction::Next,
+        &ready.content.conversations,
+        &ready.content.vocabulary,
+        1060000,
+        0.0,
+    );
+    assert_eq!(ready.review.session().unwrap().conversation_id, "0001");
+    assert_eq!(ready.review.session().unwrap().exchange_index, 0);
+    assert!(!starts_new_conversation(&ready));
+}

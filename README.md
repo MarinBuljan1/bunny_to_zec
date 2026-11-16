@@ -12,6 +12,7 @@ forms absent from learner replies are deferred until coverage expands.
 
 - `lib.rs`: app entry point and guide integration.
 - `chat.rs`: conversation UI, loading/saving, clocks, and typing/feedback timers.
+- `conversation_transition.rs`: inert outgoing timeline snapshots and conversation-change animations.
 - `conversations.rs`: pure selection, review targets, and persistent conversation transitions.
 - `gestures.rs`: one pointer controller for review swipes, history/notes scrolling, and bottom pulls.
 - `scroll_drag.rs`: independent horizontal displacement, vertical scrolling, and release velocity.
@@ -73,13 +74,17 @@ and shrinks in proportion to the dot, with scroll compensation preserving the
 distance from the bottom as its height changes.
 Cancelling/reversing shrinks the preview. The dot announces readiness for assistive
 technology, and keyboard controls provide alternatives to swiping. Replacing
-the conversation clears the previous conversation's visible history.
+the conversation slides the previous visible history upward as the new conversation
+enters from below over 360 ms. The outgoing snapshot is inert, hidden from assistive
+technology, and removed after the transition; it is not saved as history. Reduced
+motion skips the transition, and timers/temporary DOM are cleaned up on interruption.
 
 Drag visuals are coalesced to one `requestAnimationFrame` callback and update only
 the active bubble's inline visual properties. They do not put pointer coordinates
 in Yew state. Dot readiness and accessibility attributes are also painted directly;
 crossing a threshold does not schedule a conversation render. The glow animates
-opacity on a separate layer.
+opacity on a separate layer, offset towards the active swipe direction: blue to
+the left/right for flips, green above for correct, and red below for incorrect.
 `gloo-render`, already pinned in the dependency tree, is now a direct dependency
 for cancellable frame callbacks. Pending frames are cancelled on release, pointer
 cancellation, mode changes, and unmount; weak callback ownership avoids cycles.
@@ -280,6 +285,9 @@ Croatian, English, and its explanation flowing in a single paragraph. Introduced
 related forms remain available in vocabulary order; untranslated grammar forms
 are not introduced merely by opening notes.
 Rating hides this section; a later flip can reopen it without changing any scores.
+Rated learner replies keep a subtle green (correct) or red (incorrect) border,
+including earlier replies and restored sessions. Ungraded/read-only messages stay
+neutral. The border does not change the bubble's dimensions.
 Info visibility is session-local before and after rating. Extra info flips and
 settling share the same immutable progress snapshot without copying scores/read
 counts. Persistent actions detach the snapshot; the reducer detects that change

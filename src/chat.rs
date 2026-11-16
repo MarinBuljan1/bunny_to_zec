@@ -266,27 +266,27 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
             ),
         );
     }
-    let pull = crate::gestures::use_conversation_scroll(
-        timeline.clone(),
-        ready.is_some(),
-        if can_pull {
-            let screen = screen.clone();
-            Some(Callback::from(move |action| {
-                screen.dispatch(Action::Review(action))
-            }))
-        } else {
-            None
-        },
-    );
+    let transition =
+        crate::conversation_transition::use_conversation_transition(timeline.clone(), turn.clone());
+    let leaving_conversation = ready.is_some_and(starts_new_conversation);
     let send = {
         let screen = screen.clone();
         let blocked = props.guide_open;
+        let capture = transition.capture.clone();
         Callback::from(move |action| {
             if !blocked {
+                if action == ChatAction::Next && leaving_conversation {
+                    capture.emit(());
+                }
                 screen.dispatch(Action::Review(action));
             }
         })
     };
+    let pull = crate::gestures::use_conversation_scroll(
+        timeline.clone(),
+        ready.is_some(),
+        can_pull.then(|| send.clone()),
+    );
     let onscroll = {
         let following = following.clone();
         let timeline = timeline.clone();
@@ -413,6 +413,7 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
                         let masked = active && matches!(session.phase, SessionPhase::Question | SessionPhase::Answer { face: AnswerFace::Masked, .. });
                         let words = if active { session.words.as_slice() } else { session.completed.get(index).map_or(&[] as &[_], |reply| reply.words.as_slice()) };
                         let notes_open = active && ready.review.showing_notes();
+                        let rating = session.completed.get(index).map(|reply| reply.rating);
                         let motion_class = classes!("message-motion", "learner-motion");
                         html!{<div class="chat-exchange" key={format!("{}-{index}", conversation.id)}>
                             <div class="message-motion partner-motion"><MessageBubble typing={partner_typing} class={classes!("partner-message")} label="Partner message" layout_key={format!("{partner_typing}-{english}")} start_size={partner_typing.then_some((36.0, 36.0))} on_resized={bubble_resized.clone()}>
@@ -425,7 +426,11 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
                             </MessageBubble></div>
                             {if partner_typing { Html::default() } else { html!{
                                 <div ref={if active { motion.clone() } else { NodeRef::default() }} class={motion_class}>
-                                <MessageBubble typing={learner_typing} class={classes!("learner-message")} label="Learner message" layout_key={format!("{learner_typing}-{masked}-{english}-{notes_open}")} on_resized={bubble_resized.clone()}>
+                                <MessageBubble typing={learner_typing} class={learner_message_class(rating)} label={match rating {
+                                    Some(Rating::Correct) => "Learner message, marked correct",
+                                    Some(Rating::Incorrect) => "Learner message, marked incorrect",
+                                    _ => "Learner message",
+                                }} layout_key={format!("{learner_typing}-{masked}-{english}-{notes_open}")} on_resized={bubble_resized.clone()}>
                                     {if learner_typing { typing_indicator("Learner is typing") } else { html!{
                                         <button class="message-text" type="button" onpointerdown={tap_start.clone()} onclick={toggle.clone()} title="Toggle English for all messages" aria-pressed={english.to_string()}>
                                             <span lang="hr">{annotated_message(&exchange.learner.hr, words, masked)}</span>
@@ -450,9 +455,34 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
                     <div class="pull-dot"></div>
                 </div>
             </section>
+            <div ref={transition.outgoing} class="conversation-exit" aria-hidden="true" inert=""></div>
             </div>
         </main>
     }
+}
+
+fn starts_new_conversation(ready: &Ready) -> bool {
+    ready.review.can_next()
+        && ready.review.session().is_some_and(|session| {
+            ready
+                .content
+                .conversations
+                .get(&session.conversation_id)
+                .is_some_and(|conversation| {
+                    session.exchange_index + 1 == conversation.exchanges.len()
+                })
+        })
+}
+
+fn learner_message_class(rating: Option<Rating>) -> Classes {
+    classes!(
+        "learner-message",
+        match rating {
+            Some(Rating::Correct) => Some("rated-correct"),
+            Some(Rating::Incorrect) => Some("rated-incorrect"),
+            _ => None,
+        }
+    )
 }
 
 fn score_bar(learned_words: f64) -> Html {

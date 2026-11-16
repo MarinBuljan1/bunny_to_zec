@@ -116,6 +116,50 @@
   padding: 20px max(16px, (100% - 760px) / 2) max(20px, env(safe-area-inset-bottom));
 }
 
+.chat-timeline[data-conversation-enter] {
+  animation: conversation-enter 750ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.conversation-exit {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.conversation-snapshot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  pointer-events: none;
+}
+.conversation-snapshot[data-conversation-exit] {
+  animation: conversation-exit 750ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.conversation-snapshot .pull-preview {
+  visibility: hidden;
+}
+
+@keyframes conversation-enter {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes conversation-exit {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
 .chat-exchange {
   display: flex;
   flex-direction: column;
@@ -148,10 +192,11 @@
   z-index: -1;
   pointer-events: none;
   background: rgb(var(--glow-rgb, 88, 101, 122));
-  box-shadow: 0 0 28px 9px rgb(var(--glow-rgb, 88, 101, 122));
+  box-shadow: 0 0 24px 5px rgb(var(--glow-rgb, 88, 101, 122));
+  transform: translate3d(var(--glow-x, 0px), var(--glow-y, 0px), 0);
   opacity: var(--glow-opacity, 0);
   transition: opacity var(--drag-duration, 170ms) ease-out;
-  will-change: opacity;
+  will-change: transform, opacity;
 }
 
 .chat-message {
@@ -184,6 +229,14 @@
 
 .learner-message {
   user-select: none;
+  outline: 1px solid transparent;
+  outline-offset: -1px;
+}
+.learner-message.rated-correct {
+  outline-color: #369567;
+}
+.learner-message.rated-incorrect {
+  outline-color: #c75c5c;
 }
 
 .message-text {
@@ -321,6 +374,9 @@
     animation: none !important;
     transition: none !important;
   }
+  .conversation-exit {
+    display: none;
+  }
 }
 html, body {
   margin: 0;
@@ -399,3 +455,5 @@ button:focus-visible, [tabindex="0"]:focus-visible {
   outline: 3px solid #a34b00;
   outline-offset: 3px;
 }
+
+/*# sourceMappingURL=style.css.map */

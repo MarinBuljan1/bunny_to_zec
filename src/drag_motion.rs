@@ -57,6 +57,7 @@ fn draw_motion(motion: &DragMotion, settling: bool) {
     };
     let (dx, dy, mode) = motion.latest;
     let feedback = swipe_feedback(dx, dy, mode);
+    let (glow_x, glow_y) = glow_offset(feedback.action, dx, dy);
     let color = match feedback.action {
         Some(ChatAction::Rate(Rating::Correct)) => "34, 197, 94",
         Some(ChatAction::Rate(_)) => "239, 68, 68",
@@ -78,9 +79,21 @@ fn draw_motion(motion: &DragMotion, settling: bool) {
         )
     };
     // This hook owns the active wrapper's inline visual properties; Yew owns its contents.
-    let style = format!("--drag-x: {x}px; --drag-y: {y}px; --drag-duration: {duration}ms; --glow-rgb: {color}; --glow-opacity: {opacity}");
+    let style = format!("--drag-x: {x}px; --drag-y: {y}px; --drag-duration: {duration}ms; --glow-rgb: {color}; --glow-opacity: {opacity}; --glow-x: {glow_x}px; --glow-y: {glow_y}px");
     if let Err(error) = element.set_attribute("style", &style) {
         // Failure leaves the message usable through keyboard controls.
         web_sys::console::error_2(&"Could not update message movement".into(), &error);
     }
 }
+
+fn glow_offset(action: Option<ChatAction>, dx: f64, dy: f64) -> (f64, f64) {
+    match action {
+        Some(ChatAction::Flip) => (resisted_offset(dx) * 0.3, 0.0),
+        Some(ChatAction::Rate(_)) => (0.0, resisted_offset(dy) * 0.3),
+        _ => (0.0, 0.0),
+    }
+}
+
+#[cfg(test)]
+#[path = "tests/drag_motion_tests.rs"]
+mod tests;

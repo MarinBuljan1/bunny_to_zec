@@ -2,6 +2,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use yew::prelude::*;
 
 mod chat;
+mod conversation_transition;
 mod conversations;
 mod drag_motion;
 mod gestures;

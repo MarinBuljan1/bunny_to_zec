@@ -20,6 +20,14 @@ also need these checks in desktop and narrow/mobile layouts:
   briefly grow in; dots morph to text size with a short shrink/grow transition.
   Confirm reduced-motion mode skips these transitions. Only learner
   appearance starts recall timing. Refresh during either typing phase and retry.
+- Finish a conversation and advance using touch, mouse, wheel, and keyboard. The
+  visible previous conversation should slide up and out while the next starts
+  below, with no header movement or stale interactive messages left behind.
+  Advancing within a conversation must not run this whole-conversation animation.
+  Repeat when the same conversation ID is selected again, and with reduced motion.
+- Rate replies correct and incorrect: confirm a thin green/red border appears
+  without rewrapping or resizing the message. Scroll back and refresh; borders
+  should reflect saved ratings. Ungraded/read-only replies remain neutral.
 - Reveal using a horizontal swipe starting on the message or empty background.
   Hints, black underlines, spacing, and wrapping remain in place with blanks filled.
   Speaker labels and per-message rating labels are absent.
@@ -36,7 +44,8 @@ also need these checks in desktop and narrow/mobile layouts:
   Movement can change freely between sideways/up/down during one drag and settles
   once on release. Release direction decides the action; ambiguous diagonal
   releases do nothing. The glow stays behind this bubble, with green/red feedback
-  for ratings and blue for flips.
+  for ratings and blue for flips. Most of the glow should appear above/below for
+  ratings and to the left/right for flips, following direction changes smoothly.
   On real touch, verify both up and down gestures finish without turning into
   list scrolling, including after opening word explanations. Scroll inside long
   explanations with touch or mouse dragging. Sideways drags starting on notes
