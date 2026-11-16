@@ -270,7 +270,10 @@ fn content_round_trips_and_legacy_content_remains_readable() {
     let expected = content();
     let mut store = MemoryStore::default();
     store.insert_json("cards", &expected.cards);
-    store.insert_json("sentences", &expected.sentences);
+    store.insert_json(
+        "sentences",
+        &serde_json::json!([{"base_language": "hello!", "target_language": "bok!"}]),
+    );
     assert_eq!(read_content(&store).unwrap(), expected);
     write_content(&mut store, &expected).unwrap();
     assert_eq!(store.writes, 1);
@@ -284,22 +287,16 @@ fn invalid_content_cannot_replace_a_good_cache() {
     let mut store = MemoryStore::default();
     write_content(&mut store, &content()).unwrap();
     let before = store.values.clone();
-    for indices in [vec![-1], vec![1], vec![0, -1]] {
-        let mut invalid = content();
-        invalid.cards.get_mut("bok").unwrap().sentence_indexes = indices;
-        assert!(write_content(&mut store, &invalid).is_err());
-        assert_eq!(store.values, before);
-    }
+    let mut empty = content();
+    empty.cards.clear();
+    assert!(write_content(&mut store, &empty).is_err());
+    assert_eq!(store.values, before);
+    let mut invalid = content();
+    let entry = invalid.cards.shift_remove("bok").unwrap();
+    invalid.cards.insert(" ".into(), entry);
+    assert!(write_content(&mut store, &invalid).is_err());
+    assert_eq!(store.values, before);
     assert!(validate_content(&LearningContent::default()).is_err());
-    let mut word_only = content();
-    word_only
-        .cards
-        .get_mut("bok")
-        .unwrap()
-        .sentence_indexes
-        .clear();
-    word_only.sentences.clear();
-    assert!(validate_content(&word_only).is_ok());
 }
 
 #[test]
@@ -322,8 +319,6 @@ fn unavailable_storage_and_invalid_scores_return_errors_without_panicking() {
 fn real_project_content_satisfies_validation() {
     let content = LearningContent {
         cards: serde_json::from_str(include_str!("../../assets/croatian.json")).unwrap(),
-        sentences: serde_json::from_str(include_str!("../../assets/croatian_sentences.json"))
-            .unwrap(),
         explanations: serde_json::from_str(include_str!("../../assets/croatian_explanations.json"))
             .unwrap(),
     };
@@ -331,15 +326,12 @@ fn real_project_content_satisfies_validation() {
 }
 
 #[test]
-fn unordered_references_and_corrupt_or_future_content_are_rejected() {
-    let mut invalid = content();
-    invalid.sentences.push(crate::model::CardSentences {
-        base_language: "is".into(),
-        target_language: "je".into(),
-    });
-    invalid.cards.get_mut("bok").unwrap().sentence_indexes = vec![1, 0];
-    assert!(validate_content(&invalid).unwrap_err().contains("ordered"));
-    for raw in ["broken", r#"{"version":2,"value":{}}"#] {
+fn corrupt_or_future_content_is_rejected() {
+    for raw in [
+        "broken",
+        r#"{"version":2,"value":{}}"#,
+        r#"{"version":3,"value":{}}"#,
+    ] {
         let mut store = MemoryStore::default();
         store.values.insert(CONTENT_KEY.into(), raw.into());
         assert!(read_content(&store).is_err());
@@ -352,7 +344,10 @@ fn content_migration_only_removes_legacy_copies_after_success_and_never_touches_
     let mut store = MemoryStore::default();
     let expected = content();
     store.insert_json("cards", &expected.cards);
-    store.insert_json("sentences", &expected.sentences);
+    store.insert_json(
+        "sentences",
+        &serde_json::json!([{"base_language": "hello!", "target_language": "bok!"}]),
+    );
     store.insert_json("explanations", &expected.explanations);
     store.insert_json("card_scores", &progress().scores);
     store.insert_json("last_data_update", &progress().last_data_update);
@@ -379,4 +374,58 @@ fn failed_legacy_cleanup_reports_a_warning_but_keeps_the_committed_snapshot_usab
     };
     assert!(write_content(&mut store, &content()).unwrap().is_some());
     assert_eq!(read_content(&store).unwrap(), content());
+}
+
+#[test]
+fn version_one_content_migrates_without_sentence_data_or_progress_changes() {
+    let original = r#"{"version":1,"value":{"cards":{"bok":{"base_language":"hello","sentence_indexes":[0]}},"sentences":[{"base_language":"hello!","target_language":"bok!"}],"explanations":{}}}"#;
+    let mut store = MemoryStore::default();
+    store.values.insert(CONTENT_KEY.into(), original.into());
+    let mut saved = progress();
+    saved.conversations.read_counts.insert("0001".into(), 3);
+    saved.conversations.show_english = true;
+    write_progress(&mut store, &saved).unwrap();
+    let previous_progress = store.values[PROGRESS_KEY].clone();
+    let restored = read_content(&store).unwrap();
+    assert_eq!(restored, content());
+    assert_eq!(store.values[CONTENT_KEY], original);
+    store.write_error = Some(StorageError::WriteFailed);
+    assert!(write_content(&mut store, &restored).is_err());
+    assert_eq!(store.values[CONTENT_KEY], original);
+    store.write_error = None;
+    write_content(&mut store, &restored).unwrap();
+    let snapshot: serde_json::Value = serde_json::from_str(&store.values[CONTENT_KEY]).unwrap();
+    assert_eq!(snapshot["version"], 2);
+    assert!(snapshot["value"].get("sentences").is_none());
+    assert!(snapshot["value"]["cards"]["bok"]
+        .get("sentence_indexes")
+        .is_none());
+    assert_eq!(store.values[PROGRESS_KEY], previous_progress);
+    assert_eq!(read_content(&store).unwrap(), restored);
+    // Old clients accept only version 1 and must reject the compact snapshot.
+    assert_eq!(
+        read_snapshot::<LearningContent>(&store, CONTENT_KEY, &[1]),
+        Err(StorageError::UnsupportedVersion(CONTENT_KEY))
+    );
+}
+
+#[test]
+fn legacy_vocabulary_migration_preserves_order_and_needs_no_sentence_cache() {
+    let mut store = MemoryStore::default();
+    store.values.insert("cards".into(), r#"{"second":{"base_language":"two","sentence_indexes":[999]},"first":{"base_language":"one","sentence_indexes":[]}}"#.into());
+    store
+        .values
+        .insert("sentences".into(), "broken obsolete cache".into());
+    let restored = read_content(&store).unwrap();
+    assert_eq!(
+        restored
+            .cards
+            .keys()
+            .map(String::as_str)
+            .collect::<Vec<_>>(),
+        ["second", "first"]
+    );
+    write_content(&mut store, &restored).unwrap();
+    assert!(!store.values.contains_key("sentences"));
+    assert_eq!(read_content(&store).unwrap(), restored);
 }

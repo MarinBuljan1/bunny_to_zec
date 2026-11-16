@@ -9,7 +9,6 @@ fn repeated_forms_and_shared_translations_produce_one_entry_per_form() {
             form.into(),
             CardList {
                 base_language: "is".into(),
-                sentence_indexes: vec![],
             },
         );
     }

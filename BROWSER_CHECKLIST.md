@@ -73,12 +73,17 @@ also need these checks in desktop and narrow/mobile layouts:
 - Rate, refresh, and confirm progress survives. Block storage/exhaust quota: show
   a warning and retain saved data. Restore storage and retry saving. Corrupt/future
   progress stays read-only.
+- Upgrade with version-1 content cached, including a saved conversation and read
+  counts. Confirm content migrates to version 2, vocabulary order and progress stay
+  intact, and failed/quota-blocked writes retain the old cache with a warning.
+  Network requests must no longer include `croatian_sentences.json`.
 
 For offline checks, use HTTPS staging below a repository path; localhost
 intentionally retires service workers:
 
 1. Visit online, wait for worker installation, close/reopen, then go offline.
-   Refresh, review cards, and open Guide.
+   Refresh, start/continue conversations, and open Guide. Confirm vocabulary,
+   explanations, and `conversations.json` all load without network access.
 2. Publish a changed build with an old tab open. The old version remains consistent
    while the new worker waits. Close every app tab/window, including the installed
    PWA, then reopen and confirm the new version.

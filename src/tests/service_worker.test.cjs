@@ -58,6 +58,11 @@ test('successful first install provides offline navigation and assets below a re
   assert.equal(app.stats.claimed, true);
   assert.match(await app.dispatch('fetch', { method: 'GET', mode: 'navigate', url: 'https://example.test/learner/' }), /index\.html$/);
   assert.match(await app.dispatch('fetch', { method: 'GET', url: 'https://example.test/learner/pkg/bunny_to_zec_bg.wasm' }), /\.wasm$/);
+  for (const file of ['croatian.json', 'croatian_explanations.json', 'conversations.json']) {
+    const url = `https://example.test/learner/assets/${file}`;
+    assert.equal(await app.dispatch('fetch', { method: 'GET', url }), `cached:${url}`);
+  }
+  assert.equal([...app.stores.values()][0].has('https://example.test/learner/assets/croatian_sentences.json'), false);
   assert.equal(app.stats.network.length, 0);
 });
 

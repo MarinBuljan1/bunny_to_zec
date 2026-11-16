@@ -6,7 +6,7 @@ use crate::conversations::{
 use crate::gestures::at_bottom;
 use crate::message_bubble::MessageBubble;
 use crate::model::{LearningContent, SavedProgress};
-use crate::storage::{self, ContentLoadState};
+use crate::storage;
 use gloo_timers::callback::Timeout;
 use js_sys::{Date, Math};
 use std::cell::Cell;
@@ -22,7 +22,7 @@ struct Content {
 #[derive(Clone)]
 struct Ready {
     content: Rc<Content>,
-    review: ConversationReview,
+    review: Rc<ConversationReview>,
     notice: Option<String>,
     read_only: bool,
     save_error: Option<String>,
@@ -49,60 +49,56 @@ enum Action {
 impl Reducible for Screen {
     type Action = Action;
     fn reduce(self: Rc<Self>, action: Action) -> Rc<Self> {
-        match action {
-            Action::Loaded(ready) => Rc::new(Self::Ready(ready)),
-            Action::Failed(error) => Rc::new(Self::Failed(error)),
-            action => {
-                let Self::Ready(current) = self.as_ref() else {
+        // Reject stale timer/save callbacks before copying any state.
+        let action = match action {
+            Action::Loaded(ready) => return Rc::new(Self::Ready(ready)),
+            Action::Failed(error) => return Rc::new(Self::Failed(error)),
+            Action::Timed { turn, action } => {
+                let Self::Ready(ready) = self.as_ref() else {
                     return self;
                 };
-                let mut ready = current.clone();
-                match action {
-                    Action::Saved(revision, result) if revision == ready.revision => {
-                        ready.save_error = result.err()
-                    }
-                    Action::RetrySave => ready.revision += 1,
-                    Action::Review(action) => {
-                        if !ready.review.act(
-                            action,
-                            &ready.content.conversations,
-                            &ready.content.vocabulary,
-                            Date::now() as i64,
-                            Math::random(),
-                        ) {
-                            return self;
-                        }
-                        if ready.review.progress != current.review.progress {
-                            ready.revision += 1;
-                        }
-                    }
-                    Action::Timed { turn, action } => {
-                        if ready
-                            .review
-                            .session()
-                            .map(|s| (&s.conversation_id, s.exchange_index))
-                            != Some((&turn.0, turn.1))
-                        {
-                            return self;
-                        }
-                        if !ready.review.act(
-                            action,
-                            &ready.content.conversations,
-                            &ready.content.vocabulary,
-                            Date::now() as i64,
-                            Math::random(),
-                        ) {
-                            return self;
-                        }
-                        if ready.review.progress != current.review.progress {
-                            ready.revision += 1;
-                        }
-                    }
-                    _ => return self,
+                if ready
+                    .review
+                    .session()
+                    .map(|s| (&s.conversation_id, s.exchange_index))
+                    != Some((&turn.0, turn.1))
+                {
+                    return self;
                 }
-                Rc::new(Self::Ready(ready))
+                Action::Review(action)
+            }
+            action => action,
+        };
+        let Self::Ready(current) = self.as_ref() else {
+            return self;
+        };
+        if let Action::Saved(revision, _) = &action {
+            if *revision != current.revision {
+                return self;
             }
         }
+        // Save acknowledgements share the review snapshot; only domain actions copy it.
+        let mut ready = current.clone();
+        match action {
+            Action::Saved(_, result) => ready.save_error = result.err(),
+            Action::RetrySave => ready.revision += 1,
+            Action::Review(action) => {
+                if !Rc::make_mut(&mut ready.review).act(
+                    action,
+                    &ready.content.conversations,
+                    &ready.content.vocabulary,
+                    Date::now() as i64,
+                    Math::random(),
+                ) {
+                    return self;
+                }
+                if ready.review.progress != current.review.progress {
+                    ready.revision += 1;
+                }
+            }
+            _ => return self,
+        }
+        Rc::new(Self::Ready(ready))
     }
 }
 
@@ -144,8 +140,8 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
                     match loaded {
                         Err(error) => screen.dispatch(Action::Failed(error)),
                         Ok((loaded, conversations)) => {
-                            let Some(ContentLoadState::Ready(loaded)) =
-                                storage::commit_content_load(Ok(loaded), &task_cancelled)
+                            let Some(loaded) =
+                                storage::commit_content_load(loaded, &task_cancelled)
                             else {
                                 return;
                             };
@@ -167,7 +163,7 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
                                     vocabulary: loaded.content,
                                     conversations,
                                 }),
-                                review,
+                                review: Rc::new(review),
                                 notice: (!notices.is_empty()).then(|| notices.join(" ")),
                                 read_only,
                                 save_error: None,
@@ -510,3 +506,7 @@ fn annotated_message(text: &str, words: &[crate::model::Card], masked: bool) -> 
 fn typing_indicator(label: &str) -> Html {
     html! {<div class="typing-indicator" role="status" aria-label={label.to_owned()}><i/><i/><i/></div>}
 }
+
+#[cfg(test)]
+#[path = "tests/chat_tests.rs"]
+mod tests;

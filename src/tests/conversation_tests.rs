@@ -11,7 +11,6 @@ fn content() -> LearningContent {
                     word.to_owned(),
                     CardList {
                         base_language: word.into(),
-                        sentence_indexes: vec![],
                     },
                 )
             })

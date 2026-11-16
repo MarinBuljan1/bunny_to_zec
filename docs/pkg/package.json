@@ -1,7 +1,7 @@
 {
   "name": "bunny_to_zec",
   "type": "module",
-  "description": "Bunny to Zec: an offline-capable Croatian vocabulary flashcard app",
+  "description": "Bunny to Zec: an offline-capable Croatian conversation vocabulary app",
   "version": "0.1.0",
   "files": [
     "bunny_to_zec_bg.wasm",

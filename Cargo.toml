@@ -2,7 +2,7 @@
 name = "bunny_to_zec"
 version = "0.1.0"
 edition = "2021"
-description = "Bunny to Zec: an offline-capable Croatian vocabulary flashcard app"
+description = "Bunny to Zec: an offline-capable Croatian conversation vocabulary app"
 
 [dependencies]
 gloo-events = "0.2"

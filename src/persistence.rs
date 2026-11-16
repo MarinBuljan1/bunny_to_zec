@@ -8,6 +8,8 @@ use std::collections::HashMap;
 use std::fmt;
 
 const CONTENT_KEY: &str = "learning_content_v1";
+// Reuse the key, but make old readers reject content without sentence references.
+const CONTENT_VERSION: u32 = 2;
 // Keep the existing key so version-1 clients refuse to overwrite wider progress.
 const PROGRESS_KEY: &str = "learning_progress_v1";
 
@@ -119,36 +121,22 @@ fn write_snapshot<T: Serialize>(
     store.set(key, &raw)
 }
 
-/// Ordered, in-range references are required by the sentence-selection rule.
+/// Vocabulary order determines review ties. Older sentence fields are ignored on read.
 pub(crate) fn validate_content(content: &LearningContent) -> Result<(), &'static str> {
     if content.cards.is_empty() {
         return Err("The vocabulary is empty.");
     }
-    for card in content.cards.values() {
-        if card
-            .sentence_indexes
-            .iter()
-            .any(|&index| index < 0 || index as usize >= content.sentences.len())
-        {
-            return Err("Vocabulary contains an out-of-range sentence reference.");
-        }
-        if card
-            .sentence_indexes
-            .windows(2)
-            .any(|pair| pair[0] > pair[1])
-        {
-            return Err("Vocabulary sentence references are not ordered.");
-        }
+    if content.cards.keys().any(|word| word.trim().is_empty()) {
+        return Err("Vocabulary contains an empty word.");
     }
     Ok(())
 }
 
 pub(crate) fn read_content(store: &impl Store) -> Result<LearningContent, StorageError> {
-    let content = match read_snapshot(store, CONTENT_KEY, &[1])? {
+    let content = match read_snapshot(store, CONTENT_KEY, &[1, CONTENT_VERSION])? {
         Some(content) => content,
         None => LearningContent {
             cards: read_json(store, "cards")?.ok_or(StorageError::Missing("vocabulary"))?,
-            sentences: read_json(store, "sentences")?.ok_or(StorageError::Missing("sentences"))?,
             explanations: read_json(store, "explanations")?.unwrap_or_default(),
         },
     };
@@ -161,7 +149,7 @@ pub(crate) fn write_content(
     content: &LearningContent,
 ) -> Result<Option<String>, StorageError> {
     validate_content(content).map_err(|_| StorageError::Invalid("learning content"))?;
-    write_snapshot(store, CONTENT_KEY, 1, content)?;
+    write_snapshot(store, CONTENT_KEY, CONTENT_VERSION, content)?;
     // Free duplicate content space for progress, but only after an atomic commit.
     for key in ["cards", "sentences", "explanations"] {
         if store.remove(key).is_err() {

@@ -45,8 +45,7 @@ impl Store for MemoryStore {
 pub(crate) fn content() -> crate::model::LearningContent {
     serde_json::from_str(
         r#"{
-        "cards":{"bok":{"base_language":"hello","sentence_indexes":[0]}},
-        "sentences":[{"base_language":"hello!","target_language":"bok!"}],
+        "cards":{"bok":{"base_language":"hello"}},
         "explanations":{}
     }"#,
     )

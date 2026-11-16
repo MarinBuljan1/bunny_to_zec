@@ -1,6 +1,5 @@
 //! Release hints update independently of Yew while a pointer is held.
 use crate::conversations::{ChatAction, Rating};
-use crate::gestures::ReviewHint;
 use web_sys::HtmlElement;
 use yew::NodeRef;
 
@@ -17,8 +16,8 @@ impl GestureHint {
         }
     }
 
-    pub fn paint(&mut self, hint: ReviewHint, next_ready: bool) {
-        let instruction = release_instruction(hint, next_ready);
+    pub fn paint(&mut self, action: Option<ChatAction>, next_ready: bool) {
+        let instruction = release_instruction(action, next_ready);
         let active = instruction.is_some();
         let text = instruction.unwrap_or("");
         if self.previous == Some((text, active)) {
@@ -51,8 +50,8 @@ impl GestureHint {
     }
 }
 
-fn release_instruction(hint: ReviewHint, next_ready: bool) -> Option<&'static str> {
-    match hint.action.filter(|_| hint.armed) {
+fn release_instruction(action: Option<ChatAction>, next_ready: bool) -> Option<&'static str> {
+    match action {
         Some(ChatAction::Flip) => Some("Release to flip"),
         Some(ChatAction::Rate(Rating::Correct)) => Some("Release to mark remembered"),
         Some(ChatAction::Rate(_)) => Some("Release to review again"),

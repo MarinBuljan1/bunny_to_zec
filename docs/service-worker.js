@@ -1,11 +1,11 @@
 // The build replaces this marker with a hash of the deployed files.
 const CACHE_PREFIX = `language-learner:${self.registration.scope}:`;
-const CACHE_NAME = `${CACHE_PREFIX}3d8135201d935ddf2e12393bbd553127140997ef43fd81875db13a32a6c8156b`;
+const CACHE_NAME = `${CACHE_PREFIX}a5337d2d4a0cb1ebbcc70c4c4eba53ef86f0863bef1e9d59fc7f5b7085362a55`;
 const LOCAL_DEVELOPMENT = ['localhost', '127.0.0.1', '[::1]', '::1']
   .includes(new URL(self.registration.scope).hostname);
 const APP_FILES = [
   'index.html', 'manifest.json',
-  'assets/croatian.json', 'assets/croatian_sentences.json', 'assets/croatian_explanations.json',
+  'assets/croatian.json', 'assets/conversations.json', 'assets/croatian_explanations.json',
   'pkg/bunny_to_zec_bg.wasm', 'pkg/bunny_to_zec.js',
   'icons/icon-192x192.png', 'icons/icon-512x512.png', 'icons/icon-1024x1024.png',
   'static/style.css',

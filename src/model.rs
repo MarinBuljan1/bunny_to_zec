@@ -13,13 +13,6 @@ pub(crate) struct Card {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub(crate) struct CardList {
     pub(crate) base_language: String,
-    pub(crate) sentence_indexes: Vec<i32>,
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-pub(crate) struct CardSentences {
-    pub(crate) target_language: String,
-    pub(crate) base_language: String,
 }
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, Debug)]
@@ -32,7 +25,6 @@ pub(crate) struct ScoreData {
 #[derive(Serialize, Deserialize, Default, Debug, PartialEq)]
 pub(crate) struct LearningContent {
     pub(crate) cards: IndexMap<String, CardList>,
-    pub(crate) sentences: Vec<CardSentences>,
     pub(crate) explanations: HashMap<String, HashMap<String, String>>,
 }
 

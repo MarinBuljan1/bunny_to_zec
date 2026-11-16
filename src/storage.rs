@@ -61,23 +61,9 @@ impl fmt::Display for DownloadError {
 }
 
 #[derive(PartialEq)]
-pub(crate) enum ContentOrigin {
-    Downloaded,
-    Saved,
-}
-
-#[derive(PartialEq)]
 pub(crate) struct LoadedContent {
     pub content: LearningContent,
     pub notice: Option<String>,
-    pub origin: ContentOrigin,
-}
-
-#[derive(PartialEq)]
-pub(crate) enum ContentLoadState {
-    Loading,
-    Ready(LoadedContent),
-    Failed(String),
 }
 
 /// Shared transport, status, and JSON checks for each content resource.
@@ -109,7 +95,6 @@ pub(crate) async fn load_conversations() -> Result<crate::conversations::Convers
 async fn download_content() -> Result<LearningContent, DownloadError> {
     let content = LearningContent {
         cards: fetch_json("assets/croatian.json", "vocabulary").await?,
-        sentences: fetch_json("assets/croatian_sentences.json", "sentences").await?,
         explanations: fetch_json("assets/croatian_explanations.json", "explanations").await?,
     };
     Ok(content)
@@ -133,7 +118,6 @@ fn choose_content(
         Ok(content) => Ok(LoadedContent {
             content,
             notice: None,
-            origin: ContentOrigin::Downloaded,
         }),
         Err(error) => match persistence::read_content(store) {
             Ok(content) => Ok(LoadedContent {
@@ -142,7 +126,6 @@ fn choose_content(
                     "Using saved learning content because the latest files could not be loaded."
                         .into(),
                 ),
-                origin: ContentOrigin::Saved,
             }),
             Err(cached) => Err(format!(
                 "{error} {cached} Connect to the internet and try again."
@@ -154,32 +137,33 @@ fn choose_content(
 /// Call only after confirming the load is still active. Failure leaves the
 /// validated in-memory content usable.
 pub(crate) fn commit_content_load(
-    result: Result<LoadedContent, String>,
+    loaded: LoadedContent,
     cancelled: &Cell<bool>,
-) -> Option<ContentLoadState> {
-    commit_content_load_to_store(result, &mut BrowserStore, cancelled)
+) -> Option<LoadedContent> {
+    commit_content_load_to_store(loaded, &mut BrowserStore, cancelled)
 }
 
 fn commit_content_load_to_store(
-    result: Result<LoadedContent, String>,
+    mut loaded: LoadedContent,
     store: &mut impl Store,
     cancelled: &Cell<bool>,
-) -> Option<ContentLoadState> {
+) -> Option<LoadedContent> {
     if cancelled.get() {
         return None;
     }
-    Some(match result {
-        Ok(mut loaded) => {
-            if loaded.origin == ContentOrigin::Downloaded {
-                match persistence::write_content(store, &loaded.content) {
-                    Ok(warning) => loaded.notice = warning,
-                    Err(error) => loaded.notice = Some(format!("{error} You can keep learning, but a local fallback copy of these learning files could not be saved.")),
-                }
-            }
-            ContentLoadState::Ready(loaded)
+    // Also migrate older fallback snapshots after conversation validation succeeds.
+    let warning = match persistence::write_content(store, &loaded.content) {
+        Ok(warning) => warning,
+        Err(error) => Some(format!("{error} You can keep learning, but a local fallback copy of these learning files could not be saved.")),
+    };
+    if let Some(warning) = warning {
+        let notice = loaded.notice.get_or_insert_with(String::new);
+        if !notice.is_empty() {
+            notice.push(' ');
         }
-        Err(message) => ContentLoadState::Failed(message),
-    })
+        notice.push_str(&warning);
+    }
+    Some(loaded)
 }
 
 pub(crate) fn load_progress(now_s: i64) -> Result<LoadedProgress, StorageError> {

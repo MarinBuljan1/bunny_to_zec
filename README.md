@@ -143,10 +143,14 @@ remain unchanged.
 
 Browser local storage uses two snapshots with a `version` and `value` envelope:
 
-- `learning_content_v1`: version 1; vocabulary, sentences, and explanations together. Downloads
-  must have successful HTTP responses, parse correctly, and pass reference/order
-  validation before a cache write. Any failed resource falls back to a whole saved
-  dataset. A valid download remains usable if its cache write fails, with a warning.
+- `learning_content_v1`: version 2; ordered vocabulary and explanations together.
+  Downloads must have successful HTTP responses, parse correctly, and pass content
+  and conversation-index validation before a cache write. Any failed vocabulary or
+  explanation resource falls back to a whole saved dataset. A valid download remains
+  usable if its cache write fails, with a warning. Readers also accept version 1,
+  ignoring obsolete sentence arrays/indexes. After validation, a successful atomic
+  cache write migrates either downloaded or fallback content to version 2. Old clients
+  reject version 2 rather than using vocabulary without their required sentence indexes.
 - `learning_progress_v1`: version 4; i64 per-word scores, last-review timestamps,
   decay-update timestamp, completed conversation read counts, English visibility,
   and the current conversation cursor/masked words/completed replies in one atomic
@@ -154,8 +158,8 @@ Browser local storage uses two snapshots with a `version` and `value` envelope:
   to empty. Migration happens only on a successful save. Failed writes preserve
   the original snapshot. Old readers reject version 4 before writing. Version 4 adds the partner typing
   phase and the optional answer-explanation face; version-3 unfinished sessions
-  retain their phase, words, scores, and completed counts. Content
-  stays at version 1, and timestamp units/scoring formulas remain unchanged.
+  retain their phase, words, scores, and completed counts. Timestamp units and
+  scoring formulas remain unchanged.
 
 The conversation JSON is fetched as a relative asset and validated against the
 vocabulary and its actual learner occurrences before selection. It is covered by
@@ -164,8 +168,9 @@ content update invalidates a saved cursor, only that cursor is reset; word score
 and completed conversation counts are kept. Conversation IDs must remain stable
 now that persistent counts refer to them.
 
-The legacy `cards`, `sentences`, and `explanations` content keys remain readable.
-Once a complete new content snapshot is saved successfully, those old content copies
+The legacy `cards` and `explanations` content keys remain readable; the obsolete
+`sentences` key is no longer required. Once a complete new content snapshot is saved
+successfully, all three old content copies
 are removed to free storage space. They are retained if the new write fails.
 Migration can temporarily require space for both copies; quota failures are reported
 without deleting the good cache. Offline service-worker caching remains separate.
@@ -284,10 +289,7 @@ a native modal dialog with keyboard focus containment and Escape/backdrop closin
 The runtime reads only these UTF-8 JSON files in `assets/`:
 
 - `croatian.json`: vocabulary object in selection order. Each Croatian key has
-  `base_language` and `sentence_indexes` (ascending, zero-based references into
-  the sentence array). Order determines selection ties; do not sort casually.
-- `croatian_sentences.json`: array of objects with `target_language` (Croatian)
-  and `base_language` (English). Reordering it requires updating all indexes.
+  `base_language` (English). Order determines selection ties; do not sort casually.
 - `croatian_explanations.json`: English base-word keys mapping Croatian forms to
   their explanation text.
 - `conversations.json`: partner/learner exchanges, English translations, and the
@@ -295,11 +297,12 @@ The runtime reads only these UTF-8 JSON files in `assets/`:
 
 Editable `croatian.xlsx`, `croatian.xlsm`, and the Krita icon source `icon.kra`
 are retained. There is no repository script that exports those workbooks to the
-three JSON files, so a repeatable spreadsheet export workflow cannot yet be
+runtime JSON files, so a repeatable spreadsheet export workflow cannot yet be
 established from the source. Do not assume editing a workbook updates the app.
 Update/verify the JSON explicitly, run `cargo test --locked` (which validates the
-full dataset), then `build_and_sync.bat`. No workbook or existing JSON was changed
-by the maintenance refactors. Local certificates and root `pkg/` are ignored.
+full dataset), then `build_and_sync.bat`. The old standalone sentence file and
+vocabulary sentence indexes were retired when the app switched to conversations.
+Local certificates and root `pkg/` are ignored.
 
 ## Score and timestamp ranges
 

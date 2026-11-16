@@ -1,5 +1,4 @@
 use super::*;
-use indexmap::indexmap;
 
 #[test]
 fn derived_progress_caps_each_word_and_accumulates_beyond_i32() {
@@ -232,14 +231,6 @@ fn scores_cross_the_old_i32_limit_without_changing_selection_or_review_math() {
     assert_eq!(
         calculate_final_score(&progress.scores["bok"], NOW),
         i128::from(score + REVIEW_PRIORITY_INTERVAL_SECONDS - 1)
-    );
-    let cards = indexmap! {
-        "bok".into() => CardList { base_language: "hello".into(), sentence_indexes: vec![] },
-        "new".into() => CardList { base_language: "new".into(), sentence_indexes: vec![] },
-    };
-    assert_eq!(
-        find_key_of_lowest_score(&cards, &updated.scores, &[], NOW).as_deref(),
-        Some("new")
     );
 }
 
@@ -594,52 +585,14 @@ fn normalisation_handles_empty_and_zero_scores() {
 }
 
 #[test]
-fn selection_preserves_insertion_order_ties_and_current_word_exclusions() {
-    let cards = indexmap! {
-        "first".into() => CardList { base_language: "first".into(), sentence_indexes: vec![] },
-        "second".into() => CardList { base_language: "second".into(), sentence_indexes: vec![] },
-    };
-    let scores = HashMap::new();
-    assert_eq!(
-        find_key_of_lowest_score(&cards, &scores, &[], NOW).as_deref(),
-        Some("first")
-    );
-    assert_eq!(
-        find_key_of_lowest_score(&cards, &scores, &[review_word("first")], NOW).as_deref(),
-        Some("second")
-    );
-    assert!(find_key_of_lowest_score(
-        &cards,
-        &scores,
-        &[review_word("first"), review_word("second")],
-        NOW
-    )
-    .is_none());
-    assert!(find_key_of_lowest_score(&IndexMap::new(), &scores, &[], NOW).is_none());
-}
-
-#[test]
-fn selection_uses_explicit_time_for_review_priority_and_unseen_words() {
-    let cards = indexmap! {
-        "known".into() => CardList { base_language: "known".into(), sentence_indexes: vec![] },
-        "new".into() => CardList { base_language: "new".into(), sentence_indexes: vec![] },
-    };
-    let scores = HashMap::from([(
+fn priorities_use_explicit_time_and_the_unseen_word_threshold() {
+    let scores: HashMap<String, ScoreData> = HashMap::from([(
         "known".into(),
         ScoreData {
             score: 10,
             last_review: NOW,
         },
     )]);
-    assert_eq!(
-        find_key_of_lowest_score(&cards, &scores, &[], NOW).as_deref(),
-        Some("new")
-    );
-    assert_eq!(
-        find_key_of_lowest_score(&cards, &scores, &[], NOW + REVIEW_PRIORITY_INTERVAL_SECONDS)
-            .as_deref(),
-        Some("known")
-    );
     assert_eq!(
         calculate_final_score(&scores["known"], NOW + REVIEW_PRIORITY_INTERVAL_SECONDS - 1),
         11

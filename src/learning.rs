@@ -6,9 +6,7 @@
 
 use std::collections::HashMap;
 
-use indexmap::IndexMap;
-
-use crate::model::{Card, CardList, SavedProgress, ScoreData};
+use crate::model::{Card, SavedProgress, ScoreData};
 
 pub(crate) const LEARNED_INTERVAL_SECONDS: i64 = 10 * 86_400;
 const REVIEW_PRIORITY_INTERVAL_SECONDS: i64 = LEARNED_INTERVAL_SECONDS + 120;
@@ -144,30 +142,6 @@ pub(crate) fn calculate_final_score(score: &ScoreData, now_s: i64) -> i128 {
         - i128::from(now_s))
     .max(0);
     i128::from(score.score) + remaining_interval
-}
-
-/// Exclude current review words, then select the lowest priority score.
-/// `IndexMap` insertion order resolves equal scores; retain that order.
-pub(crate) fn find_key_of_lowest_score(
-    cards: &IndexMap<String, CardList>,
-    scores: &HashMap<String, ScoreData>,
-    current_words: &[Card],
-    now_s: i64,
-) -> Option<String> {
-    cards
-        .iter()
-        .filter(|(key, _)| {
-            !current_words
-                .iter()
-                .any(|word| word.target_language == key.as_str())
-        })
-        .min_by_key(|(key, _)| {
-            scores
-                .get(*key)
-                .map(|score| calculate_final_score(score, now_s))
-                .unwrap_or(i128::from(LEARNED_INTERVAL_SECONDS))
-        })
-        .map(|(key, _)| key.clone())
 }
 
 pub(crate) fn calculate_progress_sum(scores: &HashMap<String, ScoreData>) -> i64 {
