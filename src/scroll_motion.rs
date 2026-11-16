@@ -131,14 +131,16 @@ pub(crate) fn cancel_scroll(motion: &Rc<RefCell<ScrollMotion>>) {
 
 pub(crate) struct PullPreview {
     node: NodeRef,
+    timeline: NodeRef,
     progress: f64,
     frame: Option<AnimationFrame>,
 }
 
 impl PullPreview {
-    pub fn new(node: NodeRef) -> Self {
+    pub fn new(node: NodeRef, timeline: NodeRef) -> Self {
         Self {
             node,
+            timeline,
             progress: 0.0,
             frame: None,
         }
@@ -179,11 +181,19 @@ fn paint_preview(preview: &PullPreview) {
     let Some(element) = preview.node.cast::<HtmlElement>() else {
         return;
     };
+    let Some(dot) = element.first_element_child() else {
+        return;
+    };
     let progress = preview.progress;
-    let style = format!("--pull-scale: {progress}; --pull-opacity: {progress}");
-    // Failed visual updates leave Next messages and the review state usable.
-    if let Err(error) = element
-        .set_attribute("style", &style)
+    let timeline = preview.timeline.cast::<HtmlElement>();
+    let scroll_before = timeline
+        .as_ref()
+        .map(|timeline| (timeline.scroll_height(), timeline.scroll_top()));
+    let (space_style, dot_style) = preview_styles(progress);
+    // Failed visual updates leave keyboard advancement and the review state usable.
+    let result = element
+        .set_attribute("style", &space_style)
+        .and_then(|_| dot.set_attribute("style", &dot_style))
         .and_then(|_| {
             element.set_attribute(
                 "aria-hidden",
@@ -199,8 +209,31 @@ fn paint_preview(preview: &PullPreview) {
                     "Pull for next messages"
                 },
             )
-        })
-    {
+        });
+    if let (Some(timeline), Some((height, top))) = (timeline, scroll_before) {
+        let height_change = timeline.scroll_height() - height;
+        if height_change != 0 {
+            // Keep the same distance from the bottom as the preview resizes. Using
+            // the previous top also preserves reverse-scroll deltas queued this frame.
+            timeline.set_scroll_top(top.saturating_add(height_change));
+        }
+    }
+    if let Err(error) = result {
         web_sys::console::error_2(&"Could not update the next-message dot".into(), &error);
     }
 }
+
+/// Set concrete dimensions on the DOM nodes rather than relying on CSS-variable
+/// arithmetic to give an otherwise zero-sized preview its visible size.
+fn preview_styles(progress: f64) -> (String, String) {
+    let space = 52.0 * progress;
+    let diameter = 36.0 * progress;
+    (
+        format!("height: {space}px"),
+        format!("width: {diameter}px; height: {diameter}px; opacity: {progress}"),
+    )
+}
+
+#[cfg(test)]
+#[path = "tests/scroll_motion_tests.rs"]
+mod tests;

@@ -132,7 +132,9 @@ pub(crate) fn use_conversation_scroll(
     advance: Option<Callback<ChatAction>>,
 ) -> ConversationScroll {
     let preview_node = use_node_ref();
-    let preview = use_mut_ref(|| crate::scroll_motion::PullPreview::new(preview_node.clone()));
+    let preview = use_mut_ref(|| {
+        crate::scroll_motion::PullPreview::new(preview_node.clone(), timeline.clone())
+    });
     let motion = use_mut_ref(crate::scroll_motion::ScrollMotion::new);
     let wheel_pull = use_mut_ref(BottomPull::default);
     let update_preview = {
@@ -238,7 +240,6 @@ pub(crate) fn use_conversation_scroll(
 
 pub(crate) struct ReviewGestures {
     pub motion: NodeRef,
-    pub hint: NodeRef,
     pub onpointerdown: Callback<PointerEvent>,
     pub onpointermove: Callback<PointerEvent>,
     pub onpointerup: Callback<PointerEvent>,
@@ -297,17 +298,13 @@ pub(crate) fn use_review_gestures(
     let motion = use_mut_ref(|| crate::drag_motion::DragMotion::new(node.clone()));
     let pointer = use_mut_ref(|| None::<ActiveDrag>);
     let suppress_click = use_mut_ref(|| false);
-    let hint_node = use_node_ref();
-    let hint = use_mut_ref(|| crate::gesture_hint::GestureHint::new(hint_node.clone()));
     {
         let pointer = pointer.clone();
         let motion = motion.clone();
-        let hint = hint.clone();
         let scroll = scroll.clone();
         use_effect_with_deps(
             move |_| {
                 *pointer.borrow_mut() = None;
-                hint.borrow_mut().paint(None, false);
                 crate::drag_motion::settle_motion(&motion);
                 scroll.update_preview.emit(0.0);
                 crate::scroll_motion::cancel_scroll(&scroll.motion);
@@ -345,7 +342,7 @@ pub(crate) fn use_review_gestures(
                 .target()
                 .and_then(|t| t.dyn_into::<web_sys::Element>().ok())
                 .is_some_and(|e| {
-                    e.closest(".chat-header, .chat-toolbar, .chat-controls, .chat-notice")
+                    e.closest(".chat-header, .chat-notices")
                         .ok()
                         .flatten()
                         .is_some()
@@ -397,7 +394,6 @@ pub(crate) fn use_review_gestures(
         let pointer = pointer.clone();
         let motion = motion.clone();
         let suppress = suppress_click.clone();
-        let hint = hint.clone();
         let scroll = scroll.clone();
         Callback::from(move |event: PointerEvent| {
             let mut active = pointer.borrow_mut();
@@ -411,16 +407,13 @@ pub(crate) fn use_review_gestures(
             {
                 *suppress.borrow_mut() = true;
             }
-            let feedback = move_active_drag(drag, &event, &scroll, &motion);
-            hint.borrow_mut()
-                .paint(feedback, drag.pull.progress() >= 1.0);
+            move_active_drag(drag, &event, &scroll, &motion);
         })
     };
     let onpointerup = {
         let pointer = pointer.clone();
         let motion = motion.clone();
         let send = send.clone();
-        let hint = hint.clone();
         let scroll = scroll.clone();
         Callback::from(move |event: PointerEvent| {
             if pointer
@@ -436,7 +429,6 @@ pub(crate) fn use_review_gestures(
             let result = move_active_drag(&mut drag, &event, &scroll, &motion);
             crate::drag_motion::settle_motion(&motion);
             crate::scroll_motion::flush_scroll(&scroll.motion);
-            hint.borrow_mut().paint(None, false);
             scroll.update_preview.emit(0.0);
             if let Some(route) = &drag.scroll {
                 // One release performs one action: an armed horizontal flip takes priority.
@@ -462,7 +454,6 @@ pub(crate) fn use_review_gestures(
         let pointer = pointer.clone();
         let motion = motion.clone();
         let suppress = suppress_click.clone();
-        let hint = hint.clone();
         let scroll = scroll.clone();
         Callback::from(move |event: PointerEvent| {
             if pointer
@@ -474,14 +465,12 @@ pub(crate) fn use_review_gestures(
                 *suppress.borrow_mut() = false;
                 crate::drag_motion::settle_motion(&motion);
                 crate::scroll_motion::cancel_scroll(&scroll.motion);
-                hint.borrow_mut().paint(None, false);
                 scroll.update_preview.emit(0.0);
             }
         })
     };
     ReviewGestures {
         motion: node,
-        hint: hint_node,
         onpointerdown,
         onpointermove,
         onpointerup,

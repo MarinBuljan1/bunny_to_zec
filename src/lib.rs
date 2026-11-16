@@ -4,7 +4,6 @@ use yew::prelude::*;
 mod chat;
 mod conversations;
 mod drag_motion;
-mod gesture_hint;
 mod gestures;
 mod guide;
 mod learning;

@@ -5,6 +5,16 @@ and Node suites cover learning, persistence, interaction transitions, and cache
 policy. Browser layout, native focus, pointer capture, and installed-PWA behavior
 also need these checks in desktop and narrow/mobile layouts:
 
+- Confirm the header has circular EN on the left, progress centred, and Guide on
+  the right; no app/conversation heading, toolbar, or footer. Toggle EN and tap a
+  message: translations and EN's strikethrough/pressed state must stay in sync.
+  Open Guide and check keyboard focus restoration when it closes.
+  Confirm the score bar fills smoothly as progress approaches the next level,
+  updates its text/goal at level boundaries, and respects reduced motion.
+- Rate a reply and confirm the message and scroll position do not jump to add a
+  preview gap. Pull up: the dot and its space must grow together from zero,
+  shrink together when reversing, and not reset or jump as the preview changes
+  the scroll height. Reverse/cancel and confirm it shrinks away.
 - Start from welcome. Confirm partner typing dots appear for one second before
   partner text, then learner typing dots before the masked reply. Both bubbles
   briefly grow in; dots morph to text size with a short shrink/grow transition.
@@ -20,8 +30,8 @@ also need these checks in desktop and narrow/mobile layouts:
   Notes scroll with touch, mouse dragging, wheel, or keys and do not pull the surrounding history to the bottom.
 - Drag up/down from outside the bubble after revealing. The current learner
   bubble should track small movements closely. Reverse direction mid-drag and
-  cross the acceptance threshold repeatedly: the footer and message list must
-  stay in place while the release hint changes. Check slow and fast drags on a
+  cross the acceptance threshold repeatedly: the header and message list must
+  stay in place while the glow strengthens. Check slow and fast drags on a
   real phone, and confirm the glow follows smoothly without a delayed repaint.
   Movement can change freely between sideways/up/down during one drag and settles
   once on release. Release direction decides the action; ambiguous diagonal
@@ -36,7 +46,7 @@ also need these checks in desktop and narrow/mobile layouts:
   jump to the bottom. Reload after opening info before rating: target, frozen
   recall duration, scores, and completed counts remain valid; details may collapse.
 - Drag continuously left/right past the release threshold and keep going. The
-  card must not return to centre when the release hint changes, including with
+  card must not return to centre when crossing the threshold, including with
   the dot simultaneously full. Hold the pointer still beyond the threshold:
   position must remain unchanged until release or a real cancellation.
 - On real touch and mouse, move the card sideways, then move vertically while

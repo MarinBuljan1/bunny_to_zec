@@ -10,18 +10,17 @@ forms absent from learner replies are deferred until coverage expands.
 
 ## Rust source layout
 
-- `lib.rs`: app entry point and guide integration; the previous flashcard implementation remains as a compatibility reference.
+- `lib.rs`: app entry point and guide integration.
 - `chat.rs`: conversation UI, loading/saving, clocks, and typing/feedback timers.
 - `conversations.rs`: pure selection, review targets, and persistent conversation transitions.
 - `gestures.rs`: one pointer controller for review swipes, history/notes scrolling, and bottom pulls.
 - `scroll_drag.rs`: independent horizontal displacement, vertical scrolling, and release velocity.
 - `drag_motion.rs`: frame-scheduled movement/glow updates for the active bubble.
-- `gesture_hint.rs`: release-instruction painting without a conversation render.
 - `scroll_motion.rs`: frame-coalesced mouse scrolling and pull-dot painting.
 - `message_bubble.rs`: cancellable bubble entry/resize animations, separate from dragging.
 - `word_notes.rs`: distinct tested/introduced forms and compact explanation entries.
 - `guide.rs`: native guide dialog, Escape/backdrop closing, and focus restoration.
-- `model.rs`: shared vocabulary and progress structures, retaining the existing JSON schemas.
+- `model.rs`: ordered vocabulary, review words, and saved progress schemas.
 - `learning.rs`: pure scoring, decay, progress, and card-selection rules. Time is an explicit input.
 - `sentences.rs`: pure tokenization, word matching, and sentence selection. Random samples are explicit inputs.
 - `storage.rs`: network loading and browser persistence, separated from learning calculations.
@@ -60,7 +59,7 @@ not change that duration. Tap any message to toggle English for all messages.
 Swipes can start on the conversation background as well as a message. Horizontal
 swipes reveal the active reply or toggle its word explanations, including after
 rating. Vertical swipes grade after revealing. A soft green/red/blue glow follows the moving learner bubble and builds toward
-the acceptance threshold; the release hint indicates acceptance. The message list itself disables
+the acceptance threshold. The message list itself disables
 native touch panning during interactive scroll/flip/review gestures, so a browser
 cannot cancel pointer delivery at that scroll-container boundary. Word explanations accept sideways flips too. Short notes accept vertical ratings;
 overflowing notes scroll vertically with touch or mouse dragging instead. The overflow decision is made when the gesture starts. The bubble follows the pointer directly in both directions without locking an axis, with smooth
@@ -71,17 +70,18 @@ After rating, touch dragging, mouse dragging, or the wheel scroll history.
 A 72 px upward pull beyond the bottom (120 px accumulated wheel motion) requests
 the next exchange. A partner-coloured dot grows below the conversation during the pull. It stops
 growing at the acceptance threshold; release expands a dot-sized partner bubble
-into the typing message. A fixed preview slot prevents the dot from changing the
-scroll boundary. Cancelling/reversing shrinks the preview, and the accessible
-release hint remains available without a progress bar. Buttons and keyboard controls provide alternatives. Replacing
+into the typing message. The preview takes no space while idle. Its space grows
+and shrinks in proportion to the dot, with scroll compensation preserving the
+distance from the bottom as its height changes.
+Cancelling/reversing shrinks the preview. The dot announces readiness for assistive
+technology, and keyboard controls provide alternatives to swiping. Replacing
 the conversation clears the previous conversation's visible history.
 
 Drag visuals are coalesced to one `requestAnimationFrame` callback and update only
 the active bubble's inline visual properties. They do not put pointer coordinates
-in Yew state. Release instructions and dot readiness are also painted directly;
-crossing a threshold does not schedule a conversation render. Instruction text
-updates only when it changes, retains its original layout space, and updates
-accessibility attributes along with the visible label. The glow animates opacity on a separate layer.
+in Yew state. Dot readiness and accessibility attributes are also painted directly;
+crossing a threshold does not schedule a conversation render. The glow animates
+opacity on a separate layer.
 `gloo-render`, already pinned in the dependency tree, is now a direct dependency
 for cancellable frame callbacks. Pending frames are cancelled on release, pointer
 cancellation, mode changes, and unmount; weak callback ownership avoids cycles.
@@ -100,7 +100,7 @@ pull first shrinks its stored distance, capped at the 72 px visible threshold.
 Only movement left after shrinking it to zero scrolls history backward. A pull
 already in progress survives a transient bottom measurement. Horizontal movement
 does not clear the dot. On release, an armed horizontal flip takes priority over
-Next; one release performs only one action, and the instruction reflects that.
+Next; one release performs only one action.
 Wheel pulls use the equivalent 120 px threshold. Pointer cancellation, mode
 changes, and view teardown cancel queued movement and preview frames.
 
@@ -264,8 +264,11 @@ checks and [REFACTORING_ROADMAP.md](REFACTORING_ROADMAP.md) for implementation r
 
 ## Review controls
 
-Use Start conversation, Reveal / flip, Correct/Incorrect, Flip, and Next messages
-buttons, or swipe across the conversation area. Tab to controls and press Enter or
+The header has a circular EN toggle on the left (struck through when off), learning
+progress in the centre, and Guide on the right. The progress bar fills smoothly
+as the existing score approaches the next level's threshold. There is no toolbar or footer.
+Start conversation is available in the welcome message; swipe across the conversation
+area to reveal, rate, flip, and advance. Tab to controls and press Enter or
 Space; with the conversation focused, Left/Right reveals/flips, Up rates correct
 or requests the next exchange at the bottom, and Down rates incorrect. Repeated
 held-arrow events are ignored. Arrows inside focused word explanations scroll.

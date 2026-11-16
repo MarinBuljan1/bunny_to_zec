@@ -301,7 +301,6 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
     };
     let crate::gestures::ReviewGestures {
         motion,
-        hint,
         onpointerdown,
         onpointermove,
         onpointerup,
@@ -387,31 +386,24 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
     let learned_words = crate::learning::calculate_progress_sum(&ready.review.progress.scores)
         as f64
         / crate::learning::LEARNED_INTERVAL_SECONDS as f64;
-    let (next_level, skill_level) = [
-        (100.0, "Beginner"),
-        (300.0, "Novice"),
-        (1000.0, "Conversational"),
-        (4000.0, "Intermediate"),
-        (10000.0, "Advanced"),
-        (100000.0, "Fluent"),
-    ]
-    .into_iter()
-    .find(|(threshold, _)| learned_words < *threshold)
-    .unwrap_or((100000.0, "Fluent"));
-    let button = |label: &str, action| {
-        let send = send.clone();
-        html! {<button type="button" disabled={props.guide_open || settling.is_some()} onclick={Callback::from(move |_| send.emit(action))}>{label}</button>}
-    };
     html! {
         <main class={classes!("chat-app", ((ready.review.can_flip() || session.is_some_and(|s| s.phase == SessionPhase::Ready)) && !props.guide_open).then_some("gesture-active"))}
             onkeydown={keyboard}
             {onpointerdown} {onpointermove} {onpointerup} onpointercancel={cancel.clone()} onlostpointercapture={cancel}>
-            <header class="chat-header"><div><h1>{"Bunny to Zec"}</h1><p>{conversation.map(|c| c.title.as_str()).unwrap_or("Croatian conversations")}</p></div>
-                <button type="button" onclick={props.open_settings.clone()} aria-label="Learning progress and guide">{format!("{skill_level}: {learned_words:.1}/{next_level} · Guide")}</button>
+            <header class="chat-header">
+                <button type="button" class={classes!("english-toggle", (!english).then_some("english-off"))}
+                    aria-label={if english { "English translations on. Turn off" } else { "English translations off. Turn on" }}
+                    aria-pressed={english.to_string()}
+                    onclick={send.reform(|_| ChatAction::ToggleEnglish)}>{"EN"}</button>
+                {score_bar(learned_words)}
+                <button type="button" class="guide-button" onclick={props.open_settings.clone()} aria-haspopup="dialog">{"Guide"}</button>
             </header>
-            <div class="chat-toolbar"><button type="button" aria-pressed={english.to_string()} onclick={{ let send = send.clone(); Callback::from(move |_| send.emit(ChatAction::ToggleEnglish)) }}>{if english { "English on" } else { "English off" }}</button>
-                {session.map(|s| html!{<span>{format!("Reply {} of {}", s.exchange_index + 1, conversation.map_or(0, |c| c.exchanges.len()))}</span>}).unwrap_or_default()}
-            </div>
+            {if ready.notice.is_some() || ready.save_error.is_some() { html!{
+                <aside class="chat-notices" aria-label="App notices">
+                    {ready.notice.as_ref().map(|notice| html!{<p class="chat-notice" role="status">{notice}</p>}).unwrap_or_default()}
+                    {ready.save_error.as_ref().map(|error| { let screen = screen.clone(); html!{<div class="chat-notice" role="alert"><p>{format!("Progress has not been saved: {error}")}</p><button onclick={Callback::from(move |_| screen.dispatch(Action::RetrySave))}>{"Retry saving"}</button></div>} }).unwrap_or_default()}
+                </aside>
+            }} else { Html::default() }}
             <div class="chat-history">
             <section ref={timeline} class="chat-timeline" tabindex="0" aria-label="Conversation messages" {onscroll}>
                 {if let (Some(session), Some(conversation)) = (session, conversation) {
@@ -454,38 +446,37 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
                             }}}
                         </div>}
                     }).collect::<Html>()
-                } else { html!{<div class="chat-welcome"><h2>{"Learn through conversation"}</h2><p>{"Read your partner’s message, recall the missing Croatian words, then reveal and rate your reply."}</p></div>} }}
-            {if session.is_some_and(|s| s.phase == SessionPhase::Ready) { html!{
+                } else { html!{<div class="chat-welcome"><h2>{"Learn through conversation"}</h2><p>{"Read your partner’s message, recall the missing Croatian words, then reveal and rate your reply."}</p><button type="button" onclick={send.reform(|_| ChatAction::Next)}>{"Start conversation"}</button></div>} }}
                 <div class="pull-preview" ref={pull.preview.clone()} aria-hidden="true" role="status" aria-label="Pull for next messages">
                     <div class="pull-dot"></div>
                 </div>
-            }} else { Html::default() }}
             </section>
             </div>
-            <footer class="chat-footer">
-                {ready.notice.as_ref().map(|notice| html!{<p class="chat-notice" role="status">{notice}</p>}).unwrap_or_default()}
-                {ready.save_error.as_ref().map(|error| { let screen = screen.clone(); html!{<div class="chat-notice" role="alert"><p>{format!("Progress has not been saved: {error}")}</p><button onclick={Callback::from(move |_| screen.dispatch(Action::RetrySave))}>{"Retry saving"}</button></div>} }).unwrap_or_default()}
-                <div class="chat-controls">{match session.map(|s| &s.phase) {
-                    None => button("Start conversation", ChatAction::Next),
-                    Some(SessionPhase::PartnerTyping) => html!{<p role="status">{"A message is being typed…"}</p>},
-                    Some(SessionPhase::Typing) => html!{<p role="status">{"Your reply is being typed…"}</p>},
-                    Some(SessionPhase::Question) => button("Reveal / flip", ChatAction::Flip),
-                    Some(SessionPhase::Answer {..}) => html!{<>{button("Incorrect ↓", ChatAction::Rate(Rating::Incorrect))}{button("Flip", ChatAction::Flip)}{button("Correct ↑", ChatAction::Rate(Rating::Correct))}</>},
-                    Some(SessionPhase::Ready) => html!{<>{button("Flip", ChatAction::Flip)}{button(if conversation.is_some_and(|c| session.is_some_and(|s| s.exchange_index + 1 == c.exchanges.len())) { "Next conversation" } else { "Next messages" }, ChatAction::Next)}</>},
-                }}</div>
-                <p ref={hint} class="chat-hint" role="status">
-                    <span class="normal-gesture-hint">
-                        {if ready.review.can_rate() && ready.review.showing_notes() { "Swipe sideways on the message or notes to flip. Long notes scroll; other up/down swipes rate." } else { match session.map(|s| &s.phase) {
-                            Some(SessionPhase::Ready) => "Swipe sideways for word explanations. Pull up at the bottom for the next messages.",
-                            Some(SessionPhase::Answer {..}) => "Swipe up for correct, down to practice again. Tap any message to toggle English.",
-                            Some(SessionPhase::Question) => "Swipe left or right to reveal. Tap any message to toggle English.",
-                            _ => "Tap any message to turn English on or off for every message.",
-                        }}}
-                    </span>
-                    <span class="gesture-release-hint" aria-hidden="true"></span>
-                </p>
-            </footer>
         </main>
+    }
+}
+
+fn score_bar(learned_words: f64) -> Html {
+    let (next_level, skill_level) = [
+        (100.0, "Beginner"),
+        (300.0, "Novice"),
+        (1000.0, "Conversational"),
+        (4000.0, "Intermediate"),
+        (10000.0, "Advanced"),
+        (100000.0, "Fluent"),
+    ]
+    .into_iter()
+    .find(|(threshold, _)| learned_words < *threshold)
+    .unwrap_or((100000.0, "Fluent"));
+    let progress_percent = (learned_words / next_level * 100.0).clamp(0.0, 100.0);
+    html! {
+        <div class="chat-score" role="progressbar" aria-label="Progress towards the next learning level"
+            aria-valuemin="0" aria-valuemax={next_level.to_string()}
+            aria-valuenow={learned_words.min(next_level).to_string()}
+            aria-valuetext={format!("{skill_level}: {learned_words:.1} of {next_level}")}>
+            <span class="score-fill" aria-hidden="true" style={format!("width: {progress_percent:.2}%")}></span>
+            <span class="score-label">{format!("{skill_level}: {learned_words:.1}/{next_level}")}</span>
+        </div>
     }
 }
 

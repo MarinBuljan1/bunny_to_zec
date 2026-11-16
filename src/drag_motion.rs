@@ -80,7 +80,7 @@ fn draw_motion(motion: &DragMotion, settling: bool) {
     // This hook owns the active wrapper's inline visual properties; Yew owns its contents.
     let style = format!("--drag-x: {x}px; --drag-y: {y}px; --drag-duration: {duration}ms; --glow-rgb: {color}; --glow-opacity: {opacity}");
     if let Err(error) = element.set_attribute("style", &style) {
-        // Failure leaves the message usable through its normal review controls.
+        // Failure leaves the message usable through keyboard controls.
         web_sys::console::error_2(&"Could not update message movement".into(), &error);
     }
 }

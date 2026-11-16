@@ -15,7 +15,7 @@ fn sideways_movement_keeps_the_pull_and_vertical_motion_keeps_the_card_offset() 
     assert_eq!(pull.progress(), 64.0 / 72.0);
 }
 #[test]
-fn hint_rendering_changes_only_at_acceptance_or_direction_boundaries() {
+fn release_action_changes_only_at_acceptance_or_direction_boundaries() {
     for distance in 0..50 {
         assert_eq!(
             armed_swipe(0.0, -f64::from(distance), GestureMode::Rate),
@@ -173,5 +173,23 @@ fn reversing_direction_or_rating_cannot_advance() {
     pull.move_by(-30.0, true, true);
     assert!(!pull.finish(true));
     assert!(!pull.move_by(200.0, false, true));
+    assert!(!pull.finish(true));
+}
+
+#[test]
+fn growing_preview_does_not_reset_a_pull_when_the_layout_moves_the_bottom() {
+    let mut pull = BottomPull::default();
+    assert_eq!(pull.consume(18.0, true, true), 0.0);
+    assert_eq!(pull.progress(), 0.25);
+    // The preview's increasing height can temporarily change the DOM bottom reading.
+    assert_eq!(pull.consume(18.0, true, false), 0.0);
+    assert_eq!(pull.progress(), 0.5);
+    assert_eq!(pull.consume(36.0, true, false), 0.0);
+    assert_eq!(pull.progress(), 1.0);
+    assert_eq!(pull.consume(-18.0, true, false), 0.0);
+    assert_eq!(pull.progress(), 0.75);
+    // Only the part left after fully shrinking the preview scrolls history.
+    assert_eq!(pull.consume(-64.0, true, false), -10.0);
+    assert_eq!(pull.progress(), 0.0);
     assert!(!pull.finish(true));
 }
