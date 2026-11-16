@@ -7,6 +7,7 @@ use crate::model::{Card, LearningContent, SavedProgress, ScoreData};
 use crate::sentences::split_text;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
+use std::rc::Rc;
 
 #[derive(Clone, Debug, Deserialize, PartialEq)]
 pub(crate) struct Message {
@@ -202,52 +203,36 @@ pub(crate) fn review_words(
     progress: &SavedProgress,
     now_s: i64,
 ) -> Vec<Card> {
-    let words: HashSet<_> = split_text(text)
+    let mut included = HashSet::new();
+    let words: Vec<_> = split_text(text)
         .into_iter()
         .map(|word| word.to_lowercase())
-        .filter(|word| content.cards.contains_key(word))
-        .collect();
-    let due: HashSet<_> = words
-        .iter()
-        .filter(|word| {
-            progress
-                .scores
-                .get(*word)
-                .is_some_and(|s| s.score < LEARNED_INTERVAL_SECONDS)
-        })
-        .collect();
-    let unseen: HashSet<_> = words
-        .iter()
-        .filter(|word| !progress.scores.contains_key(*word))
-        .collect();
-    let target = content
-        .cards
-        .keys()
-        .filter(|key| {
-            if !due.is_empty() {
-                due.contains(key)
-            } else if !unseen.is_empty() {
-                unseen.contains(key)
-            } else {
-                words.contains(*key)
-            }
-        })
-        .min_by_key(|key| priority(progress.scores.get(*key), now_s));
-    let mut included = HashSet::new();
-    split_text(text)
-        .into_iter()
+        .filter(|word| included.insert(word.clone()))
         .filter_map(|word| {
-            let key = word.to_lowercase();
-            if (progress.scores.contains_key(&key) || target == Some(&key))
-                && included.insert(key.clone())
-            {
-                content.cards.get(&key).map(|card| Card {
-                    target_language: key,
-                    base_language: card.base_language.clone(),
-                })
-            } else {
-                None
-            }
+            let (rank, _, card) = content.cards.get_full(&word)?;
+            Some((word, rank, card))
+        })
+        .collect();
+    let target = words
+        .iter()
+        .min_by_key(|(word, rank, _)| {
+            let score = progress.scores.get(word);
+            let group = match score {
+                Some(score) if score.score < LEARNED_INTERVAL_SECONDS => 0,
+                None => 1,
+                Some(_) => 2,
+            };
+            // Preserve due-before-new priority and vocabulary-order ties while
+            // inspecting only forms in this reply, not the whole vocabulary.
+            (group, priority(score, now_s), *rank)
+        })
+        .map(|(_, rank, _)| *rank);
+    words
+        .into_iter()
+        .filter(|(word, rank, _)| progress.scores.contains_key(word) || target == Some(*rank))
+        .map(|(word, _, card)| Card {
+            target_language: word,
+            base_language: card.base_language.clone(),
         })
         .collect()
 }
@@ -316,7 +301,8 @@ pub(crate) enum ChatAction {
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct ConversationReview {
-    pub progress: SavedProgress,
+    /// Shared across view-only actions; persistent updates detach the snapshot.
+    pub progress: Rc<SavedProgress>,
     pub settling: Option<Rating>,
     started_at_ms: Option<i64>,
     notes_visible: bool,
@@ -363,7 +349,7 @@ impl ConversationReview {
             .map(|_| now_ms);
         (
             Self {
-                progress,
+                progress: Rc::new(progress),
                 settling: None,
                 started_at_ms,
                 notes_visible: false,
@@ -421,8 +407,8 @@ impl ConversationReview {
     ) -> bool {
         match action {
             ChatAction::ToggleEnglish => {
-                self.progress.conversations.show_english =
-                    !self.progress.conversations.show_english;
+                let progress = Rc::make_mut(&mut self.progress);
+                progress.conversations.show_english = !progress.conversations.show_english;
             }
             ChatAction::Settled => {
                 if self.settling.take().is_none() {
@@ -460,20 +446,20 @@ impl ConversationReview {
                 };
                 let text = &conversation.exchanges[index].learner.hr;
                 let words = review_words(text, content, &self.progress, now_ms / 1000);
-                self.progress.conversations.session = Some(ConversationSession {
-                    conversation_id: conversation.id.clone(),
-                    exchange_index: index,
-                    learner_text: text.clone(),
-                    phase: SessionPhase::PartnerTyping,
-                    words,
-                    completed,
-                });
+                Rc::make_mut(&mut self.progress).conversations.session =
+                    Some(ConversationSession {
+                        conversation_id: conversation.id.clone(),
+                        exchange_index: index,
+                        learner_text: text.clone(),
+                        phase: SessionPhase::PartnerTyping,
+                        words,
+                        completed,
+                    });
                 self.started_at_ms = None;
                 self.notes_visible = false;
             }
             ChatAction::PartnerAppears => {
-                let Some(session) = self
-                    .progress
+                let Some(session) = Rc::make_mut(&mut self.progress)
                     .conversations
                     .session
                     .as_mut()
@@ -484,8 +470,7 @@ impl ConversationReview {
                 session.phase = SessionPhase::Typing;
             }
             ChatAction::LearnerAppears => {
-                let Some(session) = self
-                    .progress
+                let Some(session) = Rc::make_mut(&mut self.progress)
                     .conversations
                     .session
                     .as_mut()
@@ -500,33 +485,36 @@ impl ConversationReview {
                 }
             }
             ChatAction::Flip if self.can_flip() => {
-                let Some(session) = self.progress.conversations.session.as_mut() else {
+                let elapsed_ms = match self.session().map(|session| session.phase.clone()) {
+                    Some(SessionPhase::Question) => now_ms
+                        .saturating_sub(self.started_at_ms.take().unwrap_or(now_ms))
+                        .max(0),
+                    Some(
+                        SessionPhase::Answer {
+                            face: AnswerFace::Revealed,
+                            ..
+                        }
+                        | SessionPhase::Ready,
+                    ) => {
+                        // Details are transient: keep sharing the saved snapshot.
+                        self.notes_visible = !self.notes_visible;
+                        return true;
+                    }
+                    // Keep the frozen recall time when normalizing an older Notes/Masked face.
+                    Some(SessionPhase::Answer { elapsed_ms, .. }) => elapsed_ms,
+                    _ => return false,
+                };
+                self.notes_visible = false;
+                let Some(session) = Rc::make_mut(&mut self.progress)
+                    .conversations
+                    .session
+                    .as_mut()
+                else {
                     return false;
                 };
-                session.phase = match session.phase {
-                    SessionPhase::Question => SessionPhase::Answer {
-                        elapsed_ms: now_ms
-                            .saturating_sub(self.started_at_ms.take().unwrap_or(now_ms))
-                            .max(0),
-                        face: AnswerFace::Revealed,
-                    },
-                    SessionPhase::Answer { elapsed_ms, face } => {
-                        // Opening details is a view change, not a new progress snapshot.
-                        // Keep reading old snapshots that stored the Notes/Masked faces.
-                        self.notes_visible = match face {
-                            AnswerFace::Revealed => !self.notes_visible,
-                            AnswerFace::Masked | AnswerFace::Notes => false,
-                        };
-                        SessionPhase::Answer {
-                            elapsed_ms,
-                            face: AnswerFace::Revealed,
-                        }
-                    }
-                    SessionPhase::Ready => {
-                        self.notes_visible = !self.notes_visible;
-                        SessionPhase::Ready
-                    }
-                    _ => return false,
+                session.phase = SessionPhase::Answer {
+                    elapsed_ms,
+                    face: AnswerFace::Revealed,
                 };
             }
             ChatAction::Rate(rating) if self.can_rate() && rating != Rating::Read => {
@@ -565,17 +553,17 @@ impl ConversationReview {
                 },
             };
             if let Some(updated) = apply_review(&self.progress, &words, &attempt, now_ms / 1000) {
-                self.progress = updated;
+                self.progress = Rc::new(updated);
             }
         }
-        let Some(session) = self.progress.conversations.session.as_mut() else {
+        let progress = Rc::make_mut(&mut self.progress);
+        let Some(session) = progress.conversations.session.as_mut() else {
             return false;
         };
         session.completed.push(CompletedReply { words, rating });
         session.phase = SessionPhase::Ready;
         if session.exchange_index + 1 == conversation.exchanges.len() {
-            let count = self
-                .progress
+            let count = progress
                 .conversations
                 .read_counts
                 .entry(conversation.id.clone())

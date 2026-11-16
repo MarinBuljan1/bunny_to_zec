@@ -154,6 +154,88 @@ fn masks_known_forms_and_one_unseen_form_without_merging_grammar_or_case() {
         2
     );
 }
+
+#[test]
+fn reply_targets_keep_vocabulary_ties_thresholds_and_message_order() {
+    let content = content();
+    let text = "ČAJ, kava, KAVU, čaj, molim.";
+    let mut progress = progress();
+    let forms = |progress: &SavedProgress| {
+        review_words(text, &content, progress, 1000)
+            .into_iter()
+            .map(|word| word.target_language)
+            .collect::<Vec<_>>()
+    };
+    // The first unseen form in vocabulary order wins, even when it appears later.
+    assert_eq!(forms(&progress), ["kavu"]);
+    progress.scores.insert(
+        "kavu".into(),
+        ScoreData {
+            score: LEARNED_INTERVAL_SECONDS - 1,
+            last_review: 1000,
+        },
+    );
+    assert_eq!(forms(&progress), ["kavu"]);
+    progress.scores.get_mut("kavu").unwrap().score = LEARNED_INTERVAL_SECONDS;
+    assert_eq!(forms(&progress), ["kava", "kavu"]);
+    for word in content.cards.keys() {
+        progress.scores.insert(
+            word.clone(),
+            ScoreData {
+                score: LEARNED_INTERVAL_SECONDS,
+                last_review: 1000,
+            },
+        );
+    }
+    // Known forms stay in message order, once each, including accented forms.
+    assert_eq!(forms(&progress), ["čaj", "kava", "kavu", "molim"]);
+    assert!(review_words("Unknown, words!", &content, &progress, 1000).is_empty());
+}
+
+#[test]
+fn transient_actions_share_progress_and_persistent_actions_detach() {
+    let library = library();
+    let content = content();
+    let (mut review, _) = ConversationReview::restore(progress(), &library, &content, 1000000);
+    for (action, time) in [
+        (ChatAction::Next, 1000000),
+        (ChatAction::PartnerAppears, 1001000),
+        (ChatAction::LearnerAppears, 1002000),
+        (ChatAction::Flip, 1002500),
+    ] {
+        assert!(review.act(action, &library, &content, time, 0.0));
+    }
+    let revealed = review.clone();
+    assert!(review.act(ChatAction::Flip, &library, &content, 1002600, 0.0));
+    assert!(review.showing_notes());
+    assert!(!revealed.showing_notes());
+    assert!(Rc::ptr_eq(&review.progress, &revealed.progress));
+    assert!(review.act(ChatAction::Flip, &library, &content, 1002700, 0.0));
+    assert!(Rc::ptr_eq(&review.progress, &revealed.progress));
+
+    assert!(review.act(
+        ChatAction::Rate(Rating::Correct),
+        &library,
+        &content,
+        1003000,
+        0.0
+    ));
+    assert!(!Rc::ptr_eq(&review.progress, &revealed.progress));
+    assert!(revealed.progress.scores.is_empty());
+    assert!(matches!(
+        revealed.session().unwrap().phase,
+        SessionPhase::Answer { .. }
+    ));
+    let rated = review.clone();
+    assert!(review.act(ChatAction::Settled, &library, &content, 1003300, 0.0));
+    assert!(Rc::ptr_eq(&review.progress, &rated.progress));
+    assert!(review.can_next());
+    assert!(!rated.can_next());
+    assert!(review.act(ChatAction::Next, &library, &content, 1003400, 0.0));
+    assert!(!Rc::ptr_eq(&review.progress, &rated.progress));
+    assert_eq!(rated.session().unwrap().exchange_index, 0);
+    assert_eq!(review.session().unwrap().exchange_index, 1);
+}
 #[test]
 fn typing_does_not_count_as_recall_and_completion_is_counted_only_once() {
     let library = library();
@@ -220,10 +302,19 @@ fn resuming_question_restarts_clock_and_resuming_answer_keeps_frozen_duration() 
     review.act(ChatAction::Next, &library, &content, 1000000, 0.0);
     review.act(ChatAction::PartnerAppears, &library, &content, 1001000, 0.0);
     review.act(ChatAction::LearnerAppears, &library, &content, 1001000, 0.0);
-    let (mut resumed, _) =
-        ConversationReview::restore(review.progress, &library, &content, 2000000);
+    let (mut resumed, _) = ConversationReview::restore(
+        review.progress.as_ref().clone(),
+        &library,
+        &content,
+        2000000,
+    );
     resumed.act(ChatAction::Flip, &library, &content, 2000400, 0.0);
-    let (resumed, _) = ConversationReview::restore(resumed.progress, &library, &content, 9000000);
+    let (resumed, _) = ConversationReview::restore(
+        resumed.progress.as_ref().clone(),
+        &library,
+        &content,
+        9000000,
+    );
     assert_eq!(
         resumed.session().unwrap().phase,
         SessionPhase::Answer {
@@ -274,7 +365,7 @@ fn conversation_progress_and_scores_commit_atomically_and_resume_without_regradi
     store.write_error = None;
     write_progress(&mut store, &review.progress).unwrap();
     let progress = read_progress(&store, 2000).unwrap().progress;
-    assert_eq!(progress, review.progress);
+    assert_eq!(&progress, review.progress.as_ref());
     let (mut restored, notice) = ConversationReview::restore(progress, &library, &content, 2000000);
     assert!(notice.is_none());
     assert!(restored.can_next());
@@ -314,21 +405,19 @@ fn obsolete_or_invalid_session_preserves_scores_and_read_counts() {
     let content = content();
     let (mut review, _) = ConversationReview::restore(progress(), &library, &content, 1000000);
     review.act(ChatAction::Next, &library, &content, 1000000, 0.0);
-    review.progress.scores.insert(
+    Rc::make_mut(&mut review.progress).scores.insert(
         "molim".into(),
         ScoreData {
             score: 2000,
             last_review: 1000,
         },
     );
-    review
-        .progress
+    Rc::make_mut(&mut review.progress)
         .conversations
         .read_counts
         .insert("0002".into(), 4);
     // A stored target cannot score an unrelated word that is absent from the reply.
-    review
-        .progress
+    Rc::make_mut(&mut review.progress)
         .conversations
         .session
         .as_mut()
@@ -338,8 +427,12 @@ fn obsolete_or_invalid_session_preserves_scores_and_read_counts() {
             target_language: "molim".into(),
             base_language: "molim".into(),
         });
-    let (restored, notice) =
-        ConversationReview::restore(review.progress.clone(), &library, &content, 2000000);
+    let (restored, notice) = ConversationReview::restore(
+        review.progress.as_ref().clone(),
+        &library,
+        &content,
+        2000000,
+    );
     assert!(notice.is_some());
     assert!(restored.session().is_none());
     assert_eq!(restored.progress.scores, review.progress.scores);
@@ -432,10 +525,20 @@ fn both_typing_stages_are_ordered_resumable_and_excluded_from_recall() {
     assert_eq!(review.session().unwrap().phase, SessionPhase::PartnerTyping);
     assert!(!review.act(ChatAction::LearnerAppears, &library, &content, 1000500, 0.0));
     assert!(!review.can_flip());
-    let (mut review, _) = ConversationReview::restore(review.progress, &library, &content, 2000000);
+    let (mut review, _) = ConversationReview::restore(
+        review.progress.as_ref().clone(),
+        &library,
+        &content,
+        2000000,
+    );
     assert!(review.act(ChatAction::PartnerAppears, &library, &content, 2001000, 0.0));
     assert_eq!(review.session().unwrap().phase, SessionPhase::Typing);
-    let (mut review, _) = ConversationReview::restore(review.progress, &library, &content, 3000000);
+    let (mut review, _) = ConversationReview::restore(
+        review.progress.as_ref().clone(),
+        &library,
+        &content,
+        3000000,
+    );
     assert!(!review.act(ChatAction::PartnerAppears, &library, &content, 3001000, 0.0));
     review.act(ChatAction::LearnerAppears, &library, &content, 3004000, 0.0);
     assert!(!review.act(ChatAction::LearnerAppears, &library, &content, 3004200, 0.0));
@@ -505,8 +608,7 @@ fn legacy_saved_notes_face_can_close_without_losing_the_frozen_duration() {
     ] {
         review.act(action, &library, &content, time, 0.0);
     }
-    review
-        .progress
+    Rc::make_mut(&mut review.progress)
         .conversations
         .session
         .as_mut()
@@ -515,8 +617,12 @@ fn legacy_saved_notes_face_can_close_without_losing_the_frozen_duration() {
         elapsed_ms: 500,
         face: AnswerFace::Notes,
     };
-    let (mut restored, notice) =
-        ConversationReview::restore(review.progress, &library, &content, 2000000);
+    let (mut restored, notice) = ConversationReview::restore(
+        review.progress.as_ref().clone(),
+        &library,
+        &content,
+        2000000,
+    );
     assert!(notice.is_none());
     assert!(restored.showing_notes());
     restored.act(ChatAction::Flip, &library, &content, 2001000, 0.0);
@@ -548,7 +654,7 @@ fn version_three_in_progress_typing_session_is_kept_and_migrates_on_save() {
     let saved = read_progress(&store, 1200).unwrap().progress;
     let (review, notice) = ConversationReview::restore(saved.clone(), &library, &content, 1200000);
     assert!(notice.is_none());
-    assert_eq!(review.progress, saved);
+    assert_eq!(review.progress.as_ref(), &saved);
     assert_eq!(review.session().unwrap().phase, SessionPhase::Typing);
     assert_eq!(store.values["learning_progress_v1"], raw);
     write_progress(&mut store, &review.progress).unwrap();

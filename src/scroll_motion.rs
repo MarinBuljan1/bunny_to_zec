@@ -5,6 +5,7 @@ use std::rc::Rc;
 use web_sys::HtmlElement;
 use yew::NodeRef;
 
+#[derive(Default)]
 pub(crate) struct ScrollMotion {
     element: Option<HtmlElement>,
     delta: i32,
@@ -12,19 +13,6 @@ pub(crate) struct ScrollMotion {
     velocity: f64,
     time: Option<f64>,
     remainder: f64,
-}
-
-impl ScrollMotion {
-    pub fn new() -> Self {
-        Self {
-            element: None,
-            delta: 0,
-            frame: None,
-            velocity: 0.0,
-            time: None,
-            remainder: 0.0,
-        }
-    }
 }
 
 pub(crate) fn target_scroll(motion: &Rc<RefCell<ScrollMotion>>, element: HtmlElement) {

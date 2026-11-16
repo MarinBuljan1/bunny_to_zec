@@ -21,12 +21,10 @@ forms absent from learner replies are deferred until coverage expands.
 - `word_notes.rs`: distinct tested/introduced forms and compact explanation entries.
 - `guide.rs`: native guide dialog, Escape/backdrop closing, and focus restoration.
 - `model.rs`: ordered vocabulary, review words, and saved progress schemas.
-- `learning.rs`: pure scoring, decay, progress, and card-selection rules. Time is an explicit input.
-- `sentences.rs`: pure tokenization, word matching, and sentence selection. Random samples are explicit inputs.
+- `learning.rs`: pure scoring, decay, and progress calculations. Time is an explicit input.
+- `sentences.rs`: shared tokenization for conversation matching and rendering.
 - `storage.rs`: network loading and browser persistence, separated from learning calculations.
 - `persistence.rs`: dataset validation, versioned snapshots, and legacy-data migration.
-- `review_state.rs`: previous flashcard state, retained with its regression tests.
-- `animation.rs`: previous flashcard animation ordering and regression tests.
 - `tests/`: unit tests attached to their owning modules, plus build/cache checks.
 
 Conversation review words are a plain `Vec<Card>` and are stored with the current
@@ -135,6 +133,8 @@ learner reply is rated/read. No read count is awarded for starting or abandoning
 For each learner reply, an already-introduced form below 864,000 raw score takes
 priority. Otherwise the next unseen form in the reply is introduced using existing
 review priorities. All previously introduced forms plus the target are blanked.
+Target selection tokenizes each reply once and examines its distinct vocabulary
+forms, using vocabulary positions to preserve priority ties and message order.
 When every form is known, all are blanked. Replies with no vocabulary forms are
 readable without grading. Scoring/decay formulas and the learning-level display
 remain unchanged.
@@ -280,9 +280,12 @@ Croatian, English, and its explanation flowing in a single paragraph. Introduced
 related forms remain available in vocabulary order; untranslated grammar forms
 are not introduced merely by opening notes.
 Rating hides this section; a later flip can reopen it without changing any scores.
-Info visibility is now session-local before and after rating. Extra info flips
-keep the same progress snapshot, so they do not trigger serialization/storage
-writes; the first reveal still saves the frozen recall duration. Older saved
+Info visibility is session-local before and after rating. Extra info flips and
+settling share the same immutable progress snapshot without copying scores/read
+counts. Persistent actions detach the snapshot; the reducer detects that change
+by identity rather than comparing all progress contents. Extra info flips do not
+trigger serialization/storage writes; the first reveal still saves the frozen
+recall duration. This changes in-memory ownership only, not the saved JSON format. Older saved
 `Notes` answer faces remain readable and convert when closed.
 Visible speaker labels and per-message rating labels are omitted. Guide remains
 a native modal dialog with keyboard focus containment and Escape/backdrop closing.

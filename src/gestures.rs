@@ -57,18 +57,14 @@ impl BottomPull {
     fn progress(&self) -> f64 {
         (self.distance / 72.0).clamp(0.0, 1.0)
     }
-    fn move_by(&mut self, delta: f64, enabled: bool, bottom: bool) -> bool {
+    /// Reverse through the visible pull before allowing the list to move away from the bottom.
+    fn consume(&mut self, delta: f64, enabled: bool, bottom: bool) -> f64 {
+        let previous = self.distance;
         self.distance = if enabled && (bottom || self.distance > 0.0) {
             (self.distance + delta).clamp(0.0, 72.0)
         } else {
             0.0
         };
-        self.distance > 0.0
-    }
-    /// Reverse through the visible pull before allowing the list to move away from the bottom.
-    fn consume(&mut self, delta: f64, enabled: bool, bottom: bool) -> f64 {
-        let previous = self.distance;
-        self.move_by(delta, enabled, bottom);
         if enabled && (previous > 0.0 || (bottom && delta > 0.0)) {
             if delta > 0.0 {
                 0.0
@@ -135,7 +131,7 @@ pub(crate) fn use_conversation_scroll(
     let preview = use_mut_ref(|| {
         crate::scroll_motion::PullPreview::new(preview_node.clone(), timeline.clone())
     });
-    let motion = use_mut_ref(crate::scroll_motion::ScrollMotion::new);
+    let motion = use_mut_ref(crate::scroll_motion::ScrollMotion::default);
     let wheel_pull = use_mut_ref(BottomPull::default);
     let update_preview = {
         let preview = preview.clone();

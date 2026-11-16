@@ -22,7 +22,7 @@ struct Content {
 #[derive(Clone)]
 struct Ready {
     content: Rc<Content>,
-    review: Rc<ConversationReview>,
+    review: ConversationReview,
     notice: Option<String>,
     read_only: bool,
     save_error: Option<String>,
@@ -33,10 +33,10 @@ enum Screen {
     #[default]
     Loading,
     Failed(String),
-    Ready(Box<Ready>),
+    Ready(Ready),
 }
 enum Action {
-    Loaded(Box<Ready>),
+    Loaded(Ready),
     Failed(String),
     Review(ChatAction),
     Timed {
@@ -77,13 +77,13 @@ impl Reducible for Screen {
                 return self;
             }
         }
-        // Save acknowledgements share the review snapshot; only domain actions copy it.
+        // Saved progress is shared until an action actually changes persistent state.
         let mut ready = current.clone();
         match action {
             Action::Saved(_, result) => ready.save_error = result.err(),
             Action::RetrySave => ready.revision += 1,
             Action::Review(action) => {
-                if !Rc::make_mut(&mut ready.review).act(
+                if !ready.review.act(
                     action,
                     &ready.content.conversations,
                     &ready.content.vocabulary,
@@ -92,7 +92,7 @@ impl Reducible for Screen {
                 ) {
                     return self;
                 }
-                if ready.review.progress != current.review.progress {
+                if !Rc::ptr_eq(&ready.review.progress, &current.review.progress) {
                     ready.revision += 1;
                 }
             }
@@ -113,13 +113,12 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
     let screen = use_reducer(Screen::default);
     let reload = use_state(|| 0_u32);
     let timeline = use_node_ref();
-    let can_pull = use_mut_ref(|| false);
     let following = use_mut_ref(|| true);
     let ready = match &*screen {
         Screen::Ready(ready) => Some(ready),
         _ => None,
     };
-    *can_pull.borrow_mut() = !props.guide_open && ready.is_some_and(|r| r.review.can_next());
+    let can_pull = !props.guide_open && ready.is_some_and(|r| r.review.can_next());
     {
         let screen = screen.clone();
         use_effect_with_deps(
@@ -158,17 +157,17 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
                                 Date::now() as i64,
                             );
                             notices.extend(notice);
-                            screen.dispatch(Action::Loaded(Box::new(Ready {
+                            screen.dispatch(Action::Loaded(Ready {
                                 content: Rc::new(Content {
                                     vocabulary: loaded.content,
                                     conversations,
                                 }),
-                                review: Rc::new(review),
+                                review,
                                 notice: (!notices.is_empty()).then(|| notices.join(" ")),
                                 read_only,
                                 save_error: None,
                                 revision: 0,
-                            })));
+                            }));
                         }
                     }
                 });
@@ -270,7 +269,7 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
     let pull = crate::gestures::use_conversation_scroll(
         timeline.clone(),
         ready.is_some(),
-        if *can_pull.borrow() {
+        if can_pull {
             let screen = screen.clone();
             Some(Callback::from(move |action| {
                 screen.dispatch(Action::Review(action))

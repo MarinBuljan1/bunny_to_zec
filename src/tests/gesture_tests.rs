@@ -52,11 +52,11 @@ fn notes_can_flip_and_only_overflowing_notes_reserve_vertical_drags_for_scrollin
 #[test]
 fn pull_dot_stops_growing_at_the_threshold_and_shrinks_when_the_pull_is_reversed() {
     let mut pull = BottomPull::default();
-    pull.move_by(72.0, true, true);
+    pull.consume(72.0, true, true);
     assert_eq!(pull.progress(), 1.0);
-    pull.move_by(100.0, true, true);
+    pull.consume(100.0, true, true);
     assert_eq!(pull.progress(), 1.0);
-    pull.move_by(-36.0, true, true);
+    pull.consume(-36.0, true, true);
     assert_eq!(pull.progress(), 0.5);
     assert!(!pull.finish(true));
     assert_eq!(pull.progress(), 0.0);
@@ -104,13 +104,13 @@ fn resisted_movement_stays_continuous_and_bounded_beyond_the_rating_threshold() 
 #[test]
 fn pull_progress_and_acceptance_use_the_same_distance() {
     let mut pull = BottomPull::default();
-    pull.move_by(36.0, true, true);
+    pull.consume(36.0, true, true);
     assert_eq!(pull.progress(), 0.5);
-    pull.move_by(36.0, true, true);
+    pull.consume(36.0, true, true);
     assert_eq!(pull.progress(), 1.0);
     assert!(pull.finish(true));
     assert_eq!(pull.progress(), 0.0);
-    pull.move_by(71.0, true, true);
+    pull.consume(71.0, true, true);
     assert!(pull.progress() < 1.0);
     assert!(!pull.finish(true));
 }
@@ -155,24 +155,24 @@ fn review_swipes_keep_the_threshold_and_reject_ambiguous_diagonals() {
 #[test]
 fn only_distance_beyond_bottom_advances_and_cancel_resets_it() {
     let mut pull = BottomPull::default();
-    assert!(!pull.move_by(300.0, true, false));
+    assert_eq!(pull.consume(300.0, true, false), 300.0);
     assert!(!pull.finish(true));
-    assert!(pull.move_by(40.0, true, true));
+    assert_eq!(pull.consume(40.0, true, true), 0.0);
     assert!(!pull.finish(true));
-    pull.move_by(80.0, true, true);
+    pull.consume(80.0, true, true);
     assert!(pull.finish(true));
     assert!(!pull.finish(true));
-    pull.move_by(80.0, true, true);
+    pull.consume(80.0, true, true);
     assert!(!pull.finish(false));
     assert!(!pull.finish(true));
 }
 #[test]
 fn reversing_direction_or_rating_cannot_advance() {
     let mut pull = BottomPull::default();
-    pull.move_by(50.0, true, true);
-    pull.move_by(-30.0, true, true);
+    pull.consume(50.0, true, true);
+    pull.consume(-30.0, true, true);
     assert!(!pull.finish(true));
-    assert!(!pull.move_by(200.0, false, true));
+    assert_eq!(pull.consume(200.0, false, true), 200.0);
     assert!(!pull.finish(true));
 }
 

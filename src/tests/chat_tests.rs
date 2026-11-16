@@ -12,17 +12,17 @@ fn ready_screen() -> Rc<Screen> {
         conversations: Default::default(),
     };
     let (review, _) = ConversationReview::restore(progress, &conversations, &vocabulary, 1000000);
-    Rc::new(Screen::Ready(Box::new(Ready {
+    Rc::new(Screen::Ready(Ready {
         content: Rc::new(Content {
             vocabulary,
             conversations,
         }),
-        review: Rc::new(review),
+        review,
         notice: None,
         read_only: false,
         save_error: None,
         revision: 1,
-    })))
+    }))
 }
 
 #[test]
@@ -31,27 +31,27 @@ fn save_acknowledgements_and_retries_preserve_the_review_snapshot() {
     let Screen::Ready(original) = screen.as_ref() else {
         panic!("ready fixture");
     };
-    let review = original.review.clone();
+    let progress = original.review.progress.clone();
     let updated = screen.reduce(Action::Saved(1, Err("storage full".into())));
     let Screen::Ready(ready) = updated.as_ref() else {
         panic!("save keeps the screen ready");
     };
     assert_eq!(ready.save_error.as_deref(), Some("storage full"));
-    assert!(Rc::ptr_eq(&review, &ready.review));
+    assert!(Rc::ptr_eq(&progress, &ready.review.progress));
 
     let retried = updated.reduce(Action::RetrySave);
     let Screen::Ready(ready) = retried.as_ref() else {
         panic!("retry keeps the screen ready");
     };
     assert_eq!(ready.revision, 2);
-    assert!(Rc::ptr_eq(&review, &ready.review));
+    assert!(Rc::ptr_eq(&progress, &ready.review.progress));
 
     let saved = retried.reduce(Action::Saved(2, Ok(())));
     let Screen::Ready(ready) = saved.as_ref() else {
         panic!("save keeps the screen ready");
     };
     assert!(ready.save_error.is_none());
-    assert!(Rc::ptr_eq(&review, &ready.review));
+    assert!(Rc::ptr_eq(&progress, &ready.review.progress));
 }
 
 #[test]
