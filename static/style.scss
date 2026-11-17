@@ -27,6 +27,7 @@ $focus: #a34b00;
 @keyframes conversation-enter { from { transform: translateY(100%); } to { transform: translateY(0); } }
 @keyframes conversation-exit { from { transform: translateY(0); } to { transform: translateY(-100%); } }
 .chat-exchange { display: flex; flex-direction: column; gap: 18px; margin-bottom: 24px; }
+.conversation-end { border: 0; border-top: 1px solid #b6c6d2; margin: 0 0 16px; }
 .message-motion { width: fit-content; max-width: 86%; border-radius: 18px; }
 .partner-motion { align-self: flex-start; }
 .learner-motion { align-self: flex-end; position: relative; isolation: isolate; transform: translate3d(var(--drag-x, 0px), var(--drag-y, 0px), 0); transition: transform var(--drag-duration, 170ms) cubic-bezier(.2,.8,.2,1);

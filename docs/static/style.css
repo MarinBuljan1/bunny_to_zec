@@ -167,6 +167,12 @@
   margin-bottom: 24px;
 }
 
+.conversation-end {
+  border: 0;
+  border-top: 1px solid #b6c6d2;
+  margin: 0 0 16px;
+}
+
 .message-motion {
   width: fit-content;
   max-width: 86%;
@@ -455,5 +461,3 @@ button:focus-visible, [tabindex="0"]:focus-visible {
   outline: 3px solid #a34b00;
   outline-offset: 3px;
 }
-
-/*# sourceMappingURL=style.css.map */

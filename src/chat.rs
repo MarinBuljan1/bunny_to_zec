@@ -381,6 +381,12 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
     };
     let session = ready.review.session();
     let conversation = session.and_then(|s| ready.content.conversations.get(&s.conversation_id));
+    let conversation_finished = session
+        .zip(conversation)
+        .is_some_and(|(session, conversation)| {
+            session.phase == SessionPhase::Ready
+                && session.exchange_index + 1 == conversation.exchanges.len()
+        });
     let english = ready.review.progress.conversations.show_english;
     let learned_words = crate::learning::calculate_progress_sum(&ready.review.progress.scores)
         as f64
@@ -451,6 +457,9 @@ pub(super) fn conversation_view(props: &ConversationViewProps) -> Html {
                         </div>}
                     }).collect::<Html>()
                 } else { html!{<div class="chat-welcome"><h2>{"Learn through conversation"}</h2><p>{"Read your partner’s message, recall the missing Croatian words, then reveal and rate your reply."}</p><button type="button" onclick={send.reform(|_| ChatAction::Next)}>{"Start conversation"}</button></div>} }}
+                {if conversation_finished { html!{
+                    <hr class="conversation-end" aria-label="End of conversation" />
+                }} else { Html::default() }}
                 <div class="pull-preview" ref={pull.preview.clone()} aria-hidden="true" role="status" aria-label="Pull for next messages">
                     <div class="pull-dot"></div>
                 </div>

@@ -21,7 +21,9 @@ also need these checks in desktop and narrow/mobile layouts:
   Confirm reduced-motion mode skips these transitions. Only learner
   appearance starts recall timing. Refresh during either typing phase and retry.
 - Finish a conversation and advance using touch, mouse, wheel, and keyboard. The
-  visible previous conversation should slide up and out while the next starts
+  final rated reply should show a divider below it before the next-message dot.
+  Earlier replies and the next conversation should not show an end divider.
+  The visible previous conversation should slide up and out while the next starts
   below, with no header movement or stale interactive messages left behind.
   Advancing within a conversation must not run this whole-conversation animation.
   Repeat when the same conversation ID is selected again, and with reduced motion.
