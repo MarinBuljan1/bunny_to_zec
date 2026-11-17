@@ -453,8 +453,77 @@ html, body {
   overflow-y: auto;
 }
 
-.instructions p {
-  margin: 0 0 1rem;
+.instructions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.instruction-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.8rem;
+  border: 1px solid rgba(0, 123, 255, 0.1490196078);
+  border-radius: 10px;
+  background: rgba(0, 123, 255, 0.0196078431);
+}
+.instruction-row.philosophy {
+  border-color: rgba(255, 145, 0, 0.2);
+  background: rgba(255, 145, 0, 0.0392156863);
+}
+.instruction-row.app-install {
+  border-color: rgba(46, 155, 39, 0.2);
+  background: rgba(46, 155, 39, 0.0392156863);
+}
+
+.instruction-icon {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 123, 255, 0.2509803922);
+  border-radius: 50%;
+  background: rgba(0, 123, 255, 0.0509803922);
+  color: #0875cd;
+}
+.instruction-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.philosophy .instruction-icon {
+  color: #a95b00;
+  border-color: rgba(255, 145, 0, 0.2509803922);
+  background: rgba(255, 145, 0, 0.0509803922);
+}
+
+.app-install .instruction-icon {
+  color: #277c24;
+  border-color: rgba(46, 155, 39, 0.2509803922);
+  background: rgba(46, 155, 39, 0.0509803922);
+}
+
+.instruction-text {
+  min-width: 0;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.instruction-text h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+.instruction-text p {
+  margin: 0;
+}
+.instruction-text ul {
+  margin: 0 0 0.5rem;
+  padding-left: 1.2rem;
+}
+.instruction-text li + li {
+  margin-top: 0.35rem;
 }
 
 button:focus-visible, [tabindex="0"]:focus-visible {

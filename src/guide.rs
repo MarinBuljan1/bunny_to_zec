@@ -70,15 +70,59 @@ pub(super) fn guide(props: &GuideProps) -> Html {
                 </div>
                 <div class="modal-body">
                     <div class="instructions">
-                        <p>{"Choose Start conversation on the welcome screen. Typing dots appear before the partner message, then before your reply. Read the partner message while your reply is being typed. The recall timer starts only when your reply appears. Recall the missing words, then swipe left or right to reveal them and stop the timer."}</p>
-                        <p>{"After revealing, swipe up for correct or down to practise again. Your message settles back into place. Scroll through earlier messages; pull up at the bottom until the next-message dot stops growing, then release to continue. Swipes can start on the conversation background. A soft green, red, or blue glow behind the moving message strengthens when you have swiped far enough. Earlier conversations disappear when a new one begins."}</p>
-                        <p>{"Tap EN in the header or any message to toggle English for every message. A line through EN means translations are off. Your learning progress appears in the middle of the header. Revealing keeps the tested words underlined with English hints. Flip again for word explanations beneath the reply; rating hides them, and another flip can reopen them."}</p>
-                        <p>{"Keyboard: Tab to a control and press Enter or Space. Focus the conversation area and use Left/Right to reveal or flip, Up for correct or next at the bottom, and Down for incorrect. Escape closes this guide."}</p>
-                        <p>{"Each word’s progress blends how long since you last saw it, how quickly you recalled it, and whether you got it right. Scores decrease over time. Quick recall after longer breaks counts toward learning."}</p>
-                        <p>{"Install the app using Add to Home Screen in Safari’s Share menu, or Install / Add to Home screen in Chrome’s menu. Offline use is available after the first successful online load."}</p>
+                        {instruction_row("", "M4 4h16v12H9l-5 4V4z M8 8h8 M8 12h5", "Read the conversation", html!{
+                            <p>{"Choose Start conversation. Typing dots appear before each message. Read your partner’s message, then recall the missing Croatian words in your reply. Your recall timer starts only when your reply appears."}</p>
+                        })}
+                        {instruction_row("", "M4 12h16 M8 8l-4 4 4 4 M16 8l4 4-4 4", "Swipe sideways to reveal", html!{
+                            <p>{"Swipe left or right to fill the blanks and stop the timer. The English word hints and underlines stay visible. Flip again to show or hide word explanations beneath your reply."}</p>
+                        })}
+                        {instruction_row("", "M5 12l4 4L19 6", "Swipe up or down to rate", html!{
+                            <p>{"After revealing, swipe up if you were correct, or down to practise again. A green or red border records your rating. You can swipe on the conversation background too; the coloured glow shows the action and grows stronger as you reach the threshold."}</p>
+                        })}
+                        {instruction_row("", "M12 20V4 M6 10l6-6 6 6", "Pull up to keep chatting", html!{
+                            <p>{"Scroll through earlier messages. At the bottom, pull up until the next-message dot stops growing, then release. A divider marks the end of a conversation; the old conversation slides away as the next begins."}</p>
+                        })}
+                        {instruction_row("", "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z M3 12h18 M12 3c4 4 4 14 0 18-4-4-4-14 0-18z", "English on or off", html!{
+                            <p>{"Tap EN in the header, or tap any message, to toggle English for all messages. A line through EN means translations are off."}</p>
+                        })}
+                        {instruction_row("", "M3 5h18v14H3z M6 9h1 M10 9h1 M14 9h1 M18 9h0 M6 13h1 M10 13h1 M14 13h4 M7 16h10", "Keyboard controls", html!{
+                            <p>{"Tab to a control and press Enter or Space. Focus the conversation area: Left/Right reveals or flips, Up rates correct or advances at the bottom, and Down rates incorrect. Arrows inside long explanations scroll them. Escape closes this guide."}</p>
+                        })}
+                        {instruction_row("philosophy", "M4 4v16h16 M7 15l4-5 4 3 5-7", "Learn for real conversations", html!{
+                            <p>{"Your score blends time since the last review, recall speed, and whether you were correct. Scores decrease over time. Quick recall after longer breaks counts towards learning, and the header bar fills as you approach the next level."}</p>
+                        })}
+                        {instruction_row("app-install", "M7 2h10v20H7z M10 5h4 M11 19h2", "Install the app", html!{
+                            <>
+                            <ul>
+                                <li><strong>{"iPhone / iPad: "}</strong>{"In Safari, open Share, then choose Add to Home Screen and Add."}</li>
+                                <li><strong>{"Android: "}</strong>{"In Chrome, open the three-dots menu and choose Install or Add to Home screen."}</li>
+                            </ul>
+                            <p>{"The app opens full screen and can work offline after the first successful online load."}</p>
+                            </>
+                        })}
                     </div>
                 </div>
             </div>
         </dialog>
+    }
+}
+
+/// Inline icons keep the guide available offline without an icon-font dependency.
+fn instruction_row(
+    modifier: &'static str,
+    icon: &'static str,
+    title: &'static str,
+    content: Html,
+) -> Html {
+    html! {
+        <section class={classes!("instruction-row", modifier)}>
+            <span class="instruction-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                    <path d={icon} />
+                </svg>
+            </span>
+            <div class="instruction-text"><h3>{title}</h3>{content}</div>
+        </section>
     }
 }

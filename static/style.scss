@@ -139,7 +139,22 @@ html, body {
     overflow-y: auto;
 }
 
-.instructions p { margin: 0 0 1rem; }
+.instructions { display: flex; flex-direction: column; gap: .75rem; }
+.instruction-row { display: flex; align-items: flex-start; gap: .75rem; padding: .8rem; border: 1px solid #007bff26; border-radius: 10px; background: #007bff05;
+    &.philosophy { border-color: #ff910033; background: #ff91000a; }
+    &.app-install { border-color: #2e9b2733; background: #2e9b270a; }
+}
+.instruction-icon { flex: 0 0 32px; width: 32px; height: 32px; display: grid; place-items: center; box-sizing: border-box; border: 1px solid #007bff40; border-radius: 50%; background: #007bff0d; color: #0875cd;
+    svg { width: 20px; height: 20px; }
+}
+.philosophy .instruction-icon { color: #a95b00; border-color: #ff910040; background: #ff91000d; }
+.app-install .instruction-icon { color: #277c24; border-color: #2e9b2740; background: #2e9b270d; }
+.instruction-text { min-width: 0; line-height: 1.55; overflow-wrap: anywhere;
+    h3 { margin: 0 0 .35rem; font-size: 1rem; }
+    p { margin: 0; }
+    ul { margin: 0 0 .5rem; padding-left: 1.2rem; }
+    li + li { margin-top: .35rem; }
+}
 
 button:focus-visible, [tabindex="0"]:focus-visible {
     outline: 3px solid $focus;

@@ -87,6 +87,8 @@ also need these checks in desktop and narrow/mobile layouts:
 - Open Guide by pointer and keyboard. Close receives initial focus; Tab/Shift+Tab
   stay inside; background controls are inert. Escape, Close, and backdrop close
   the dialog and restore focus to Guide.
+  Check that the circular icons and instruction panels display offline, and that
+  the guide stays readable and scrollable on narrow screens and at 200% zoom.
 - With a screen reader, masked words announce translation prompts without the
   hidden answer. The reverse reads the answer. Only the visible face is announced.
 - Check 320 px width, short/landscape viewports, 200% text/zoom, long sentences,
