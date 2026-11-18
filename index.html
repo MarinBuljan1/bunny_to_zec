@@ -3,27 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yew Flashcard</title>
+    <title>Bunny to Zec</title>
     <link rel="stylesheet" href="static/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icons/icon-192x192.png" sizes="192x192" type="image/png">
 </head>
 <body>
     <script>
         if ('serviceWorker' in navigator) {
-          window.addEventListener('load', function() {
-            navigator.serviceWorker.register('service-worker.js').then(function(registration) {
-              console.log('ServiceWorker registration successful with scope: ', registration.scope);
-            }, function(err) {
-              console.log('ServiceWorker registration failed: ', err);
-            });
+          window.addEventListener('load', async function() {
+            const scope = new URL('./', location.href).href;
+            const localDevelopment = ['localhost', '127.0.0.1', '[::1]', '::1'].includes(location.hostname);
+            try {
+              if (localDevelopment) {
+                // Retire workers from earlier local builds so they stop serving stale files.
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                const ownRegistrations = registrations.filter(registration => registration.scope === scope);
+                await Promise.all(ownRegistrations.map(registration => registration.unregister()));
+                const cacheNames = await caches.keys();
+                await Promise.all(cacheNames
+                  .filter(name => name.startsWith(`language-learner:${scope}:`))
+                  .map(name => caches.delete(name)));
+                if (ownRegistrations.length && navigator.serviceWorker.controller) location.reload();
+                return;
+              }
+              await navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' });
+            } catch (error) {
+              console.error('Offline setup failed:', error);
+            }
           });
         }
       </script>
     <div id="app"></div>
     <script type="module">
-        import init from './pkg/yew_project.js';
+        import init from './pkg/bunny_to_zec.js';
         init();
     </script>
 </body>

@@ -1,33 +1,22 @@
 @echo off
 setlocal
+pushd "%~dp0" || exit /b 1
 
-pushd "%~dp0"
+call build_and_sync.bat
+if errorlevel 1 goto :Failed
 
-set "SYNC_SCRIPT=%CD%\sync_docs.bat"
-set "BUILD_AND_SYNC=%CD%\build_and_sync.bat"
+rem Sass-only edits do not need to rebuild or optimize WASM.
+start "" /B sass --watch --no-source-map static/style.scss:static/style.css
+start "" /B cargo watch -w src -w Cargo.toml -w Cargo.lock -s "build_and_sync.bat"
+start "" /B cargo watch -w static/style.css -w icons -w assets -w index.html -w manifest.json -w service-worker.js -s "sync_docs.bat"
+start "" /B browser-sync start --server --files "static/*.css, pkg/*, assets/*.json" --startPath index.html
 
-echo Running initial build and docs sync...
-call "%BUILD_AND_SYNC%"
-if errorlevel 1 (
-    echo Initial build failed. Aborting watch setup.
-    goto :END
-)
-
-:: Watch and recompile SCSS in the background
-start "SASS Watch" sass --watch static/style.scss:static/style.css
-
-:: Watch and rebuild the Yew project, syncing docs afterward
-start "Cargo Watch" cargo watch -w src -s "build_and_sync.bat"
-
-:: Watch for asset and static changes to keep docs in sync
-start "Docs Sync" cargo watch -w static -w icons -w assets -w index.html -w manifest.json -w service-worker.js -s "sync_docs.bat"
-
-:: Serve the files and enable live reload, watching for JSON changes too
-start "Browser Sync" browser-sync start --server --files "static/*.css, pkg/*, assets/*.json" --startPath index.html
-
-echo.
-echo Watchers started. Docs output will stay in sync while this script is running.
-
-:END
+echo Watchers started. Close this terminal to stop the development processes.
 popd
-endlocal
+endlocal & exit /b 0
+
+:Failed
+set "RC=%ERRORLEVEL%"
+echo Initial build failed. Watchers were not started.
+popd
+endlocal & exit /b %RC%

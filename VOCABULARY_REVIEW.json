@@ -1,0 +1,1859 @@
+{
+  "status": "review_pass_complete",
+  "policy": "Standard Croatian; retain distinct grammatical forms; correct misleading hints and keep notes concise.",
+  "reviewed_ranges": [
+    [
+      1,
+      180
+    ]
+  ],
+  "reviewed_lemma_ranges": [
+    [
+      1,
+      3768
+    ]
+  ],
+  "entries": {
+    "je": {
+      "note": "Unstressed third-person singular of biti: he/she/it is. Also a past-tense auxiliary and a short form of 'her'."
+    },
+    "da": {
+      "translation": "that; yes",
+      "note": "Means 'yes' as an answer, or introduces a clause ('that'). Other uses depend on the construction."
+    },
+    "se": {
+      "translation": "oneself",
+      "note": "Short reflexive pronoun, used with verbs such as prati se. It has no single English equivalent and does not mean 'are'."
+    },
+    "u": {
+      "note": "With locative for location ('in'); with accusative for movement into somewhere. Also means 'at' in time expressions."
+    },
+    "to": {
+      "translation": "that; it",
+      "note": "Neuter singular demonstrative, nominative/accusative. Can stand for 'that' or 'it'."
+    },
+    "sam": {
+      "translation": "I am; alone",
+      "note": "Usually the short first-person singular of biti, also a past-tense auxiliary. As an adjective, sam means 'alone' (masculine)."
+    },
+    "ti": {
+      "note": "Informal singular subject 'you'; also the short dative pronoun 'to you'. Context distinguishes them."
+    },
+    "mi": {
+      "translation": "we; to me",
+      "note": "Either the subject pronoun 'we' or the short dative 'to me'. These are different pronouns with the same spelling."
+    },
+    "li": {
+      "translation": "(question particle)",
+      "note": "Unstressed particle used in yes/no questions, usually after a verb: znaš li? It has no direct English translation."
+    },
+    "ja": {
+      "translation": "I",
+      "note": "First-person singular subject pronoun. Often omitted because the verb already identifies the person."
+    },
+    "su": {
+      "note": "Short third-person plural of biti: 'they are'; also used as a past-tense auxiliary."
+    },
+    "nije": {
+      "translation": "is not",
+      "note": "Negative third-person singular of biti. With a past participle, forms a negative past tense."
+    },
+    "s": {
+      "translation": "with; from",
+      "note": "With instrumental means 'with'; with genitive can mean 'from/off'. Sa is a longer pronunciation variant."
+    },
+    "ga": {
+      "translation": "him; it",
+      "note": "Short genitive/accusative pronoun for masculine or neuter singular: 'him/it', with the English wording set by context."
+    },
+    "me": {
+      "note": "Short genitive/accusative of ja. The longer, stressed form is mene."
+    },
+    "bi": {
+      "note": "Conditional auxiliary for ti, on/ona/ono and oni/one/ona; used with a past participle. First-person singular uses bih."
+    },
+    "te": {
+      "translation": "you; and",
+      "note": "Short genitive/accusative of ti ('you'); also a conjunction meaning 'and'."
+    },
+    "će": {
+      "note": "Short future auxiliary for third-person singular or plural: he/she/it/they will. Used with an infinitive."
+    },
+    "o": {
+      "translation": "about; on",
+      "note": "With locative usually means 'about'; accusative occurs in expressions of contact or time, such as o zid and o Božić."
+    },
+    "sa": {
+      "translation": "with; from",
+      "note": "Longer form of s, especially before s, z, š, ž and in sa mnom. Case determines 'with' versus 'from/off'."
+    },
+    "sve": {
+      "note": "Often 'everything' (neuter singular); also several plural/case forms of sav. The noun and construction determine agreement."
+    },
+    "ću": {
+      "note": "First-person singular future auxiliary. It can precede the infinitive or follow its shortened form: ću raditi / radit ću."
+    },
+    "nisam": {
+      "translation": "I am not",
+      "note": "Negative first-person singular of biti. With a past participle it gives 'I did not/have not'; alone it means 'I am not'."
+    },
+    "bio": {
+      "note": "Masculine singular past participle of biti. Usually combines with an auxiliary: bio sam ('I was')."
+    },
+    "mogu": {
+      "translation": "I can; they can",
+      "note": "Present of moći, first-person singular or third-person plural. Both forms have the same spelling."
+    },
+    "redu": {
+      "translation": "order",
+      "note": "Dative/locative singular of red. The phrase u redu means 'all right' or 'OK'."
+    },
+    "bilo": {
+      "translation": "was; any; either",
+      "note": "Neuter singular past participle of biti. Also appears in bilo tko ('anyone') and bilo…bilo ('either…or')."
+    },
+    "kad": {
+      "note": "Short form of kada ('when'); standard Croatian, not restricted to informal speech."
+    },
+    "koji": {
+      "translation": "which; who",
+      "note": "Masculine singular interrogative/relative form. Unlike tko, it agrees with the noun it refers to."
+    },
+    "vas": {
+      "translation": "you",
+      "note": "Genitive/accusative of plural or polite vi. The possessive 'your' is vaš, not vas."
+    },
+    "ih": {
+      "note": "Short genitive/accusative plural pronoun ('them'); the stressed form is njih."
+    },
+    "mu": {
+      "translation": "to him; to it",
+      "note": "Short dative pronoun: to him/to it. The full, stressed form is njemu."
+    },
+    "ćemo": {
+      "note": "First-person plural future auxiliary ('we will'), used with an infinitive."
+    },
+    "bila": {
+      "note": "Past participle of biti: feminine singular or neuter plural. An auxiliary identifies the person."
+    },
+    "nas": {
+      "translation": "us",
+      "note": "Genitive/accusative of mi ('we'). The possessive 'our' is naš, not nas."
+    },
+    "mene": {
+      "note": "Long, stressed genitive/accusative of ja. Used after prepositions, for contrast or emphasis; short form me."
+    },
+    "kada": {
+      "note": "Means 'when'; kad is a standard shorter variant. Both are used in questions and time clauses."
+    },
+    "prije": {
+      "translation": "before; earlier; ago",
+      "note": "Can mean 'before' (with genitive), 'earlier', or 'ago' in a time expression."
+    },
+    "tebe": {
+      "note": "Long, stressed genitive/accusative of ti. Used after prepositions or for emphasis; short form te."
+    },
+    "hej": {
+      "note": "Interjection for greeting someone or attracting attention; informal."
+    },
+    "imam": {
+      "translation": "I have",
+      "note": "First-person singular present of imati. Also the spelling of the noun imam, an Islamic religious leader."
+    },
+    "sad": {
+      "translation": "now; USA",
+      "note": "Adverb meaning now. Uppercase SAD is also the abbreviation for the United States; matching here ignores case."
+    },
+    "tu": {
+      "note": "Usually 'here/there at that place'; can also be a feminine accusative form of taj ('that')."
+    },
+    "ćeš": {
+      "note": "Second-person singular future auxiliary ('you will'), used with an infinitive."
+    },
+    "nam": {
+      "translation": "to us",
+      "note": "Short dative of mi ('we'). The stressed form is nama."
+    },
+    "nisi": {
+      "translation": "you are not",
+      "note": "Negative second-person singular of biti. With a past participle it forms a negative past tense."
+    },
+    "zato": {
+      "translation": "therefore; that is why",
+      "note": "Points to a consequence or reason already mentioned. Zato što, as a phrase, means 'because'."
+    },
+    "baš": {
+      "translation": "really; exactly",
+      "note": "An emphatic particle meaning 'really', 'exactly' or 'just', depending on what it modifies."
+    },
+    "bez": {
+      "translation": "without",
+      "note": "Preposition followed by genitive. The colour 'beige' is bež, a different word."
+    },
+    "koje": {
+      "note": "Form of koji: commonly neuter singular or feminine plural; also feminine genitive singular and masculine accusative plural."
+    },
+    "joj": {
+      "translation": "to her",
+      "note": "Short dative of ona ('she'); also an interjection expressing pain, alarm or surprise."
+    },
+    "toga": {
+      "translation": "of that",
+      "note": "Genitive singular of taj/to; also masculine animate accusative. Can separately be the noun toga, a Roman garment."
+    },
+    "žao": {
+      "translation": "sorry",
+      "note": "Used in žao mi je ('I am sorry/I regret it'). The English word 'evil' is not an appropriate hint here."
+    },
+    "tome": {
+      "note": "Dative/locative masculine or neuter singular of taj/to. The ending does not identify the case without context."
+    },
+    "mogao": {
+      "note": "Masculine singular past participle of moći ('can'). Used in past and conditional constructions with auxiliaries."
+    },
+    "dana": {
+      "note": "Genitive singular or plural of dan ('day'); also a feminine form of the passive participle dan ('given')."
+    },
+    "moje": {
+      "note": "Form of moj ('my'): agrees with the possessed noun. Commonly neuter singular, feminine plural or feminine genitive singular."
+    },
+    "put": {
+      "translation": "time; way; road",
+      "note": "Means an occasion ('prvi put'), way/journey/road, or 'towards' as a preposition. Context distinguishes these uses."
+    },
+    "daj": {
+      "translation": "give; come on",
+      "note": "Singular imperative of dati ('give'); also used conversationally to urge someone: 'come on'."
+    },
+    "meni": {
+      "translation": "to me",
+      "note": "Dative/locative of ja; a stressed form, often used after prepositions. Separately, meni can mean a restaurant menu."
+    },
+    "kod": {
+      "translation": "at; near; code",
+      "note": "Preposition with genitive for location 'at/by/near'; also a masculine noun meaning 'code'."
+    },
+    "jeste": {
+      "translation": "you are",
+      "note": "Stressed second-person plural of biti, also used for polite singular address. Standard Croatian third-person singular is jest."
+    },
+    "dva": {
+      "note": "Number 'two' with masculine or neuter nouns. Feminine nouns use dvije."
+    },
+    "nismo": {
+      "translation": "we are not",
+      "note": "Negative first-person plural of biti; also a past-tense auxiliary when followed by a past participle."
+    },
+    "niste": {
+      "translation": "you are not",
+      "note": "Negative second-person plural of biti, also polite singular. A following past participle makes it a negative past tense."
+    },
+    "sebe": {
+      "translation": "oneself",
+      "note": "Stressed genitive/accusative reflexive pronoun. It can refer to any grammatical person, not only 'yourself'."
+    },
+    "sebi": {
+      "translation": "to oneself",
+      "note": "Dative/locative reflexive pronoun. Its reference follows the subject: myself, yourself, himself, herself, ourselves, themselves."
+    },
+    "sobom": {
+      "translation": "oneself",
+      "note": "Instrumental reflexive pronoun; often with s/sa ('with oneself'). It can refer to any person."
+    },
+    "tim": {
+      "translation": "that; team",
+      "note": "Form of taj: instrumental singular or dative/locative/instrumental plural. Separately, tim is the noun 'team'."
+    },
+    "tih": {
+      "translation": "those; quiet",
+      "note": "Genitive plural of taj ('those'); also the masculine adjective tih ('quiet')."
+    },
+    "kom": {
+      "translation": "to whom; which",
+      "note": "Short dative/locative form used for 'whom/which'. It is not the English abbreviation 'com'."
+    },
+    "im": {
+      "translation": "to them",
+      "note": "Short dative plural personal pronoun. The stressed form is njima."
+    },
+    "njim": {
+      "translation": "him; it",
+      "note": "Instrumental masculine/neuter singular pronoun. Used after prepositions, such as s njim ('with him/it')."
+    },
+    "njom": {
+      "translation": "her",
+      "note": "Instrumental feminine singular pronoun; s njom means 'with her'."
+    },
+    "njemu": {
+      "translation": "to him; to it",
+      "note": "Stressed dative/locative masculine or neuter singular pronoun; short dative form mu."
+    },
+    "njoj": {
+      "translation": "to her",
+      "note": "Stressed dative/locative of ona. The short dative form is joj."
+    },
+    "moga": {
+      "translation": "my; mine",
+      "note": "Genitive masculine/neuter singular of moj, also animate masculine accusative. It is a possessive, not a form of 'can'."
+    },
+    "kime": {
+      "translation": "with whom",
+      "note": "Instrumental of tko; koga is genitive/accusative and kome is dative/locative."
+    },
+    "žele": {
+      "translation": "they want; jelly",
+      "note": "Usually third-person plural present of željeti. Separately, žele is a noun meaning 'jelly'."
+    },
+    "morala": {
+      "translation": "had to",
+      "note": "Usually feminine singular past participle of morati; also genitive singular of the noun moral ('morality')."
+    },
+    "sina": {
+      "translation": "son",
+      "note": "Genitive/accusative singular of sin ('son'). The word for a rail is šina."
+    },
+    "priči": {
+      "translation": "story",
+      "note": "Dative/locative singular of priča. Do not confuse it with prići ('to approach'), which has ć."
+    },
+    "god": {
+      "translation": "ever",
+      "note": "Indefinite particle in tko god ('whoever'), što god ('whatever'), and similar phrases. God. with a full stop abbreviates godina."
+    },
+    "sviđa": {
+      "translation": "is appealing",
+      "note": "Third-person singular of sviđati se. The person who likes something is dative: sviđa mi se means 'I like it'."
+    },
+    "sviđaš": {
+      "translation": "you are appealing",
+      "note": "Second-person singular of sviđati se. Sviđaš mi se means 'I like you'; mi supplies the experiencer."
+    },
+    "sviđam": {
+      "translation": "I am appealing",
+      "note": "First-person singular of sviđati se. In sviđam ti se, ti means 'to you': 'you like me'."
+    },
+    "sviđaju": {
+      "translation": "are appealing",
+      "note": "Third-person plural of sviđati se. Sviđaju mi se means 'I like them'; the liked things are the subject."
+    },
+    "svoj": {
+      "translation": "one's own",
+      "note": "Reflexive possessive: one’s own, referring to the subject. Masculine singular; agrees with the possessed noun, not the owner."
+    },
+    "svoje": {
+      "translation": "one's own",
+      "note": "Inflected form of svoj: neuter singular or feminine/masculine plural forms. Refers to the subject’s own possession."
+    },
+    "svoju": {
+      "translation": "one's own",
+      "note": "Accusative feminine singular of svoj (one’s own), agreeing with the possessed noun; refers back to the subject."
+    },
+    "svojim": {
+      "translation": "one's own",
+      "note": "Instrumental masculine/neuter singular or dative/locative/instrumental plural of svoj; the owner is the subject."
+    },
+    "svog": {
+      "translation": "one's own",
+      "note": "Short genitive masculine/neuter singular, or animate masculine accusative singular, of svoj (one’s own)."
+    },
+    "svom": {
+      "translation": "one's own",
+      "note": "Dative/locative masculine/neuter singular or instrumental feminine singular of svoj; possession refers to the subject."
+    },
+    "svojoj": {
+      "translation": "one's own",
+      "note": "Dative/locative feminine singular of svoj (one’s own), agreeing with the possessed noun."
+    },
+    "svojih": {
+      "translation": "one's own",
+      "note": "Genitive plural of svoj, all genders. Means one’s own, with the owner determined by the subject."
+    },
+    "svojom": {
+      "translation": "one's own",
+      "note": "Instrumental feminine singular of svoj (one’s own); the subject determines whose possession it is."
+    },
+    "svoja": {
+      "translation": "one's own",
+      "note": "Feminine singular or neuter plural of svoj (one’s own), agreeing with the possessed noun."
+    },
+    "svoga": {
+      "translation": "one's own",
+      "note": "Long genitive masculine/neuter singular, or animate masculine accusative singular, of svoj (one’s own)."
+    },
+    "svome": {
+      "translation": "one's own",
+      "note": "Dative/locative masculine/neuter singular of svoj (one’s own); the possessor is the subject."
+    },
+    "svojem": {
+      "translation": "one's own",
+      "note": "Dative/locative masculine/neuter singular of svoj (one’s own), an alternative to svom/svome."
+    },
+    "svojeg": {
+      "translation": "one's own",
+      "note": "Genitive masculine/neuter singular, or animate masculine accusative singular, of svoj (one’s own)."
+    },
+    "sami": {
+      "translation": "alone; themselves"
+    },
+    "čula": {
+      "translation": "heard; senses",
+      "note": "Feminine singular past participle of čuti; also nominative/accusative plural of čulo ('sense')."
+    },
+    "ču": {
+      "translation": "heard",
+      "note": "Literary aorist of čuti, second-/third-person singular. The future auxiliary 'I will' is ću, with a different letter."
+    },
+    "auto": {
+      "translation": "car"
+    },
+    "sto": {
+      "translation": "one hundred",
+      "note": "The number 100. Što ('what') is a different word and must keep its diacritic."
+    },
+    "nađe": {
+      "translation": "finds; found",
+      "note": "Third-person singular present of naći; also second-/third-person singular aorist. Tense depends on context."
+    },
+    "ubit": {
+      "translation": "kill",
+      "note": "Shortened infinitive of ubiti, used before a future auxiliary: ubit ću. It is not itself a past-tense form."
+    },
+    "paru": {
+      "translation": "pair; steam",
+      "note": "Dative/locative of par ('pair/couple'); also accusative of para ('steam')."
+    },
+    "budi": {
+      "translation": "be; wakes",
+      "note": "Usually singular imperative of biti ('be!'); also a present/imperative form of buditi ('wake')."
+    },
+    "budite": {
+      "translation": "be; wake",
+      "note": "Plural/polite imperative of biti ('be!'); also a present/imperative form of buditi ('wake')."
+    },
+    "budimo": {
+      "translation": "let us be; we wake",
+      "note": "First-person plural imperative of biti; also a present/imperative form of buditi ('wake')."
+    },
+    "vise": {
+      "translation": "they hang",
+      "note": "Third-person plural present of visjeti. Više ('more') is a different word with š."
+    },
+    "sef": {
+      "translation": "safe",
+      "note": "Masculine noun for a secure box or vault. Šef ('boss') is a different word with š."
+    },
+    "svet": {
+      "translation": "holy",
+      "note": "Masculine adjective meaning 'holy/sacred'. Standard Croatian for 'world' is svijet."
+    },
+    "tede": {
+      "translation": "Ted",
+      "note": "Vocative of the name Ted, used when addressing him. Names are normally capitalized: Tede."
+    },
+    "ser": {
+      "translation": "Sir",
+      "note": "Croatian spelling of the British title Sir, used before a man's name; not a general translation of 'gospodin'."
+    },
+    "sestri": {
+      "translation": "sister"
+    },
+    "gđe": {
+      "translation": "Mrs",
+      "note": "Inflected abbreviation of gospođa, including genitive singular. 'Where' is gdje, not gđe."
+    },
+    "ista": {
+      "translation": "same"
+    },
+    "uredu": {
+      "translation": "office",
+      "note": "Dative/locative singular of ured ('office'). 'OK' is written as two words: u redu."
+    },
+    "muža": {
+      "translation": "husband"
+    },
+    "nazvat": {
+      "translation": "call",
+      "note": "Shortened infinitive of nazvati before a future auxiliary, as in nazvat ću ('I will call')."
+    },
+    "pisati": {
+      "translation": "write",
+      "note": "Infinitive meaning 'to write'. 'To pee' is pišati, with š."
+    },
+    "pisalo": {
+      "translation": "wrote; writing implement",
+      "note": "Neuter singular past participle of pisati; also a noun for a writing implement."
+    },
+    "počet": {
+      "translation": "begin; begun",
+      "note": "Shortened infinitive of početi before a future auxiliary; also a passive participle meaning 'begun'."
+    },
+    "smiješ": {
+      "translation": "you may; you laugh",
+      "note": "Present of smjeti ('may/be allowed') or, with se, smijati se ('laugh'). Both can have this spelling."
+    },
+    "smiju": {
+      "translation": "they may; they laugh",
+      "note": "Third-person plural of smjeti ('may') or, with se, smijati se ('laugh')."
+    },
+    "smjela": {
+      "translation": "dared; bold",
+      "note": "Feminine singular past participle of smjeti; also feminine of the adjective smio/smjel ('bold')."
+    },
+    "smjeli": {
+      "translation": "dared; bold",
+      "note": "Masculine plural past participle of smjeti; also an adjective form meaning 'bold'."
+    },
+    "noga": {
+      "translation": "leg; foot"
+    },
+    "nozi": {
+      "translation": "leg; foot"
+    },
+    "strašno": {
+      "translation": "terribly; frightening",
+      "note": "Adverb meaning 'terribly/awfully', or neuter adjective 'frightening'. 'Passionately' is strastveno."
+    },
+    "riješit": {
+      "translation": "solve",
+      "note": "Shortened infinitive of riješiti before a future auxiliary; not itself a past tense."
+    },
+    "biću": {
+      "translation": "being; creature",
+      "note": "Dative/locative singular of biće ('being/creature'). Standard Croatian 'I will be' is written bit ću."
+    },
+    "sustav": {
+      "translation": "system",
+      "note": "Masculine noun for a system; genitive sustava, plural sustavi. It does not mean rustling."
+    },
+    "pozvat": {
+      "translation": "call; invite",
+      "note": "Shortened infinitive of pozvati, used before a future auxiliary: pozvat ću."
+    },
+    "razmišljati": {
+      "translation": "think; consider"
+    },
+    "odakle": {
+      "translation": "where from"
+    },
+    "ispred": {
+      "translation": "in front of"
+    },
+    "donijet": {
+      "translation": "bring",
+      "note": "Shortened infinitive of donijeti before a future auxiliary: donijet ću ('I will bring')."
+    },
+    "ionako": {
+      "translation": "anyway; in any case"
+    },
+    "ruka": {
+      "translation": "hand; arm"
+    },
+    "ručku": {
+      "translation": "lunch; handle",
+      "note": "Dative/locative singular of ručak ('lunch'); also accusative singular of ručka ('handle')."
+    },
+    "ručka": {
+      "translation": "lunch; handle",
+      "note": "Genitive singular of ručak ('lunch'); also the nominative noun ručka ('handle')."
+    },
+    "pale": {
+      "translation": "fell; light; burn",
+      "note": "Feminine plural past participle of pasti, or third-person plural present of paliti. Context distinguishes the verbs."
+    },
+    "obzira": {
+      "translation": "consideration",
+      "note": "Genitive singular of obzir. Bez obzira means 'regardless'; the whole phrase supplies that meaning."
+    },
+    "staviti": {
+      "translation": "put; place"
+    },
+    "pasa": {
+      "translation": "dogs",
+      "note": "Genitive plural of pas ('dog'). Paša ('pasture' or the title 'pasha') has š and is a different word."
+    },
+    "glas": {
+      "translation": "voice; vote"
+    },
+    "sirom": {
+      "translation": "cheese",
+      "note": "Instrumental singular of sir. Širom ('throughout/wide open') has š and is a different word."
+    },
+    "šef": {
+      "translation": "boss",
+      "note": "Masculine noun for a boss or chief. Sef ('safe/vault') is a different word without š."
+    },
+    "znaci": {
+      "translation": "signs",
+      "note": "Nominative plural of znak. Znači ('means') has č and is a different form."
+    },
+    "muškaraca": {
+      "translation": "men",
+      "note": "Genitive plural of muškarac. It does not mean 'tomboy'."
+    },
+    "pošao": {
+      "translation": "went; set off",
+      "note": "Masculine singular past participle of poći (set off), normally used with an auxiliary. Posao, without š, means job/work."
+    },
+    "težak": {
+      "translation": "heavy; difficult"
+    },
+    "visi": {
+      "translation": "hangs",
+      "note": "Third-person singular present of visjeti ('hang'). Viši ('higher/taller') has š and is a different word."
+    },
+    "leta": {
+      "translation": "flight",
+      "note": "Genitive singular of let ('flight'). Standard Croatian 'of summer' is ljeta."
+    },
+    "pol": {
+      "translation": "pole; half",
+      "note": "Noun 'pole', or a short form of pola ('half') in quantities. The standard word for gender/sex is spol."
+    },
+    "udarac": {
+      "translation": "blow; hit"
+    },
+    "guzici": {
+      "translation": "ass; backside",
+      "note": "Dative/locative singular of guzica. Vulgar/informal register; not a plural form."
+    },
+    "veličanstvo": {
+      "translation": "majesty; splendour"
+    },
+    "love": {
+      "translation": "they hunt; money",
+      "note": "Third-person plural of loviti; also genitive singular of lova ('money', slang)."
+    },
+    "čista": {
+      "translation": "clean",
+      "note": "Feminine form of čist. Cista ('cyst') is a different word without č."
+    },
+    "los": {
+      "translation": "moose; elk",
+      "note": "Masculine noun for the animal. Loš ('bad') has š and is a different word."
+    },
+    "nek": {
+      "translation": "let",
+      "note": "Short form of neka, a particle used for third-person commands or wishes. It does not mean 'some'."
+    },
+    "posto": {
+      "translation": "percent",
+      "note": "Used after numbers for percentages. Pošto ('since/after/how much') has š and is a different word."
+    },
+    "ted": {
+      "translation": "Ted",
+      "note": "Personal name, normally capitalized. The standard Croatian word for 'week' is tjedan."
+    },
+    "kužim": {
+      "translation": "I understand",
+      "note": "Informal first-person singular of kužiti ('understand/get it'); it does not mean 'I am at home'."
+    },
+    "kužiš": {
+      "translation": "you understand",
+      "note": "Informal second-person singular of kužiti ('understand/get it')."
+    },
+    "rijeci": {
+      "translation": "river",
+      "note": "Dative/locative singular of rijeka. Riječi ('words/of a word') has č and is a different form."
+    },
+    "želje": {
+      "translation": "wishes",
+      "note": "Form of želja ('wish/desire'). Zelje ('greens/cabbage') starts with z and is a different word."
+    },
+    "jamie": {
+      "translation": "Jamie",
+      "note": "Personal name, normally capitalized. It is not a Croatian word for 'pits'."
+    },
+    "gade": {
+      "translation": "bastard; disgust",
+      "note": "Vocative of gad (an insult), or third-person plural of gaditi (se) ('disgust'). Context distinguishes them."
+    },
+    "lovu": {
+      "translation": "hunt; money",
+      "note": "Accusative of lov ('hunt'), or of lova ('money', slang). It is not a first-person verb form."
+    },
+    "lova": {
+      "translation": "money; hunt",
+      "note": "Slang noun for money; also genitive singular of lov ('hunt')."
+    },
+    "gori": {
+      "translation": "burns; worse",
+      "note": "Present third-person singular of gorjeti, or a masculine comparative adjective meaning 'worse'."
+    },
+    "kompa": {
+      "translation": "buddy; computer",
+      "note": "Colloquial word for a friend; also genitive of komp, a colloquial abbreviation for 'computer'."
+    },
+    "čas": {
+      "translation": "moment; time; hour",
+      "note": "Usually a moment or short time; 'hour' is literary/regional. The everyday Croatian word for an hour is sat."
+    },
+    "kurvin": {
+      "translation": "whore's",
+      "note": "Possessive adjective from kurva. Vulgar, especially in insults; it is not the noun 'whore'."
+    },
+    "carter": {
+      "translation": "Carter",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "rješenje": {
+      "translation": "solution; decision"
+    },
+    "osjetila": {
+      "translation": "felt; sense organs",
+      "note": "Feminine singular past participle of osjetiti (feel/sense); also genitive singular or plural forms of osjetilo (sense organ)."
+    },
+    "jo": {
+      "translation": "Jo",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "krista": {
+      "translation": "Christ"
+    },
+    "agente": {
+      "translation": "agent",
+      "note": "Vocative singular of agent when addressing one agent; also accusative plural."
+    },
+    "stav": {
+      "translation": "attitude; stance"
+    },
+    "uči": {
+      "translation": "learns; teaches; learn!",
+      "note": "Third-person singular present or singular imperative of učiti (learn/teach). Enter is ući, with ć."
+    },
+    "br": {
+      "translation": "number (abbr.)",
+      "note": "Abbreviation br. for broj (number), normally written with a full stop."
+    },
+    "prolazu": {
+      "translation": "passage"
+    },
+    "doc": {
+      "translation": "docent; Doc",
+      "note": "Abbreviation doc. for docent, an academic rank; also the nickname Doc. The full stop is normally written in the abbreviation."
+    },
+    "liz": {
+      "translation": "Liz",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "jay": {
+      "translation": "Jay",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "rimu": {
+      "translation": "Rome; rhyme",
+      "note": "Dative/locative singular of Rim (Rome), or accusative singular of rima (rhyme); capitals normally distinguish the name."
+    },
+    "kučkin": {
+      "translation": "bitch’s",
+      "note": "Possessive adjective from kučka (bitch); insulting when applied to people."
+    },
+    "ajme": {
+      "translation": "oh!; alas!"
+    },
+    "bruce": {
+      "translation": "Bruce",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "jess": {
+      "translation": "Jess",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "angela": {
+      "translation": "Angela",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "liči": {
+      "translation": "paints; whitewashes",
+      "note": "Present third-person singular of ličiti (paint/whitewash). For resemblance, standard Croatian uses sličiti."
+    },
+    "minut": {
+      "translation": "pass; elapse",
+      "note": "Shortened infinitive of minuti (pass/elapse), used before the future auxiliary: minut će. The noun minute is minuta."
+    },
+    "štogod": {
+      "translation": "something",
+      "note": "Indefinite pronoun meaning something. Written separately, što god means whatever."
+    },
+    "sad-a": {
+      "translation": "USA",
+      "note": "Genitive of the abbreviation SAD (United States), normally written SAD-a. It is unrelated to sad (now)."
+    },
+    "sad-u": {
+      "translation": "USA",
+      "note": "Dative/locative of SAD (United States), normally written SAD-u. It is unrelated to sad (now)."
+    },
+    "kuca": {
+      "translation": "knocks; beats",
+      "note": "Present third-person singular of kucati: knocks or beats. House is kuća, with ć."
+    },
+    "buraz": {
+      "translation": "brother; mate"
+    },
+    "božje": {
+      "translation": "God’s; divine"
+    },
+    "zapadu": {
+      "translation": "west"
+    },
+    "gol": {
+      "translation": "naked; goal"
+    },
+    "bille": {
+      "translation": "Bill",
+      "note": "Vocative of the personal name Bill, used when addressing him. It is not a form of biti."
+    },
+    "miloga": {
+      "translation": "dear; kind",
+      "note": "Genitive masculine/neuter singular, or animate masculine accusative singular, of mio (dear/kind). Also in Boga miloga."
+    },
+    "emisija": {
+      "translation": "programme; emission"
+    },
+    "emisije": {
+      "translation": "programmes; emissions"
+    },
+    "rosie": {
+      "translation": "Rosie",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "glupan": {
+      "translation": "fool; idiot"
+    },
+    "skladu": {
+      "translation": "harmony; agreement"
+    },
+    "ethan": {
+      "translation": "Ethan",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "alat": {
+      "translation": "tool; equipment"
+    },
+    "ministre": {
+      "translation": "minister",
+      "note": "Vocative singular of ministar when addressing one minister; also accusative plural."
+    },
+    "crnac": {
+      "translation": "Black man"
+    },
+    "von": {
+      "translation": "von (name particle)"
+    },
+    "daisy": {
+      "translation": "Daisy",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "buke": {
+      "translation": "noise"
+    },
+    "europi": {
+      "translation": "Europe"
+    },
+    "viče": {
+      "translation": "shouts"
+    },
+    "desetak": {
+      "translation": "about ten",
+      "note": "Approximate numeral noun meaning about ten, not a dozen (twelve). Following nouns normally take genitive plural."
+    },
+    "skladište": {
+      "translation": "warehouse; storage"
+    },
+    "kolač": {
+      "translation": "cake; pastry"
+    },
+    "stolici": {
+      "translation": "chair"
+    },
+    "garaži": {
+      "translation": "garage"
+    },
+    "farmi": {
+      "translation": "farm"
+    },
+    "postaji": {
+      "translation": "station"
+    },
+    "sv": {
+      "translation": "St. (abbr.)",
+      "note": "Abbreviation sv. for sveti (Saint); normally followed by a full stop and a name."
+    },
+    "pojas": {
+      "translation": "belt; zone"
+    },
+    "znat": {
+      "translation": "know"
+    },
+    "morat": {
+      "translation": "have to"
+    },
+    "vau": {
+      "translation": "wow; woof"
+    },
+    "doslovno": {
+      "translation": "literally; verbatim"
+    },
+    "pam": {
+      "translation": "Pam",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "brad": {
+      "translation": "Brad",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "plijen": {
+      "translation": "prey; loot"
+    },
+    "ll": {
+      "translation": "LL",
+      "note": "Initials in the stage name LL Cool J; normally written uppercase. Not the Croatian word li or ili."
+    },
+    "stone": {
+      "translation": "Stone",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "bros": {
+      "translation": "Bros. (brothers)",
+      "note": "English abbreviation Bros. for brothers, used in names such as Warner Bros.; normally capitalised with a full stop."
+    },
+    "častim": {
+      "translation": "I treat; I honour"
+    },
+    "tajnosti": {
+      "translation": "secrecy"
+    },
+    "ćeliji": {
+      "translation": "cell"
+    },
+    "trenutačno": {
+      "translation": "currently; at this moment"
+    },
+    "oprost": {
+      "translation": "forgiveness"
+    },
+    "medeni": {
+      "translation": "honey; sweet"
+    },
+    "tona": {
+      "translation": "tonne"
+    },
+    "učenik": {
+      "translation": "pupil; student; disciple"
+    },
+    "faksu": {
+      "translation": "college; fax"
+    },
+    "wille": {
+      "translation": "Will",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "baker": {
+      "translation": "Baker",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "smješka": {
+      "translation": "smiles",
+      "note": "Third-person singular present of smješkati se (smile). The reflexive se normally accompanies it."
+    },
+    "mučenje": {
+      "translation": "torture"
+    },
+    "pijesak": {
+      "translation": "sand"
+    },
+    "stark": {
+      "translation": "Stark",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "izluđuje": {
+      "translation": "drives crazy"
+    },
+    "koliki": {
+      "translation": "how big; how many",
+      "note": "Inflected form of kolik, asking about size or quantity. It does not mean colic."
+    },
+    "kolika": {
+      "translation": "how big; how much",
+      "note": "Feminine singular of kolik, asking how big or how much. It does not mean colic."
+    },
+    "fuj": {
+      "translation": "yuck!"
+    },
+    "spavaćoj": {
+      "translation": "sleeping; bedroom"
+    },
+    "spavaću": {
+      "translation": "sleeping",
+      "note": "Accusative feminine singular of spavaći, as in spavaću sobu (bedroom). I will sleep is written spavat ću."
+    },
+    "kupaonici": {
+      "translation": "bathroom"
+    },
+    "proba": {
+      "translation": "rehearsal; trial"
+    },
+    "šuma": {
+      "translation": "forest; noise",
+      "note": "Nominative singular šuma (forest); also genitive singular of šum (noise). Sum in arithmetic is suma."
+    },
+    "ned": {
+      "translation": "Ned; Sun. (abbr.)",
+      "note": "Personal name Ned, or the abbreviation ned. for nedjelja (Sunday). The abbreviation normally has a full stop."
+    },
+    "daću": {
+      "translation": "levy; tax",
+      "note": "Accusative singular of daća (levy/tax). The future I will give is written dat ću, as two words."
+    },
+    "marš": {
+      "translation": "march; get out!"
+    },
+    "toni": {
+      "translation": "Toni; sink!",
+      "note": "Personal name Toni; also the singular imperative of tonuti (sink). Tonnes is tone, not toni."
+    },
+    "visočanstvo": {
+      "translation": "Highness",
+      "note": "Neuter noun used in royal address: Vaše Visočanstvo (Your Highness). Majesty is veličanstvo."
+    },
+    "meri": {
+      "translation": "Meri",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "tvornici": {
+      "translation": "factory"
+    },
+    "mari": {
+      "translation": "cares; Mari"
+    },
+    "preci": {
+      "translation": "ancestors"
+    },
+    "dvorani": {
+      "translation": "hall"
+    },
+    "večerati": {
+      "translation": "have dinner"
+    },
+    "reid": {
+      "translation": "Reid",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "angelesu": {
+      "translation": "Angeles"
+    },
+    "gospod": {
+      "translation": "the Lord"
+    },
+    "moore": {
+      "translation": "Moore",
+      "note": "Surname Moore, normally capitalised. It is not the Croatian common noun for a moor."
+    },
+    "blizanci": {
+      "translation": "twins; Gemini"
+    },
+    "zašuti": {
+      "translation": "be quiet!"
+    },
+    "rudy": {
+      "translation": "Rudy",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "belle": {
+      "translation": "Belle",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "marco": {
+      "translation": "Marco",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "vod": {
+      "translation": "platoon; conduit"
+    },
+    "odnosno": {
+      "translation": "or rather; respectively"
+    },
+    "gubicu": {
+      "translation": "muzzle; mouth",
+      "note": "Accusative singular of gubica (an animal’s muzzle); rude when used for a person’s mouth."
+    },
+    "majk": {
+      "translation": "Mike",
+      "note": "Phonetic spelling of the personal name Mike. It is not a form of majka (mother)."
+    },
+    "tatin": {
+      "translation": "Dad’s"
+    },
+    "kupac": {
+      "translation": "buyer; customer"
+    },
+    "bome": {
+      "translation": "indeed!",
+      "note": "Emphatic particle meaning indeed/really, often expressing surprise or insistence."
+    },
+    "lester": {
+      "translation": "Lester",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "zbilo": {
+      "translation": "happened",
+      "note": "Neuter singular past participle of zbiti se (happen/occur), normally used with an auxiliary and reflexive se."
+    },
+    "bree": {
+      "translation": "Bree",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "gabe": {
+      "translation": "Gabe",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "bik": {
+      "translation": "bull; Taurus",
+      "note": "Masculine noun for a bull; also the zodiac sign Taurus, normally capitalised."
+    },
+    "isaac": {
+      "translation": "Isaac",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "usrani": {
+      "translation": "shitty; soiled",
+      "note": "Inflected passive participle/adjective from usrati; vulgar, literally soiled with excrement, often an insult."
+    },
+    "mimi": {
+      "translation": "Mimi",
+      "note": "Personal name or surname, normally capitalised. Retained in lowercase for case-insensitive matching."
+    },
+    "kara": {
+      "note": "Personal name Kara in the intended use. Also a present form of karati; it does not mean ticket (karta)."
+    },
+    "ponovo": {
+      "note": "Standard adverb meaning again; ponovno is another standard form."
+    },
+    "kaži": {
+      "note": "Singular imperative of kazati (say/tell). A valid standard Croatian form; reci is another common choice."
+    },
+    "sliči": {
+      "note": "Present third-person singular of sličiti (resemble), used with dative: sliči majci. Ličiti means paint/whitewash."
+    },
+    "tame": {
+      "note": "Genitive singular of tama (darkness). Locative singular is tami."
+    },
+    "tjednu": {
+      "note": "Dative/locative singular of tjedan (week). Accusative singular is tjedan."
+    },
+    "sati": {
+      "note": "Genitive plural or nominative/accusative/vocative plural of sat (hour). Genitive singular is sata."
+    },
+    "tajni": {
+      "note": "Dative/locative singular or genitive plural of tajna (secret); also an adjective form of tajni (secret)."
+    },
+    "detektive": {
+      "note": "Vocative singular of detektiv when addressing one detective; also accusative plural."
+    },
+    "damo": {
+      "note": "Vocative singular of dama (lady), used when addressing her. Also first-person plural present of dati (give)."
+    },
+    "planetu": {
+      "note": "Dative/locative singular of masculine planet. Also accusative singular of feminine planeta; planet is preferred in Croatian."
+    },
+    "planete": {
+      "note": "Accusative plural or vocative singular of planet. Also an inflected form of feminine planeta; planet is preferred in Croatian."
+    },
+    "liste": {
+      "note": "Genitive singular or nominative/accusative/vocative plural of lista (list). Also vocative singular of list (leaf/sheet)."
+    },
+    "susjede": {
+      "note": "Vocative singular or accusative plural of susjed (male neighbour); also inflected forms of susjeda (female neighbour)."
+    },
+    "milijardi": {
+      "note": "Genitive plural or dative/locative singular of milijarda (billion). Genitive singular is milijarde."
+    },
+    "kući": {
+      "note": "Dative/locative singular of kuća. Idem kući means I am going home; kod kuće means at home."
+    },
+    "mojeg": {
+      "note": "Genitive masculine/neuter singular of moj; also accusative masculine singular with animate nouns. Not dative."
+    },
+    "njegove": {
+      "note": "Feminine genitive singular or feminine/masculine accusative plural of njegov (his); also feminine nominative plural."
+    },
+    "njega": {
+      "note": "Full genitive/accusative form of on/ono (him/it), used after prepositions or for emphasis. Short form: ga."
+    },
+    "njih": {
+      "note": "Full genitive/accusative plural pronoun (them), used after prepositions or for emphasis. Short form: ih."
+    },
+    "njima": {
+      "note": "Dative/locative/instrumental plural pronoun: to/about/with them. Short dative: im."
+    },
+    "nama": {
+      "note": "Dative/locative/instrumental of mi (we): to/about/with us. Short dative: nam."
+    },
+    "vama": {
+      "note": "Dative/locative/instrumental plural or polite singular: to/about/with you. Short dative: vam."
+    },
+    "molimo": {
+      "note": "First-person plural present of moliti (ask/beg), commonly a polite please; the same spelling can also be an imperative."
+    },
+    "itko": {
+      "note": "Indefinite pronoun anyone/anybody, especially in questions and conditional clauses. Negative clauses normally use nitko."
+    },
+    "gospode": {
+      "note": "Vocative singular of Gospod (Lord); also genitive of gospoda (gentlemen). Addressing gentlemen uses gospodo."
+    },
+    "visosti": {
+      "note": "Genitive/dative/locative singular of visost (Highness); also used in the address Vaša Visosti (Your Highness)."
+    },
+    "jime": {
+      "note": "Vocative of the personal name Jim, used when addressing him. It is not a pronoun meaning with him."
+    },
+    "bud": {
+      "note": "Personal name Bud, normally capitalised. Awake is budan.",
+      "translation": "Bud"
+    },
+    "sidney": {
+      "note": "Personal name Sidney, normally capitalised. The Australian city is Sydney.",
+      "translation": "Sidney"
+    },
+    "kuce": {
+      "note": "Inflected form of kuca, a child’s word for dog. House forms use ć: kuća, kuće.",
+      "translation": "dog"
+    },
+    "por": {
+      "note": "Abbreviation por. for poručnik (lieutenant), normally written with a full stop.",
+      "translation": "lieutenant (abbr.)"
+    },
+    "adama": {
+      "note": "Genitive/accusative singular of the personal name Adam, normally capitalised."
+    },
+    "adame": {
+      "note": "Vocative of Adam, used when addressing him; normally capitalised."
+    },
+    "braco": {
+      "note": "Affectionate term for a brother or a young boy; also the personal name Braco."
+    },
+    "gad": {
+      "note": "Masculine noun for a nasty or contemptible person; an insult."
+    },
+    "gadovi": {
+      "note": "Nominative/vocative plural of gad, an insulting term for nasty people."
+    },
+    "glupane": {
+      "note": "Vocative singular of glupan (fool/idiot), used as an insult."
+    },
+    "gđa": {
+      "note": "Abbreviation of gospođa (Mrs/Ms); written without a full stop."
+    },
+    "gđi": {
+      "note": "Dative/locative singular abbreviation of gospođa (Mrs/Ms)."
+    },
+    "gđo": {
+      "note": "Vocative singular abbreviation of gospođa, used in direct address."
+    },
+    "gđu": {
+      "note": "Accusative singular abbreviation of gospođa (Mrs/Ms)."
+    },
+    "gđica": {
+      "note": "Abbreviation of gospođica (Miss); written without a full stop."
+    },
+    "gđice": {
+      "note": "Genitive or vocative singular, or nominative/accusative/vocative plural, abbreviated from gospođica."
+    },
+    "gđicu": {
+      "note": "Accusative singular abbreviation of gospođica (Miss)."
+    },
+    "gospo": {
+      "note": "Vocative singular of gospa (lady); also used to address the Virgin Mary, normally capitalised in that use."
+    },
+    "jebiga": {
+      "note": "Vulgar interjection expressing resignation: fuck it/oh well. Not suitable for polite situations."
+    },
+    "jebote": {
+      "note": "Vulgar exclamation expressing surprise or frustration. Its force depends on context; avoid in polite situations."
+    },
+    "maca": {
+      "note": "Affectionate noun for a cat/kitty; can also have a vulgar sexual meaning. Context matters."
+    },
+    "murjak": {
+      "note": "Informal, sometimes disparaging masculine noun for a police officer: cop."
+    },
+    "kita": {
+      "note": "Genitive/accusative singular of kit (whale); also a feminine noun for a bunch/tuft, with a vulgar anatomical meaning."
+    },
+    "sereš": {
+      "note": "Second-person singular present of srati (shit); vulgar. Often figuratively: you are talking rubbish."
+    },
+    "šupčino": {
+      "note": "Vocative singular of šupčina, an emphatic vulgar insult derived from šupak."
+    },
+    "sjeban": {
+      "note": "Masculine singular passive participle/adjective from sjebati; vulgar: ruined or messed up."
+    },
+    "sjebano": {
+      "note": "Neuter singular passive participle/adjective from sjebati, also used adverbially; vulgar."
+    },
+    "sjebao": {
+      "note": "Masculine singular past participle of sjebati, normally used with an auxiliary; vulgar."
+    },
+    "strijelac": {
+      "note": "Masculine noun for an archer, shooter or goalscorer; also Sagittarius, normally capitalised as a zodiac sign."
+    },
+    "poljubac": {
+      "note": "Masculine noun; genitive singular poljupca, plural poljupci. Note the changing stem."
+    },
+    "nažalost": {
+      "note": "Adverb meaning unfortunately, written as one word. Na žalost is separate when žalost is a noun with a complement."
+    },
+    "neki": {
+      "note": "Indefinite determiner: some/a certain. Masculine singular and masculine plural can share this spelling."
+    },
+    "svjesna": {
+      "note": "Feminine singular of svjestan (aware/conscious); also neuter plural forms."
+    },
+    "sljedećih": {
+      "note": "Genitive plural of sljedeći (next), all genders. Slijedeći, with ije, means while following."
+    },
+    "budem": {
+      "note": "First-person singular perfective present of biti. With a past participle, forms future perfect: budem radio."
+    },
+    "budeš": {
+      "note": "Second-person singular perfective present of biti; with a past participle, forms future perfect."
+    },
+    "bude": {
+      "note": "Third-person singular perfective present of biti; also used in subordinate clauses and wishes."
+    },
+    "budemo": {
+      "note": "First-person plural perfective present of biti; with a past participle, forms future perfect."
+    },
+    "budete": {
+      "note": "Second-person plural perfective present of biti; also polite singular. With a participle, forms future perfect."
+    },
+    "budu": {
+      "note": "Third-person plural perfective present of biti; with a past participle, forms future perfect."
+    },
+    "ćete": {
+      "note": "Second-person plural short future auxiliary of htjeti; also polite singular. Can precede or follow the infinitive."
+    },
+    "reklo": {
+      "note": "Neuter singular past participle of reći; normally used with an auxiliary. Passive said is rečeno."
+    },
+    "rekli": {
+      "note": "Masculine or mixed-gender plural past participle of reći; normally used with an auxiliary."
+    },
+    "bili": {
+      "note": "Masculine or mixed-gender plural past participle of biti; normally used with an auxiliary."
+    },
+    "viđati": {
+      "note": "Imperfective infinitive: see repeatedly or regularly. The infinitive itself does not specify past time."
+    },
+    "pomogne": {
+      "note": "Third-person singular present of perfective pomoći. Often refers to a possible or future event in a subordinate clause."
+    },
+    "pomognete": {
+      "note": "Second-person plural present of perfective pomoći; also polite singular. The clause determines its time reference."
+    },
+    "poznam": {
+      "note": "First-person singular present of poznati (know/be acquainted with). Poznajem is from poznavati."
+    },
+    "pravu": {
+      "note": "Accusative feminine singular of prav/pravi, or dative/locative singular of pravo. U pravu si means you are right."
+    },
+    "prijatelja": {
+      "note": "Genitive singular or plural, or accusative singular, of prijatelj (friend). Accusative plural is prijatelje."
+    },
+    "tate": {
+      "note": "Genitive singular or nominative/accusative/vocative plural of tata (Dad). Vocative singular is tata."
+    },
+    "sama": {
+      "note": "Feminine singular or neuter plural of sam (alone); also used for emphasis: herself/themselves, depending on the noun."
+    },
+    "same": {
+      "note": "Feminine genitive singular or feminine/masculine accusative plural of sam; also feminine nominative plural."
+    },
+    "nečeg": {
+      "note": "Short genitive form of nešto (something); nečega is the longer standard form."
+    },
+    "nečem": {
+      "note": "Short dative/locative form of nešto (something); nečemu is the longer standard form."
+    },
+    "ničeg": {
+      "note": "Short genitive form of ništa (nothing); ničega is the longer standard form."
+    },
+    "nikad": {
+      "note": "Standard short form of nikada (never). Usually used with a negated verb."
+    },
+    "tad": {
+      "note": "Standard short form of tada (then/at that time)."
+    },
+    "ono": {
+      "note": "Neuter singular demonstrative that (over there); also the neuter subject pronoun it."
+    },
+    "ondje": {
+      "note": "Adverb for there, a location away from the speaker. Onamo indicates movement towards there."
+    },
+    "au": {
+      "note": "Interjection expressing pain, surprise or alarm: ow!/oh!"
+    },
+    "dvije": {
+      "note": "Feminine nominative/accusative of dva (two). Following nouns normally use the counting form: dvije žene."
+    },
+    "dečki": {
+      "note": "Informal nominative/vocative plural of dečko (boy/boyfriend); also dečki as an affectionate address."
+    },
+    "provesti": {
+      "note": "Perfective infinitive: spend (time), conduct or carry out. The object determines the meaning."
+    },
+    "provela": {
+      "note": "Feminine singular past participle of provesti: spent (time), conducted or carried out. Used with an auxiliary."
+    },
+    "proveo": {
+      "note": "Masculine singular past participle of provesti: spent (time), conducted or carried out. Used with an auxiliary."
+    },
+    "proveli": {
+      "note": "Masculine or mixed-gender plural past participle of provesti; used with an auxiliary."
+    },
+    "udati": {
+      "note": "Perfective infinitive. Udati se means get married (of a woman); udati koga means marry someone off."
+    },
+    "oženiti": {
+      "note": "Perfective infinitive. Oženiti se means get married (of a man); oženiti koga means marry someone off."
+    },
+    "pokušajmo": {
+      "note": "First-person plural imperative of pokušati: let us try. Present indicative is pokušamo."
+    },
+    "nađimo": {
+      "note": "First-person plural imperative of naći: let us find. Present indicative is nađemo."
+    },
+    "uzmimo": {
+      "note": "First-person plural imperative of uzeti: let us take. Present indicative is uzmemo."
+    },
+    "božić": {
+      "note": "Masculine noun for Christmas, normally written Božić. Genitive singular is Božića."
+    },
+    "cimer": {
+      "note": "Masculine noun meaning roommate; conversational Croatian. Feminine counterpart: cimerica."
+    },
+    "negoli": {
+      "note": "Conjunction meaning than, especially after a comparative. Negoli is a longer form of nego."
+    },
+    "marie": {
+      "note": "Personal name Marie, or an inflected form of Maria; normally capitalised. It does not mean the verb marry."
+    },
+    "franka": {
+      "note": "Genitive singular of franak (franc), or the personal name Franka; normally capitalised when a name."
+    },
+    "aha": {
+      "note": "Interjection expressing recognition or understanding: aha!/I see!"
+    },
+    "obećam": {
+      "note": "First-person singular perfective present of obećati (promise). Imperfective counterpart: obećavam."
+    },
+    "cijel": {
+      "note": "Masculine singular indefinite form of the adjective meaning whole/entire. Definite form: cijeli."
+    },
+    "želudac": {
+      "note": "Masculine noun for the stomach; genitive želuca, plural želuci. Note the changing stem."
+    },
+    "sedmice": {
+      "note": "Genitive singular or nominative/accusative/vocative plural of sedmica (the number seven). Standard Croatian for weeks is tjedni."
+    },
+    "možda": {
+      "note": "Adverb meaning maybe/perhaps. It expresses uncertainty, not a grammatical future tense."
+    },
+    "jebeni": {
+      "note": "Masculine plural or definite masculine singular adjective from jebati; vulgar intensifier, roughly fucking/damned."
+    },
+    "jebeno": {
+      "note": "Neuter singular adjective or adverb from jebati; vulgar intensifier. Its force and meaning depend on context."
+    },
+    "jebena": {
+      "note": "Feminine singular or neuter plural adjective from jebati; vulgar intensifier."
+    },
+    "jebenu": {
+      "note": "Accusative feminine singular adjective from jebati; vulgar intensifier."
+    },
+    "jebene": {
+      "note": "Feminine genitive singular or feminine/masculine plural adjective forms from jebati; vulgar intensifier."
+    },
+    "jebenog": {
+      "note": "Genitive masculine/neuter singular, or animate masculine accusative singular, of jeben; vulgar intensifier."
+    },
+    "jebenom": {
+      "note": "Dative/locative masculine/neuter singular or instrumental feminine singular of jeben; vulgar intensifier."
+    },
+    "jebenih": {
+      "note": "Genitive plural of jeben, all genders; vulgar intensifier."
+    },
+    "poslušaj": {
+      "note": "Singular imperative of poslušati: listen! Perfective, requesting a particular act of listening."
+    },
+    "savršeni": {
+      "note": "Definite masculine singular or masculine plural forms of savršen (perfect). Agreement depends on the noun."
+    },
+    "mačku": {
+      "note": "Accusative singular of mačka (female cat); also dative/locative singular of mačak (male cat)."
+    },
+    "posljednju": {
+      "note": "Accusative feminine singular of posljednji (last), agreeing with a feminine direct object."
+    },
+    "navikao": {
+      "note": "Masculine singular past participle of navići. With se, means became accustomed; auxiliary supplies person and tense."
+    },
+    "isprva": {
+      "note": "Adverb meaning at first/initially; written as one word."
+    },
+    "naoružan": {
+      "note": "Masculine singular passive participle/adjective of naoružati (arm/equip with weapons)."
+    },
+    "petera": {
+      "note": "Genitive/accusative singular of the personal name Peter, normally capitalised."
+    },
+    "odemo": {
+      "note": "First-person plural present of otići (leave/go away). A perfective present; time reference depends on the clause."
+    },
+    "sretno": {
+      "note": "Adverb meaning happily/with good fortune; also the wish good luck! Neuter adjective forms can share the spelling."
+    },
+    "govno": {
+      "note": "Vulgar neuter noun for excrement; also an insult."
+    },
+    "govna": {
+      "note": "Genitive singular or nominative/accusative/vocative plural of govno; vulgar."
+    },
+    "govana": {
+      "note": "Genitive plural of govno; vulgar."
+    },
+    "guzica": {
+      "note": "Feminine noun for buttocks/arse; rude or very informal."
+    },
+    "guzice": {
+      "note": "Genitive singular or nominative/accusative/vocative plural of guzica; rude/informal."
+    },
+    "guzicu": {
+      "note": "Accusative singular of guzica; rude/informal."
+    },
+    "guzu": {
+      "note": "Accusative singular of guza (bottom), informal."
+    },
+    "jebati": {
+      "note": "Imperfective infinitive; vulgar verb meaning fuck, often used in curses."
+    },
+    "jebao": {
+      "note": "Masculine singular past participle of jebati, normally used with an auxiliary; vulgar."
+    },
+    "jebe": {
+      "note": "Third-person singular present of jebati; vulgar, often used in curses or expressions of indifference."
+    },
+    "jebem": {
+      "note": "First-person singular present of jebati; vulgar, often used in curses."
+    },
+    "jebeš": {
+      "note": "Second-person singular present of jebati; vulgar, also used in dismissive expressions."
+    },
+    "jebi": {
+      "note": "Second-person singular imperative of jebati; vulgar."
+    },
+    "kopile": {
+      "note": "Neuter noun for a child born outside marriage, now chiefly an insulting term; offensive."
+    },
+    "kuja": {
+      "note": "Feminine noun for a female dog; offensive when applied to a woman."
+    },
+    "kujo": {
+      "note": "Vocative singular of kuja; an offensive insult when addressed to a woman."
+    },
+    "kučka": {
+      "note": "Feminine noun for a female dog; offensive when applied to a woman."
+    },
+    "kučko": {
+      "note": "Vocative singular of kučka; an offensive insult when addressed to a woman."
+    },
+    "kurac": {
+      "note": "Vulgar masculine noun for penis, also used in curses and dismissive expressions."
+    },
+    "kurve": {
+      "note": "Genitive singular or nominative/accusative/vocative plural of kurva; derogatory/vulgar."
+    },
+    "kurvo": {
+      "note": "Vocative singular of kurva; an offensive insult."
+    },
+    "kurvu": {
+      "note": "Accusative singular of kurva; derogatory/vulgar."
+    },
+    "muda": {
+      "note": "Nominative/accusative/vocative plural of mudo (testicle); vulgar, also figurative for courage."
+    },
+    "odjebi": {
+      "note": "Singular imperative of odjebati, a vulgar command meaning fuck off."
+    },
+    "seronja": {
+      "note": "Masculine noun following feminine-type declension; vulgar insult for an obnoxious person."
+    },
+    "seronje": {
+      "note": "Genitive singular or nominative/accusative/vocative plural of seronja; vulgar insult."
+    },
+    "seronjo": {
+      "note": "Vocative singular of seronja; vulgar insult."
+    },
+    "sranje": {
+      "note": "Vulgar neuter noun: shit, a mess or rubbish, depending on context."
+    },
+    "sranja": {
+      "note": "Genitive singular or nominative/accusative/vocative plural of sranje; vulgar."
+    },
+    "sranjem": {
+      "note": "Instrumental singular of sranje; vulgar."
+    },
+    "šupak": {
+      "note": "Vulgar masculine noun, literally anus; often an insult for an unpleasant person."
+    },
+    "zajebao": {
+      "note": "Masculine singular past participle of zajebati (mess up/trick); vulgar."
+    },
+    "zajebavati": {
+      "note": "Imperfective infinitive: tease, mess with or fool someone; vulgar. With se, can mean joke around."
+    },
+    "zajebi": {
+      "note": "Singular imperative of zajebati; vulgar, often used to dismiss something: forget it/screw it."
+    },
+    "stražnjica": {
+      "note": "Feminine noun for the buttocks/bottom; a neutral alternative to vulgar anatomical terms."
+    },
+    "kupaonica": {
+      "note": "Feminine noun for a bathroom; genitive singular kupaonice, locative singular kupaonici."
+    },
+    "đavao": {
+      "note": "Masculine noun for a devil; genitive singular đavla. Note the changing stem."
+    },
+    "obveza": {
+      "note": "Feminine noun for an obligation or duty; genitive singular obveze."
+    },
+    "partner": {
+      "note": "Masculine noun for a partner, whether in a relationship or a shared activity. Feminine counterpart: partnerica."
+    },
+    "nećaka": {
+      "note": "Genitive/accusative singular of nećak (nephew); also the feminine noun nećaka (niece). Nećakinja is the usual Croatian feminine form."
+    }
+  },
+  "aliases": {
+    "dа": "da",
+    "biio": "bio",
+    "zasto": "zašto",
+    "nesto": "nešto",
+    "znas": "znaš",
+    "cemo": "ćemo",
+    "čemo": "ćemo",
+    "nista": "ništa",
+    "nase": "naše",
+    "reči": "riječi",
+    "uvek": "uvijek",
+    "uvjek": "uvijek",
+    "ldemo": "idemo",
+    "neče": "neće",
+    "vreme": "vrijeme",
+    "hočeš": "hoćeš",
+    "lmaš": "imaš",
+    "lmamo": "imamo",
+    "moras": "moraš",
+    "neču": "neću",
+    "dve": "dvije",
+    "zivot": "život",
+    "radis": "radiš",
+    "videli": "vidjeli",
+    "pomoci": "pomoći",
+    "htela": "htjela",
+    "želeo": "želio",
+    "želela": "željela",
+    "hteli": "htjeli",
+    "lepo": "lijepo",
+    "lep": "lijep",
+    "dete": "dijete",
+    "verovatno": "vjerojatno",
+    "deo": "dio",
+    "takođe": "također",
+    "verujem": "vjerujem",
+    "veruj": "vjeruj",
+    "razumem": "razumijem",
+    "shvatam": "shvaćam",
+    "uopšte": "uopće",
+    "ceo": "cijel",
+    "osećam": "osjećam",
+    "voleo": "volio",
+    "volela": "voljela",
+    "reč": "riječ",
+    "srećan": "sretan",
+    "srećna": "sretna",
+    "dečak": "dječak",
+    "sećam": "sjećam",
+    "sećaš": "sjećaš",
+    "deca": "djeca",
+    "decu": "djecu",
+    "smešno": "smiješno",
+    "meseci": "mjeseci",
+    "celu": "cijelu",
+    "veče": "večer",
+    "lepa": "lijepa",
+    "vesti": "vijesti",
+    "osećaj": "osjećaj",
+    "juče": "jučer",
+    "mesec": "mjesec",
+    "razumeš": "razumiješ",
+    "devojke": "djevojke",
+    "oduvek": "oduvijek",
+    "srećno": "sretno",
+    "uspeo": "uspio",
+    "osećaš": "osjećaš",
+    "devojka": "djevojka",
+    "devojku": "djevojku",
+    "veruješ": "vjeruješ",
+    "doneo": "donio",
+    "beži": "bježi",
+    "prevod": "prijevod",
+    "primer": "primjer",
+    "shvataš": "shvaćaš",
+    "zvezda": "zvijezda",
+    "poslednji": "posljednji",
+    "poslednja": "posljednja",
+    "sledeći": "sljedeći",
+    "sledeće": "sljedeće",
+    "videla": "vidjela",
+    "videti": "vidjeti",
+    "nedelju": "nedjelju",
+    "nedelja": "nedjelja",
+    "lmam": "imam",
+    "telo": "tijelo",
+    "umesto": "umjesto",
+    "nevjerovatno": "nevjerojatno",
+    "neverovatno": "nevjerojatno",
+    "verovati": "vjerovati",
+    "svo": "sve",
+    "bice": "biće",
+    "ce": "će",
+    "cu": "ću",
+    "cekaj": "čekaj",
+    "cao": "ćao",
+    "covjece": "čovječe",
+    "cete": "ćete",
+    "ceš": "ćeš",
+    "dodji": "dođi",
+    "dogadja": "događa",
+    "gde": "gdje",
+    "hocete": "hoćete",
+    "hoceš": "hoćeš",
+    "hocu": "hoću",
+    "hteo": "htio",
+    "ijude": "ljude",
+    "ijudi": "ljudi",
+    "kazem": "kažem",
+    "mesta": "mjesta",
+    "mesto": "mjesto",
+    "mestu": "mjestu",
+    "moze": "može",
+    "naci": "naći",
+    "negde": "negdje",
+    "nigde": "nigdje",
+    "sinoc": "sinoć",
+    "svida": "sviđa",
+    "svidja": "sviđa",
+    "uopce": "uopće",
+    "vidis": "vidiš",
+    "vjerovatno": "vjerojatno",
+    "zelis": "želiš",
+    "zelite": "želite",
+    "čovek": "čovjek",
+    "čoveka": "čovjeka",
+    "čoveče": "čovječe",
+    "čovjeće": "čovječe",
+    "pre": "prije",
+    "posle": "poslije",
+    "tačno": "točno",
+    "ces": "ćeš",
+    "sta": "što",
+    "šta": "što",
+    "niko": "nitko",
+    "mac": "mač",
+    "preći": "prijeći",
+    "primjetio": "primijetio",
+    "obećajem": "obećam",
+    "napolje": "van",
+    "napolju": "vani",
+    "če": "će",
+    "nedelje": "nedjelje",
+    "meseca": "mjeseca",
+    "lično": "osobno",
+    "jebo": "jebao",
+    "ubistva": "ubojstva",
+    "izvinjavam": "ispričavam",
+    "zena": "žena",
+    "milion": "milijun",
+    "vera": "vjera",
+    "slijedeće": "sljedeće",
+    "kafu": "kavu",
+    "umreti": "umrijeti",
+    "dodi": "dođi",
+    "neprijatno": "neugodno",
+    "hiljada": "tisuća",
+    "ovde": "ovdje",
+    "porodica": "obitelj",
+    "sedi": "sjedi",
+    "napred": "naprijed",
+    "snimak": "snimka",
+    "spisak": "popis",
+    "stomak": "želudac",
+    "sekund": "sekunda",
+    "utisak": "dojam",
+    "desilo": "dogodilo",
+    "desiti": "dogoditi",
+    "kaj": "što",
+    "ko": "tko",
+    "ajde": "hajde",
+    "ajmo": "hajdemo",
+    "gdin": "gospodin",
+    "gosp": "gospodin",
+    "gdine": "gospodine",
+    "g-dine": "gospodine",
+    "dosije": "dosje",
+    "kuce": "kuće",
+    "a-ha": "aha",
+    "deda": "djed",
+    "drugar": "prijatelj",
+    "ortak": "partner",
+    "ujutru": "ujutro",
+    "prijatno": "ugodno",
+    "lažov": "lažljivac",
+    "mašina": "stroj",
+    "mašinu": "stroj",
+    "kancelariji": "uredu",
+    "kupatilo": "kupaonica",
+    "obaveza": "obveza",
+    "dupe": "stražnjica",
+    "đubre": "smeće",
+    "đavo": "đavao"
+  },
+  "removed_phrases": {
+    "neznam": "ne znam",
+    "nemogu": "ne mogu",
+    "nebi": "ne bi",
+    "samnom": "sa mnom",
+    "bićeš": "bit ćeš",
+    "trebaće": "trebat će",
+    "vratiću": "vratit ću",
+    "jebemti": "jebem ti",
+    "jebemu": "jebem mu",
+    "jel": "je li"
+  },
+  "uncertain": {},
+  "review_method": "All 3,768 original translation families reviewed; explanation templates reviewed and inflection claims cross-checked with hrLex; individual exceptions hand-edited. Not a native-speaker certification.",
+  "result": {
+    "original_forms": 8574,
+    "retained_forms": 8380,
+    "new_standard_forms": 9,
+    "score_aliases_added": 193,
+    "split_phrases_removed": 10,
+    "changed_english_hints": 522,
+    "changed_existing_notes": 4319,
+    "missing_notes_filled": 102,
+    "new_form_notes": 9,
+    "orphan_notes_removed": 14,
+    "conversation_messages_corrected": 9
+  }
+}

@@ -1,54 +1,65 @@
 @echo off
 setlocal
-
 set "ROOT_DIR=%~dp0"
-pushd "%ROOT_DIR%"
+if "%~1"=="--lock-held" goto :Run
+powershell -NoProfile -ExecutionPolicy Bypass -File "%ROOT_DIR%tools\run_site_command.ps1" -Operation Sync
+exit /b %ERRORLEVEL%
 
+:Run
+pushd "%ROOT_DIR%" || exit /b 1
 set "DOCS_DIR=%CD%\docs"
-if not exist "%DOCS_DIR%" (
-    mkdir "%DOCS_DIR%"
-)
+
+call :SyncSite
+set "RC=%ERRORLEVEL%"
+popd
+endlocal & exit /b %RC%
+
+:SyncSite
+if not exist "%DOCS_DIR%" mkdir "%DOCS_DIR%"
+if errorlevel 1 exit /b %ERRORLEVEL%
 
 call :CopyFile index.html
+if errorlevel 1 exit /b %ERRORLEVEL%
 call :CopyFile manifest.json
-if exist service-worker.js (
-    call :CopyFile service-worker.js
-)
+if errorlevel 1 exit /b %ERRORLEVEL%
+call :SyncDir static
+if errorlevel 1 exit /b %ERRORLEVEL%
+call :SyncDir icons
+if errorlevel 1 exit /b %ERRORLEVEL%
+call :SyncDir assets
+if errorlevel 1 exit /b %ERRORLEVEL%
+call :SyncDir pkg
+if errorlevel 1 exit /b %ERRORLEVEL%
 
-call :SyncDir static "%DOCS_DIR%\static"
-call :SyncDir icons "%DOCS_DIR%\icons"
-call :SyncDir assets "%DOCS_DIR%\assets"
-if exist pkg (
-    call :SyncDir pkg "%DOCS_DIR%\pkg"
-    if exist "%DOCS_DIR%\pkg\.gitignore" del /F /Q "%DOCS_DIR%\pkg\.gitignore" >nul 2>nul
+rem These are generated deployment copies, not source files.
+for %%F in (static\style.scss static\style.css.map pkg\.gitignore pkg\README.md) do (
+    if exist "%DOCS_DIR%\%%F" (
+        del /Q "%DOCS_DIR%\%%F"
+        if errorlevel 1 exit /b 1
+    )
 )
-
-popd
-endlocal
-exit /b 0
+type nul > "%DOCS_DIR%\.nojekyll"
+if errorlevel 1 exit /b %ERRORLEVEL%
+powershell -NoProfile -ExecutionPolicy Bypass -File "%ROOT_DIR%tools\write_service_worker.ps1" -SiteDirectory "%DOCS_DIR%" -WorkerTemplate "%ROOT_DIR%service-worker.js"
+exit /b %ERRORLEVEL%
 
 :CopyFile
-set "SOURCE=%~1"
-if not exist "%SOURCE%" (
-    echo Skipping missing file "%SOURCE%".
-    exit /b 0
+if not exist "%~1" (
+    echo ERROR: Required source file "%~1" is missing.
+    exit /b 1
 )
-copy /Y "%SOURCE%" "%DOCS_DIR%\%~1" >nul
-exit /b 0
+copy /Y "%~1" "%DOCS_DIR%\%~1" >nul
+exit /b %ERRORLEVEL%
 
 :SyncDir
-set "SOURCE_DIR=%~1"
-set "TARGET_DIR=%~2"
-
-if not exist "%SOURCE_DIR%" (
-    echo Skipping missing source "%SOURCE_DIR%".
-    exit /b 0
+if not exist "%~1\" (
+    echo ERROR: Required source directory "%~1" is missing. Run build_and_sync.bat.
+    exit /b 1
 )
-
-robocopy "%SOURCE_DIR%" "%TARGET_DIR%" /MIR >nul
-set "RC=%ERRORLEVEL%"
-if %RC% GEQ 8 (
-    echo Failed to copy "%SOURCE_DIR%" to "%TARGET_DIR%".
-    exit /b %RC%
+robocopy "%~1" "%DOCS_DIR%\%~1" /MIR /R:1 /W:1 >nul
+set "COPY_RC=%ERRORLEVEL%"
+if %COPY_RC% GEQ 8 (
+    echo ERROR: Could not synchronize "%~1". Robocopy exit code: %COPY_RC%.
+    exit /b %COPY_RC%
 )
 exit /b 0

@@ -1,0 +1,1046 @@
+{
+  "schema_version": 1,
+  "corrections": [
+    {
+      "original": "covek",
+      "corrected": "čovjek",
+      "action": "merged",
+      "sentence_indexes": [
+        8868
+      ]
+    },
+    {
+      "original": "pomoči",
+      "corrected": "pomoći",
+      "action": "merged",
+      "sentence_indexes": [
+        4934
+      ]
+    },
+    {
+      "original": "o.k.",
+      "corrected": "okej",
+      "action": "merged",
+      "sentence_indexes": [
+        6983
+      ]
+    },
+    {
+      "original": "dа",
+      "corrected": "da",
+      "action": "merged"
+    },
+    {
+      "original": "biio",
+      "corrected": "bio",
+      "action": "merged"
+    },
+    {
+      "original": "zasto",
+      "corrected": "zašto",
+      "action": "merged"
+    },
+    {
+      "original": "nesto",
+      "corrected": "nešto",
+      "action": "merged"
+    },
+    {
+      "original": "znas",
+      "corrected": "znaš",
+      "action": "merged"
+    },
+    {
+      "original": "cemo",
+      "corrected": "ćemo",
+      "action": "merged"
+    },
+    {
+      "original": "čemo",
+      "corrected": "ćemo",
+      "action": "merged"
+    },
+    {
+      "original": "nista",
+      "corrected": "ništa",
+      "action": "merged"
+    },
+    {
+      "original": "nase",
+      "corrected": "naše",
+      "action": "merged"
+    },
+    {
+      "original": "reči",
+      "corrected": "riječi",
+      "action": "merged"
+    },
+    {
+      "original": "uvek",
+      "corrected": "uvijek",
+      "action": "merged"
+    },
+    {
+      "original": "uvjek",
+      "corrected": "uvijek",
+      "action": "merged"
+    },
+    {
+      "original": "ldemo",
+      "corrected": "idemo",
+      "action": "merged"
+    },
+    {
+      "original": "neče",
+      "corrected": "neće",
+      "action": "merged"
+    },
+    {
+      "original": "vreme",
+      "corrected": "vrijeme",
+      "action": "merged"
+    },
+    {
+      "original": "hočeš",
+      "corrected": "hoćeš",
+      "action": "merged"
+    },
+    {
+      "original": "lmaš",
+      "corrected": "imaš",
+      "action": "merged"
+    },
+    {
+      "original": "lmamo",
+      "corrected": "imamo",
+      "action": "merged"
+    },
+    {
+      "original": "moras",
+      "corrected": "moraš",
+      "action": "merged"
+    },
+    {
+      "original": "neču",
+      "corrected": "neću",
+      "action": "merged"
+    },
+    {
+      "original": "dve",
+      "corrected": "dvije",
+      "action": "merged"
+    },
+    {
+      "original": "zivot",
+      "corrected": "život",
+      "action": "merged"
+    },
+    {
+      "original": "radis",
+      "corrected": "radiš",
+      "action": "merged"
+    },
+    {
+      "original": "videli",
+      "corrected": "vidjeli",
+      "action": "merged"
+    },
+    {
+      "original": "pomoci",
+      "corrected": "pomoći",
+      "action": "merged"
+    },
+    {
+      "original": "htela",
+      "corrected": "htjela",
+      "action": "merged"
+    },
+    {
+      "original": "želeo",
+      "corrected": "želio",
+      "action": "merged"
+    },
+    {
+      "original": "želela",
+      "corrected": "željela",
+      "action": "merged"
+    },
+    {
+      "original": "hteli",
+      "corrected": "htjeli",
+      "action": "merged"
+    },
+    {
+      "original": "lepo",
+      "corrected": "lijepo",
+      "action": "merged"
+    },
+    {
+      "original": "lep",
+      "corrected": "lijep",
+      "action": "merged"
+    },
+    {
+      "original": "dete",
+      "corrected": "dijete",
+      "action": "merged"
+    },
+    {
+      "original": "verovatno",
+      "corrected": "vjerojatno",
+      "action": "merged"
+    },
+    {
+      "original": "deo",
+      "corrected": "dio",
+      "action": "merged"
+    },
+    {
+      "original": "takođe",
+      "corrected": "također",
+      "action": "merged"
+    },
+    {
+      "original": "verujem",
+      "corrected": "vjerujem",
+      "action": "merged"
+    },
+    {
+      "original": "veruj",
+      "corrected": "vjeruj",
+      "action": "merged"
+    },
+    {
+      "original": "razumem",
+      "corrected": "razumijem",
+      "action": "merged"
+    },
+    {
+      "original": "shvatam",
+      "corrected": "shvaćam",
+      "action": "merged"
+    },
+    {
+      "original": "uopšte",
+      "corrected": "uopće",
+      "action": "merged"
+    },
+    {
+      "original": "ceo",
+      "corrected": "cijel",
+      "action": "corrected"
+    },
+    {
+      "original": "osećam",
+      "corrected": "osjećam",
+      "action": "merged"
+    },
+    {
+      "original": "voleo",
+      "corrected": "volio",
+      "action": "merged"
+    },
+    {
+      "original": "volela",
+      "corrected": "voljela",
+      "action": "merged"
+    },
+    {
+      "original": "reč",
+      "corrected": "riječ",
+      "action": "merged"
+    },
+    {
+      "original": "srećan",
+      "corrected": "sretan",
+      "action": "merged"
+    },
+    {
+      "original": "srećna",
+      "corrected": "sretna",
+      "action": "merged"
+    },
+    {
+      "original": "dečak",
+      "corrected": "dječak",
+      "action": "merged"
+    },
+    {
+      "original": "sećam",
+      "corrected": "sjećam",
+      "action": "merged"
+    },
+    {
+      "original": "sećaš",
+      "corrected": "sjećaš",
+      "action": "merged"
+    },
+    {
+      "original": "deca",
+      "corrected": "djeca",
+      "action": "merged"
+    },
+    {
+      "original": "decu",
+      "corrected": "djecu",
+      "action": "merged"
+    },
+    {
+      "original": "smešno",
+      "corrected": "smiješno",
+      "action": "merged"
+    },
+    {
+      "original": "meseci",
+      "corrected": "mjeseci",
+      "action": "merged"
+    },
+    {
+      "original": "celu",
+      "corrected": "cijelu",
+      "action": "merged"
+    },
+    {
+      "original": "veče",
+      "corrected": "večer",
+      "action": "merged"
+    },
+    {
+      "original": "lepa",
+      "corrected": "lijepa",
+      "action": "merged"
+    },
+    {
+      "original": "vesti",
+      "corrected": "vijesti",
+      "action": "merged"
+    },
+    {
+      "original": "osećaj",
+      "corrected": "osjećaj",
+      "action": "merged"
+    },
+    {
+      "original": "juče",
+      "corrected": "jučer",
+      "action": "merged"
+    },
+    {
+      "original": "mesec",
+      "corrected": "mjesec",
+      "action": "merged"
+    },
+    {
+      "original": "razumeš",
+      "corrected": "razumiješ",
+      "action": "merged"
+    },
+    {
+      "original": "devojke",
+      "corrected": "djevojke",
+      "action": "merged"
+    },
+    {
+      "original": "oduvek",
+      "corrected": "oduvijek",
+      "action": "merged"
+    },
+    {
+      "original": "srećno",
+      "corrected": "sretno",
+      "action": "merged"
+    },
+    {
+      "original": "uspeo",
+      "corrected": "uspio",
+      "action": "merged"
+    },
+    {
+      "original": "osećaš",
+      "corrected": "osjećaš",
+      "action": "merged"
+    },
+    {
+      "original": "devojka",
+      "corrected": "djevojka",
+      "action": "merged"
+    },
+    {
+      "original": "devojku",
+      "corrected": "djevojku",
+      "action": "merged"
+    },
+    {
+      "original": "veruješ",
+      "corrected": "vjeruješ",
+      "action": "merged"
+    },
+    {
+      "original": "doneo",
+      "corrected": "donio",
+      "action": "merged"
+    },
+    {
+      "original": "beži",
+      "corrected": "bježi",
+      "action": "merged"
+    },
+    {
+      "original": "prevod",
+      "corrected": "prijevod",
+      "action": "merged"
+    },
+    {
+      "original": "primer",
+      "corrected": "primjer",
+      "action": "merged"
+    },
+    {
+      "original": "shvataš",
+      "corrected": "shvaćaš",
+      "action": "merged"
+    },
+    {
+      "original": "zvezda",
+      "corrected": "zvijezda",
+      "action": "merged"
+    },
+    {
+      "original": "poslednji",
+      "corrected": "posljednji",
+      "action": "merged"
+    },
+    {
+      "original": "poslednja",
+      "corrected": "posljednja",
+      "action": "merged"
+    },
+    {
+      "original": "sledeći",
+      "corrected": "sljedeći",
+      "action": "merged"
+    },
+    {
+      "original": "sledeće",
+      "corrected": "sljedeće",
+      "action": "merged"
+    },
+    {
+      "original": "videla",
+      "corrected": "vidjela",
+      "action": "merged"
+    },
+    {
+      "original": "videti",
+      "corrected": "vidjeti",
+      "action": "merged"
+    },
+    {
+      "original": "nedelju",
+      "corrected": "nedjelju",
+      "action": "merged"
+    },
+    {
+      "original": "nedelja",
+      "corrected": "nedjelja",
+      "action": "merged"
+    },
+    {
+      "original": "lmam",
+      "corrected": "imam",
+      "action": "merged"
+    },
+    {
+      "original": "telo",
+      "corrected": "tijelo",
+      "action": "merged"
+    },
+    {
+      "original": "umesto",
+      "corrected": "umjesto",
+      "action": "merged"
+    },
+    {
+      "original": "nevjerovatno",
+      "corrected": "nevjerojatno",
+      "action": "merged"
+    },
+    {
+      "original": "neverovatno",
+      "corrected": "nevjerojatno",
+      "action": "merged"
+    },
+    {
+      "original": "verovati",
+      "corrected": "vjerovati",
+      "action": "merged"
+    },
+    {
+      "original": "svo",
+      "corrected": "sve",
+      "action": "merged"
+    },
+    {
+      "original": "bice",
+      "corrected": "biće",
+      "action": "merged"
+    },
+    {
+      "original": "ce",
+      "corrected": "će",
+      "action": "merged"
+    },
+    {
+      "original": "cu",
+      "corrected": "ću",
+      "action": "merged"
+    },
+    {
+      "original": "cekaj",
+      "corrected": "čekaj",
+      "action": "merged"
+    },
+    {
+      "original": "cao",
+      "corrected": "ćao",
+      "action": "merged"
+    },
+    {
+      "original": "covjece",
+      "corrected": "čovječe",
+      "action": "merged"
+    },
+    {
+      "original": "cete",
+      "corrected": "ćete",
+      "action": "merged"
+    },
+    {
+      "original": "ceš",
+      "corrected": "ćeš",
+      "action": "merged"
+    },
+    {
+      "original": "dodji",
+      "corrected": "dođi",
+      "action": "merged"
+    },
+    {
+      "original": "dogadja",
+      "corrected": "događa",
+      "action": "merged"
+    },
+    {
+      "original": "gde",
+      "corrected": "gdje",
+      "action": "merged"
+    },
+    {
+      "original": "hocete",
+      "corrected": "hoćete",
+      "action": "merged"
+    },
+    {
+      "original": "hoceš",
+      "corrected": "hoćeš",
+      "action": "merged"
+    },
+    {
+      "original": "hocu",
+      "corrected": "hoću",
+      "action": "merged"
+    },
+    {
+      "original": "hteo",
+      "corrected": "htio",
+      "action": "merged"
+    },
+    {
+      "original": "ijude",
+      "corrected": "ljude",
+      "action": "merged"
+    },
+    {
+      "original": "ijudi",
+      "corrected": "ljudi",
+      "action": "merged"
+    },
+    {
+      "original": "kazem",
+      "corrected": "kažem",
+      "action": "merged"
+    },
+    {
+      "original": "mesta",
+      "corrected": "mjesta",
+      "action": "merged"
+    },
+    {
+      "original": "mesto",
+      "corrected": "mjesto",
+      "action": "merged"
+    },
+    {
+      "original": "mestu",
+      "corrected": "mjestu",
+      "action": "merged"
+    },
+    {
+      "original": "moze",
+      "corrected": "može",
+      "action": "merged"
+    },
+    {
+      "original": "naci",
+      "corrected": "naći",
+      "action": "merged"
+    },
+    {
+      "original": "negde",
+      "corrected": "negdje",
+      "action": "merged"
+    },
+    {
+      "original": "nigde",
+      "corrected": "nigdje",
+      "action": "merged"
+    },
+    {
+      "original": "sinoc",
+      "corrected": "sinoć",
+      "action": "merged"
+    },
+    {
+      "original": "svida",
+      "corrected": "sviđa",
+      "action": "merged"
+    },
+    {
+      "original": "svidja",
+      "corrected": "sviđa",
+      "action": "merged"
+    },
+    {
+      "original": "uopce",
+      "corrected": "uopće",
+      "action": "merged"
+    },
+    {
+      "original": "vidis",
+      "corrected": "vidiš",
+      "action": "merged"
+    },
+    {
+      "original": "vjerovatno",
+      "corrected": "vjerojatno",
+      "action": "merged"
+    },
+    {
+      "original": "zelis",
+      "corrected": "želiš",
+      "action": "merged"
+    },
+    {
+      "original": "zelite",
+      "corrected": "želite",
+      "action": "merged"
+    },
+    {
+      "original": "čovek",
+      "corrected": "čovjek",
+      "action": "merged"
+    },
+    {
+      "original": "čoveka",
+      "corrected": "čovjeka",
+      "action": "merged"
+    },
+    {
+      "original": "čoveče",
+      "corrected": "čovječe",
+      "action": "merged"
+    },
+    {
+      "original": "čovjeće",
+      "corrected": "čovječe",
+      "action": "merged"
+    },
+    {
+      "original": "pre",
+      "corrected": "prije",
+      "action": "merged"
+    },
+    {
+      "original": "posle",
+      "corrected": "poslije",
+      "action": "merged"
+    },
+    {
+      "original": "tačno",
+      "corrected": "točno",
+      "action": "merged"
+    },
+    {
+      "original": "ces",
+      "corrected": "ćeš",
+      "action": "merged"
+    },
+    {
+      "original": "sta",
+      "corrected": "što",
+      "action": "merged"
+    },
+    {
+      "original": "šta",
+      "corrected": "što",
+      "action": "merged"
+    },
+    {
+      "original": "niko",
+      "corrected": "nitko",
+      "action": "merged"
+    },
+    {
+      "original": "mac",
+      "corrected": "mač",
+      "action": "merged"
+    },
+    {
+      "original": "preći",
+      "corrected": "prijeći",
+      "action": "merged"
+    },
+    {
+      "original": "primjetio",
+      "corrected": "primijetio",
+      "action": "merged"
+    },
+    {
+      "original": "obećajem",
+      "corrected": "obećam",
+      "action": "corrected"
+    },
+    {
+      "original": "napolje",
+      "corrected": "van",
+      "action": "merged"
+    },
+    {
+      "original": "napolju",
+      "corrected": "vani",
+      "action": "merged"
+    },
+    {
+      "original": "če",
+      "corrected": "će",
+      "action": "merged"
+    },
+    {
+      "original": "nedelje",
+      "corrected": "nedjelje",
+      "action": "merged"
+    },
+    {
+      "original": "meseca",
+      "corrected": "mjeseca",
+      "action": "merged"
+    },
+    {
+      "original": "lično",
+      "corrected": "osobno",
+      "action": "merged"
+    },
+    {
+      "original": "jebo",
+      "corrected": "jebao",
+      "action": "merged"
+    },
+    {
+      "original": "ubistva",
+      "corrected": "ubojstva",
+      "action": "merged"
+    },
+    {
+      "original": "izvinjavam",
+      "corrected": "ispričavam",
+      "action": "merged"
+    },
+    {
+      "original": "zena",
+      "corrected": "žena",
+      "action": "merged"
+    },
+    {
+      "original": "milion",
+      "corrected": "milijun",
+      "action": "merged"
+    },
+    {
+      "original": "vera",
+      "corrected": "vjera",
+      "action": "merged"
+    },
+    {
+      "original": "slijedeće",
+      "corrected": "sljedeće",
+      "action": "merged"
+    },
+    {
+      "original": "kafu",
+      "corrected": "kavu",
+      "action": "merged"
+    },
+    {
+      "original": "umreti",
+      "corrected": "umrijeti",
+      "action": "merged"
+    },
+    {
+      "original": "dodi",
+      "corrected": "dođi",
+      "action": "merged"
+    },
+    {
+      "original": "neprijatno",
+      "corrected": "neugodno",
+      "action": "merged"
+    },
+    {
+      "original": "hiljada",
+      "corrected": "tisuća",
+      "action": "merged"
+    },
+    {
+      "original": "ovde",
+      "corrected": "ovdje",
+      "action": "merged"
+    },
+    {
+      "original": "porodica",
+      "corrected": "obitelj",
+      "action": "merged"
+    },
+    {
+      "original": "sedi",
+      "corrected": "sjedi",
+      "action": "merged"
+    },
+    {
+      "original": "napred",
+      "corrected": "naprijed",
+      "action": "merged"
+    },
+    {
+      "original": "snimak",
+      "corrected": "snimka",
+      "action": "merged"
+    },
+    {
+      "original": "spisak",
+      "corrected": "popis",
+      "action": "merged"
+    },
+    {
+      "original": "stomak",
+      "corrected": "želudac",
+      "action": "corrected"
+    },
+    {
+      "original": "sekund",
+      "corrected": "sekunda",
+      "action": "merged"
+    },
+    {
+      "original": "utisak",
+      "corrected": "dojam",
+      "action": "merged"
+    },
+    {
+      "original": "desilo",
+      "corrected": "dogodilo",
+      "action": "merged"
+    },
+    {
+      "original": "desiti",
+      "corrected": "dogoditi",
+      "action": "merged"
+    },
+    {
+      "original": "kaj",
+      "corrected": "što",
+      "action": "merged"
+    },
+    {
+      "original": "ko",
+      "corrected": "tko",
+      "action": "merged"
+    },
+    {
+      "original": "ajde",
+      "corrected": "hajde",
+      "action": "merged"
+    },
+    {
+      "original": "ajmo",
+      "corrected": "hajdemo",
+      "action": "merged"
+    },
+    {
+      "original": "gdin",
+      "corrected": "gospodin",
+      "action": "merged"
+    },
+    {
+      "original": "gosp",
+      "corrected": "gospodin",
+      "action": "merged"
+    },
+    {
+      "original": "gdine",
+      "corrected": "gospodine",
+      "action": "merged"
+    },
+    {
+      "original": "g-dine",
+      "corrected": "gospodine",
+      "action": "merged"
+    },
+    {
+      "original": "dosije",
+      "corrected": "dosje",
+      "action": "merged"
+    },
+    {
+      "original": "kuce",
+      "corrected": "kuće",
+      "action": "merged"
+    },
+    {
+      "original": "a-ha",
+      "corrected": "aha",
+      "action": "corrected"
+    },
+    {
+      "original": "deda",
+      "corrected": "djed",
+      "action": "merged"
+    },
+    {
+      "original": "drugar",
+      "corrected": "prijatelj",
+      "action": "merged"
+    },
+    {
+      "original": "ortak",
+      "corrected": "partner",
+      "action": "corrected"
+    },
+    {
+      "original": "ujutru",
+      "corrected": "ujutro",
+      "action": "merged"
+    },
+    {
+      "original": "prijatno",
+      "corrected": "ugodno",
+      "action": "merged"
+    },
+    {
+      "original": "lažov",
+      "corrected": "lažljivac",
+      "action": "merged"
+    },
+    {
+      "original": "mašina",
+      "corrected": "stroj",
+      "action": "merged"
+    },
+    {
+      "original": "mašinu",
+      "corrected": "stroj",
+      "action": "merged"
+    },
+    {
+      "original": "kancelariji",
+      "corrected": "uredu",
+      "action": "merged"
+    },
+    {
+      "original": "kupatilo",
+      "corrected": "kupaonica",
+      "action": "corrected"
+    },
+    {
+      "original": "obaveza",
+      "corrected": "obveza",
+      "action": "corrected"
+    },
+    {
+      "original": "dupe",
+      "corrected": "stražnjica",
+      "action": "corrected"
+    },
+    {
+      "original": "đubre",
+      "corrected": "smeće",
+      "action": "merged"
+    },
+    {
+      "original": "đavo",
+      "corrected": "đavao",
+      "action": "corrected"
+    }
+  ],
+  "split_phrases": [
+    {
+      "original": "neznam",
+      "corrected": "ne znam",
+      "progress": "retain_unmatched_history"
+    },
+    {
+      "original": "nemogu",
+      "corrected": "ne mogu",
+      "progress": "retain_unmatched_history"
+    },
+    {
+      "original": "nebi",
+      "corrected": "ne bi",
+      "progress": "retain_unmatched_history"
+    },
+    {
+      "original": "samnom",
+      "corrected": "sa mnom",
+      "progress": "retain_unmatched_history"
+    },
+    {
+      "original": "bićeš",
+      "corrected": "bit ćeš",
+      "progress": "retain_unmatched_history"
+    },
+    {
+      "original": "trebaće",
+      "corrected": "trebat će",
+      "progress": "retain_unmatched_history"
+    },
+    {
+      "original": "vratiću",
+      "corrected": "vratit ću",
+      "progress": "retain_unmatched_history"
+    },
+    {
+      "original": "jebemti",
+      "corrected": "jebem ti",
+      "progress": "retain_unmatched_history"
+    },
+    {
+      "original": "jebemu",
+      "corrected": "jebem mu",
+      "progress": "retain_unmatched_history"
+    },
+    {
+      "original": "jel",
+      "corrected": "je li",
+      "progress": "retain_unmatched_history"
+    }
+  ]
+}
