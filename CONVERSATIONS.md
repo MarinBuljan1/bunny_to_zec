@@ -9,7 +9,9 @@ learner reply.
 
 [CONVERSATION_EXPANSION_1000_REPORT.md](CONVERSATION_EXPANSION_1000_REPORT.md) records the
 latest expansion: 100 new conversations, each adding at least two uncovered forms.
-The library now has **1,000 conversations**, covering **5,673 of 8,574 forms (66.2%)**.
+The library now has **1,000 conversations**, covering **5,673 of 8,380 forms (67.7%)**
+after the [standard Croatian vocabulary review](VOCABULARY_REVIEW.md). The expansion
+report preserves the vocabulary counts at the time that batch was authored.
 This batch adds **246 previously uncovered forms**. Existing dialogue and IDs were
 preserved. No conversation contributes
 fewer than two first appearances in ascending ID order. This is an authoring metric,
@@ -32,7 +34,7 @@ cleanup audit, which removed 47 zero-contribution conversations and expanded all
 [CONVERSATION_BATCH_REPORT.md](CONVERSATION_BATCH_REPORT.md) preserves the historical
 audit of the preceding 100-conversation expansion, before pruning. The earlier
 repetitive 400-conversation draft was not published. The 1,000-conversation milestone
-is now reached. Full vocabulary coverage remains outstanding: 2,901 forms are missing.
+is now reached. Full vocabulary coverage remains outstanding: 2,707 forms are missing.
 
 The drafts cover food, shopping, directions, travel, home, social plans, work,
 study, health, leisure, family, and past experiences. The first authoring batch used

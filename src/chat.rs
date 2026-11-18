@@ -522,11 +522,15 @@ fn annotated_message(text: &str, words: &[crate::model::Card], masked: bool) -> 
     crate::sentences::split_text(text).into_iter().map(|token| {
         let key = token.to_lowercase();
         match words.iter().find(|word| word.target_language == key) {
-            Some(word) => html!{<span class="review-word"><span class="word-hint">{&word.base_language}</span>
-                <span class="word-line" aria-label={if masked { format!("Missing Croatian word: {}", word.base_language) } else { token.clone() }}>
+            Some(word) => {
+                let hint = word.base_language.split_once(';')
+                    .map_or(word.base_language.as_str(), |(first, _)| first).trim();
+                html!{<span class="review-word"><span class="word-hint">{hint}</span>
+                <span class="word-line" aria-label={if masked { format!("Missing Croatian word: {hint}") } else { token.clone() }}>
                     <span class={masked.then_some("concealed-word")} aria-hidden={masked.to_string()}>{token}</span>
                 </span>
-            </span>},
+            </span>}
+            },
             None => html!{token},
         }
     }).collect()

@@ -3,13 +3,13 @@
     "base_language": "is"
   },
   "da": {
-    "base_language": "that"
+    "base_language": "that; yes"
   },
   "ne": {
     "base_language": "not"
   },
   "se": {
-    "base_language": "are"
+    "base_language": "oneself"
   },
   "i": {
     "base_language": "and"
@@ -18,10 +18,10 @@
     "base_language": "in"
   },
   "to": {
-    "base_language": "it"
+    "base_language": "that; it"
   },
   "sam": {
-    "base_language": "alone"
+    "base_language": "I am; alone"
   },
   "što": {
     "base_language": "what"
@@ -36,16 +36,16 @@
     "base_language": "for"
   },
   "mi": {
-    "base_language": "me"
+    "base_language": "we; to me"
   },
   "si": {
     "base_language": "you are"
   },
   "li": {
-    "base_language": "li"
+    "base_language": "(question particle)"
   },
   "ja": {
-    "base_language": "i"
+    "base_language": "I"
   },
   "su": {
     "base_language": "are"
@@ -54,16 +54,16 @@
     "base_language": "but"
   },
   "nije": {
-    "base_language": "it is not"
+    "base_language": "is not"
   },
   "s": {
-    "base_language": "with"
+    "base_language": "with; from"
   },
   "samo": {
     "base_language": "only"
   },
   "ga": {
-    "base_language": "him"
+    "base_language": "him; it"
   },
   "me": {
     "base_language": "me"
@@ -84,13 +84,13 @@
     "base_language": "how"
   },
   "te": {
-    "base_language": "you"
+    "base_language": "you; and"
   },
   "će": {
     "base_language": "will"
   },
   "o": {
-    "base_language": "on"
+    "base_language": "about; on"
   },
   "dobro": {
     "base_language": "good"
@@ -102,7 +102,7 @@
     "base_language": "we are"
   },
   "sa": {
-    "base_language": "with"
+    "base_language": "with; from"
   },
   "sve": {
     "base_language": "all"
@@ -111,7 +111,7 @@
     "base_language": "as"
   },
   "ću": {
-    "base_language": "i will"
+    "base_language": "I will"
   },
   "biti": {
     "base_language": "be"
@@ -120,13 +120,13 @@
     "base_language": "so"
   },
   "znam": {
-    "base_language": "i know"
+    "base_language": "I know"
   },
   "ste": {
     "base_language": "you are"
   },
   "nisam": {
-    "base_language": "i didn't"
+    "base_language": "I am not"
   },
   "ovdje": {
     "base_language": "here"
@@ -135,7 +135,7 @@
     "base_language": "was"
   },
   "mogu": {
-    "base_language": "i can"
+    "base_language": "I can; they can"
   },
   "pa": {
     "base_language": "and"
@@ -150,10 +150,10 @@
     "base_language": "more"
   },
   "redu": {
-    "base_language": "ok"
+    "base_language": "order"
   },
   "bilo": {
-    "base_language": "either"
+    "base_language": "was; any; either"
   },
   "nešto": {
     "base_language": "something"
@@ -162,13 +162,13 @@
     "base_language": "when"
   },
   "koji": {
-    "base_language": "who"
+    "base_language": "which; who"
   },
   "vas": {
-    "base_language": "your"
+    "base_language": "you"
   },
   "mislim": {
-    "base_language": "i think"
+    "base_language": "I think"
   },
   "hvala": {
     "base_language": "thanks"
@@ -213,13 +213,13 @@
     "base_language": "then"
   },
   "bih": {
-    "base_language": "i would"
+    "base_language": "I would"
   },
   "tko": {
     "base_language": "who"
   },
   "mu": {
-    "base_language": "him"
+    "base_language": "to him; to it"
   },
   "ćemo": {
     "base_language": "we will"
@@ -240,13 +240,13 @@
     "base_language": "right?"
   },
   "nas": {
-    "base_language": "our"
+    "base_language": "us"
   },
   "ona": {
     "base_language": "she"
   },
   "želim": {
-    "base_language": "i want"
+    "base_language": "I want"
   },
   "malo": {
     "base_language": "little"
@@ -269,14 +269,11 @@
   "reći": {
     "base_language": "say"
   },
-  "šta": {
-    "base_language": "what"
-  },
   "jer": {
     "base_language": "because"
   },
   "prije": {
-    "base_language": "ago"
+    "base_language": "before; earlier; ago"
   },
   "tebe": {
     "base_language": "you"
@@ -285,13 +282,13 @@
     "base_language": "hey"
   },
   "imam": {
-    "base_language": "imam"
+    "base_language": "I have"
   },
   "možeš": {
     "base_language": "you can"
   },
   "sad": {
-    "base_language": "usa"
+    "base_language": "now; USA"
   },
   "tu": {
     "base_language": "here"
@@ -306,7 +303,7 @@
     "base_language": "nor"
   },
   "nam": {
-    "base_language": "us"
+    "base_language": "to us"
   },
   "tamo": {
     "base_language": "there"
@@ -318,13 +315,13 @@
     "base_language": "people"
   },
   "nisi": {
-    "base_language": "you didn't"
+    "base_language": "you are not"
   },
   "svi": {
     "base_language": "all"
   },
   "moram": {
-    "base_language": "i have to"
+    "base_language": "I have to"
   },
   "uvijek": {
     "base_language": "always"
@@ -357,10 +354,10 @@
     "base_language": "you think"
   },
   "zato": {
-    "base_language": "because"
+    "base_language": "therefore; that is why"
   },
   "baš": {
-    "base_language": "bass"
+    "base_language": "really; exactly"
   },
   "nego": {
     "base_language": "than"
@@ -369,7 +366,7 @@
     "base_language": "won't"
   },
   "bez": {
-    "base_language": "beige"
+    "base_language": "without"
   },
   "stvari": {
     "base_language": "things"
@@ -393,7 +390,7 @@
     "base_language": "it"
   },
   "joj": {
-    "base_language": "her"
+    "base_language": "to her"
   },
   "oni": {
     "base_language": "they"
@@ -402,13 +399,13 @@
     "base_language": "you want"
   },
   "toga": {
-    "base_language": "toga"
+    "base_language": "of that"
   },
   "ovaj": {
     "base_language": "this"
   },
   "žao": {
-    "base_language": "evil"
+    "base_language": "sorry"
   },
   "imaš": {
     "base_language": "you have"
@@ -465,7 +462,7 @@
     "base_language": "she said"
   },
   "put": {
-    "base_language": "time"
+    "base_language": "time; way; road"
   },
   "radi": {
     "base_language": "works"
@@ -477,13 +474,13 @@
     "base_language": "better"
   },
   "svoje": {
-    "base_language": "own"
+    "base_language": "one's own"
   },
   "moraš": {
     "base_language": "you have to"
   },
   "daj": {
-    "base_language": "come on"
+    "base_language": "give; come on"
   },
   "nemoj": {
     "base_language": "don't"
@@ -495,19 +492,19 @@
     "base_language": "a lot"
   },
   "neću": {
-    "base_language": "i won't"
+    "base_language": "I won't"
   },
   "netko": {
     "base_language": "someone"
   },
   "meni": {
-    "base_language": "menu"
+    "base_language": "to me"
   },
   "možete": {
     "base_language": "you can"
   },
   "kod": {
-    "base_language": "code"
+    "base_language": "at; near; code"
   },
   "reci": {
     "base_language": "say"
@@ -519,7 +516,7 @@
     "base_language": "see"
   },
   "jeste": {
-    "base_language": "is"
+    "base_language": "you are"
   },
   "mama": {
     "base_language": "mom"
@@ -555,7 +552,7 @@
     "base_language": "life"
   },
   "im": {
-    "base_language": "them"
+    "base_language": "to them"
   },
   "tata": {
     "base_language": "dad"
@@ -570,7 +567,7 @@
     "base_language": "saw"
   },
   "volim": {
-    "base_language": "i love"
+    "base_language": "I love"
   },
   "jako": {
     "base_language": "very"
@@ -582,7 +579,7 @@
     "base_language": "go"
   },
   "vidim": {
-    "base_language": "i see"
+    "base_language": "I see"
   },
   "kući": {
     "base_language": "home"
@@ -618,7 +615,7 @@
     "base_language": "just"
   },
   "svoj": {
-    "base_language": "its"
+    "base_language": "one's own"
   },
   "učiniti": {
     "base_language": "make"
@@ -636,13 +633,13 @@
     "base_language": "certainly"
   },
   "svoju": {
-    "base_language": "your own"
+    "base_language": "one's own"
   },
   "tri": {
     "base_language": "three"
   },
   "idem": {
-    "base_language": "i'm going"
+    "base_language": "I'm going"
   },
   "želi": {
     "base_language": "wants"
@@ -654,7 +651,7 @@
     "base_language": "nobody"
   },
   "jesam": {
-    "base_language": "i am"
+    "base_language": "I am"
   },
   "čovjek": {
     "base_language": "man"
@@ -666,7 +663,7 @@
     "base_language": "why"
   },
   "tim": {
-    "base_language": "team"
+    "base_language": "that; team"
   },
   "koju": {
     "base_language": "which one"
@@ -702,7 +699,7 @@
     "base_language": "knew"
   },
   "nismo": {
-    "base_language": "we didn't"
+    "base_language": "we are not"
   },
   "toliko": {
     "base_language": "so many"
@@ -738,13 +735,13 @@
     "base_language": "be"
   },
   "god": {
-    "base_language": "year"
+    "base_language": "ever"
   },
   "čekaj": {
     "base_language": "wait"
   },
   "kažem": {
-    "base_language": "i say"
+    "base_language": "I say"
   },
   "novac": {
     "base_language": "money"
@@ -759,7 +756,7 @@
     "base_language": "look"
   },
   "nemam": {
-    "base_language": "i don't have"
+    "base_language": "I don't have"
   },
   "drugi": {
     "base_language": "other"
@@ -834,7 +831,7 @@
     "base_language": "shit"
   },
   "sebe": {
-    "base_language": "yourself"
+    "base_language": "oneself"
   },
   "vaš": {
     "base_language": "your"
@@ -876,7 +873,7 @@
     "base_language": "have"
   },
   "trebam": {
-    "base_language": "i need"
+    "base_language": "I need"
   },
   "kroz": {
     "base_language": "through"
@@ -945,7 +942,7 @@
     "base_language": "except"
   },
   "radim": {
-    "base_language": "i work"
+    "base_language": "I work"
   },
   "oprostite": {
     "base_language": "sorry"
@@ -957,7 +954,7 @@
     "base_language": "killed"
   },
   "njim": {
-    "base_language": "him"
+    "base_language": "him; it"
   },
   "dosta": {
     "base_language": "enough"
@@ -987,7 +984,7 @@
     "base_language": "man"
   },
   "niste": {
-    "base_language": "you didn't"
+    "base_language": "you are not"
   },
   "teško": {
     "base_language": "heavy"
@@ -1000,9 +997,6 @@
   },
   "dobio": {
     "base_language": "got"
-  },
-  "ovde": {
-    "base_language": "here"
   },
   "pogledaj": {
     "base_language": "look"
@@ -1017,7 +1011,7 @@
     "base_language": "whom"
   },
   "hoću": {
-    "base_language": "i will"
+    "base_language": "I will"
   },
   "brzo": {
     "base_language": "quickly"
@@ -1059,7 +1053,7 @@
     "base_language": "help"
   },
   "sviđa": {
-    "base_language": "he likes it"
+    "base_language": "is appealing"
   },
   "nama": {
     "base_language": "us"
@@ -1071,7 +1065,7 @@
     "base_language": "part"
   },
   "nadam": {
-    "base_language": "i hope"
+    "base_language": "I hope"
   },
   "jednu": {
     "base_language": "one"
@@ -1083,7 +1077,7 @@
     "base_language": "two"
   },
   "auto": {
-    "base_language": "auto"
+    "base_language": "car"
   },
   "istina": {
     "base_language": "truth"
@@ -1130,9 +1124,6 @@
   "bismo": {
     "base_language": "we would"
   },
-  "ko": {
-    "base_language": "who"
-  },
   "prvo": {
     "base_language": "first"
   },
@@ -1155,7 +1146,7 @@
     "base_language": "had"
   },
   "sto": {
-    "base_language": "what"
+    "base_language": "one hundred"
   },
   "preko": {
     "base_language": "through"
@@ -1176,7 +1167,7 @@
     "base_language": "this one"
   },
   "vjerujem": {
-    "base_language": "i believe"
+    "base_language": "I believe"
   },
   "otišao": {
     "base_language": "left"
@@ -1248,7 +1239,7 @@
     "base_language": "simply"
   },
   "razumijem": {
-    "base_language": "i understand"
+    "base_language": "I understand"
   },
   "pusti": {
     "base_language": "let go"
@@ -1284,7 +1275,7 @@
     "base_language": "that"
   },
   "svojim": {
-    "base_language": "his own"
+    "base_language": "one's own"
   },
   "veze": {
     "base_language": "connections"
@@ -1317,7 +1308,7 @@
     "base_language": "came"
   },
   "budi": {
-    "base_language": "be"
+    "base_language": "be; wakes"
   },
   "važno": {
     "base_language": "important"
@@ -1332,7 +1323,7 @@
     "base_language": "else"
   },
   "svog": {
-    "base_language": "his own"
+    "base_language": "one's own"
   },
   "pitanje": {
     "base_language": "question"
@@ -1344,7 +1335,7 @@
     "base_language": "really"
   },
   "njemu": {
-    "base_language": "him"
+    "base_language": "to him; to it"
   },
   "znala": {
     "base_language": "knew"
@@ -1365,7 +1356,7 @@
     "base_language": "we need"
   },
   "osjećam": {
-    "base_language": "i feel"
+    "base_language": "I feel"
   },
   "njima": {
     "base_language": "them"
@@ -1431,7 +1422,7 @@
     "base_language": "yours"
   },
   "valjda": {
-    "base_language": "i guess"
+    "base_language": "I guess"
   },
   "između": {
     "base_language": "between"
@@ -1506,7 +1497,7 @@
     "base_language": "word"
   },
   "sebi": {
-    "base_language": "to myself"
+    "base_language": "to oneself"
   },
   "drži": {
     "base_language": "holds"
@@ -1522,9 +1513,6 @@
   },
   "prijatelji": {
     "base_language": "friends"
-  },
-  "gde": {
-    "base_language": "where"
   },
   "ovim": {
     "base_language": "this"
@@ -1553,9 +1541,6 @@
   "potpuno": {
     "base_language": "completely"
   },
-  "ce": {
-    "base_language": "will"
-  },
   "mom": {
     "base_language": "mine"
   },
@@ -1563,7 +1548,7 @@
     "base_language": "be able"
   },
   "žele": {
-    "base_language": "jelly"
+    "base_language": "they want; jelly"
   },
   "čega": {
     "base_language": "what"
@@ -1593,7 +1578,7 @@
     "base_language": "our"
   },
   "budem": {
-    "base_language": "i will be"
+    "base_language": "I will be"
   },
   "ženu": {
     "base_language": "a woman"
@@ -1737,7 +1722,7 @@
     "base_language": "ship"
   },
   "pretpostavljam": {
-    "base_language": "i guess"
+    "base_language": "I guess"
   },
   "moguće": {
     "base_language": "possible"
@@ -1761,7 +1746,7 @@
     "base_language": "rights"
   },
   "svom": {
-    "base_language": "his own"
+    "base_language": "one's own"
   },
   "djevojka": {
     "base_language": "girl"
@@ -1830,7 +1815,7 @@
     "base_language": "lives"
   },
   "sjećam": {
-    "base_language": "i remember"
+    "base_language": "I remember"
   },
   "mojoj": {
     "base_language": "mine"
@@ -1857,7 +1842,7 @@
     "base_language": "at least"
   },
   "sina": {
-    "base_language": "rail"
+    "base_language": "son"
   },
   "umrijeti": {
     "base_language": "die"
@@ -1873,9 +1858,6 @@
   },
   "pazi": {
     "base_language": "watch out"
-  },
-  "cu": {
-    "base_language": "i will"
   },
   "sobu": {
     "base_language": "room"
@@ -1923,19 +1905,19 @@
     "base_language": "you look"
   },
   "čujem": {
-    "base_language": "i hear"
+    "base_language": "I hear"
   },
   "djeca": {
     "base_language": "children"
   },
   "bojim": {
-    "base_language": "i'm afraid"
+    "base_language": "I'm afraid"
   },
   "voliš": {
     "base_language": "you love"
   },
   "pitam": {
-    "base_language": "i ask"
+    "base_language": "I ask"
   },
   "pogledajte": {
     "base_language": "have a look"
@@ -1959,7 +1941,7 @@
     "base_language": "you speak"
   },
   "čula": {
-    "base_language": "senses"
+    "base_language": "heard; senses"
   },
   "ranije": {
     "base_language": "earlier"
@@ -1977,7 +1959,7 @@
     "base_language": "as soon as"
   },
   "govorim": {
-    "base_language": "i speak"
+    "base_language": "I speak"
   },
   "recite": {
     "base_language": "say"
@@ -1986,7 +1968,7 @@
     "base_language": "yours"
   },
   "odakle": {
-    "base_language": "where"
+    "base_language": "where from"
   },
   "čuti": {
     "base_language": "hear"
@@ -2016,7 +1998,7 @@
     "base_language": "you will"
   },
   "njoj": {
-    "base_language": "her"
+    "base_language": "to her"
   },
   "mojim": {
     "base_language": "mine"
@@ -2076,7 +2058,7 @@
     "base_language": "in the morning"
   },
   "morat": {
-    "base_language": "i have to"
+    "base_language": "have to"
   },
   "zbilja": {
     "base_language": "really"
@@ -2085,7 +2067,7 @@
     "base_language": "live"
   },
   "pokušavam": {
-    "base_language": "i'm trying"
+    "base_language": "I'm trying"
   },
   "bile": {
     "base_language": "were"
@@ -2103,7 +2085,7 @@
     "base_language": "the other"
   },
   "sami": {
-    "base_language": "yourself"
+    "base_language": "alone; themselves"
   },
   "ostani": {
     "base_language": "stay"
@@ -2121,7 +2103,7 @@
     "base_language": "mrs"
   },
   "mrzim": {
-    "base_language": "i hate it"
+    "base_language": "I hate it"
   },
   "rat": {
     "base_language": "war"
@@ -2145,7 +2127,7 @@
     "base_language": "asked"
   },
   "svojoj": {
-    "base_language": "his own"
+    "base_language": "one's own"
   },
   "ubojica": {
     "base_language": "killer"
@@ -2154,7 +2136,7 @@
     "base_language": "phone"
   },
   "tražim": {
-    "base_language": "i'm looking for"
+    "base_language": "I'm looking for"
   },
   "ovome": {
     "base_language": "to this"
@@ -2190,13 +2172,13 @@
     "base_language": "ten"
   },
   "ispred": {
-    "base_language": "front"
+    "base_language": "in front of"
   },
   "boli": {
     "base_language": "it hurts"
   },
   "uredu": {
-    "base_language": "okay"
+    "base_language": "office"
   },
   "sastanak": {
     "base_language": "meeting"
@@ -2250,10 +2232,7 @@
     "base_language": "what kind"
   },
   "shvaćam": {
-    "base_language": "i understand"
-  },
-  "pre": {
-    "base_language": "before"
+    "base_language": "I understand"
   },
   "svim": {
     "base_language": "to all"
@@ -2264,9 +2243,6 @@
   "ljubavi": {
     "base_language": "love"
   },
-  "jel": {
-    "base_language": "is"
-  },
   "njegovu": {
     "base_language": "his"
   },
@@ -2274,16 +2250,13 @@
     "base_language": "forget it"
   },
   "tih": {
-    "base_language": "quiet"
+    "base_language": "those; quiet"
   },
   "sva": {
     "base_language": "all"
   },
   "zemlji": {
     "base_language": "the country"
-  },
-  "uvek": {
-    "base_language": "always"
   },
   "poslu": {
     "base_language": "to work"
@@ -2331,7 +2304,7 @@
     "base_language": "game"
   },
   "zovem": {
-    "base_language": "i'm calling"
+    "base_language": "I'm calling"
   },
   "nazvati": {
     "base_language": "call"
@@ -2444,9 +2417,6 @@
   "mjesec": {
     "base_language": "month"
   },
-  "desilo": {
-    "base_language": "happened"
-  },
   "onog": {
     "base_language": "that one"
   },
@@ -2455,9 +2425,6 @@
   },
   "jebeni": {
     "base_language": "fucking"
-  },
-  "sta": {
-    "base_language": "what"
   },
   "večeru": {
     "base_language": "dinner"
@@ -2561,9 +2528,6 @@
   "ostalo": {
     "base_language": "the rest"
   },
-  "vreme": {
-    "base_language": "time"
-  },
   "kraja": {
     "base_language": "the end"
   },
@@ -2622,7 +2586,7 @@
     "base_language": "perfectly"
   },
   "smijem": {
-    "base_language": "i'm allowed"
+    "base_language": "I'm allowed"
   },
   "zaboravio": {
     "base_language": "forgot"
@@ -2688,7 +2652,7 @@
     "base_language": "play"
   },
   "strašno": {
-    "base_language": "passionately"
+    "base_language": "terribly; frightening"
   },
   "zabavno": {
     "base_language": "fun"
@@ -2766,16 +2730,16 @@
     "base_language": "murders"
   },
   "poznajem": {
-    "base_language": "i know"
+    "base_language": "I know"
   },
   "sretno": {
     "base_language": "good luck"
   },
   "ispričavam": {
-    "base_language": "i'm sorry"
+    "base_language": "I'm sorry"
   },
   "staviti": {
-    "base_language": "tan"
+    "base_language": "put; place"
   },
   "uspio": {
     "base_language": "succeeded"
@@ -2802,7 +2766,7 @@
     "base_language": "yours"
   },
   "sobom": {
-    "base_language": "myself"
+    "base_language": "oneself"
   },
   "čekajte": {
     "base_language": "wait"
@@ -2814,7 +2778,7 @@
     "base_language": "last"
   },
   "morala": {
-    "base_language": "morality"
+    "base_language": "had to"
   },
   "nove": {
     "base_language": "new ones"
@@ -2925,7 +2889,7 @@
     "base_language": "names"
   },
   "kunem": {
-    "base_language": "i swear"
+    "base_language": "I swear"
   },
   "doktor": {
     "base_language": "doctor"
@@ -2976,7 +2940,7 @@
     "base_language": "dog"
   },
   "glas": {
-    "base_language": "vote"
+    "base_language": "voice; vote"
   },
   "svakog": {
     "base_language": "everyone"
@@ -3027,13 +2991,13 @@
     "base_language": "sleep"
   },
   "dolazim": {
-    "base_language": "i'm coming"
+    "base_language": "I'm coming"
   },
   "sir": {
     "base_language": "cheese"
   },
   "šef": {
-    "base_language": "safe"
+    "base_language": "boss"
   },
   "hajdemo": {
     "base_language": "let's go"
@@ -3149,9 +3113,6 @@
   "vole": {
     "base_language": "they love"
   },
-  "niko": {
-    "base_language": "no one"
-  },
   "misliti": {
     "base_language": "think"
   },
@@ -3201,7 +3162,7 @@
     "base_language": "finished"
   },
   "vraćam": {
-    "base_language": "i return"
+    "base_language": "I return"
   },
   "društvo": {
     "base_language": "society"
@@ -3288,7 +3249,7 @@
     "base_language": "letter"
   },
   "odem": {
-    "base_language": "i'm leaving"
+    "base_language": "I'm leaving"
   },
   "ode": {
     "base_language": "he leaves"
@@ -3342,7 +3303,7 @@
     "base_language": "killed"
   },
   "kladim": {
-    "base_language": "i bet"
+    "base_language": "I bet"
   },
   "jedne": {
     "base_language": "one"
@@ -3363,7 +3324,7 @@
     "base_language": "keep"
   },
   "svojih": {
-    "base_language": "of their own"
+    "base_language": "one's own"
   },
   "knjigu": {
     "base_language": "a book"
@@ -3399,7 +3360,7 @@
     "base_language": "their"
   },
   "ubit": {
-    "base_language": "killed"
+    "base_language": "kill"
   },
   "novo": {
     "base_language": "new"
@@ -3411,7 +3372,7 @@
     "base_language": "becomes"
   },
   "obećavam": {
-    "base_language": "i promise"
+    "base_language": "I promise"
   },
   "božić": {
     "base_language": "christmas"
@@ -3456,7 +3417,7 @@
     "base_language": "girls"
   },
   "čekam": {
-    "base_language": "i'm waiting"
+    "base_language": "I'm waiting"
   },
   "kakvo": {
     "base_language": "what kind"
@@ -3489,7 +3450,7 @@
     "base_language": "he can"
   },
   "obzira": {
-    "base_language": "regardless"
+    "base_language": "consideration"
   },
   "naučiti": {
     "base_language": "learn"
@@ -3522,7 +3483,7 @@
     "base_language": "they don't have"
   },
   "budite": {
-    "base_language": "be"
+    "base_language": "be; wake"
   },
   "srca": {
     "base_language": "hearts"
@@ -3594,7 +3555,7 @@
     "base_language": "since"
   },
   "muža": {
-    "base_language": "muse"
+    "base_language": "husband"
   },
   "sasvim": {
     "base_language": "quite"
@@ -3617,9 +3578,6 @@
   "govore": {
     "base_language": "they speak"
   },
-  "cemo": {
-    "base_language": "we will"
-  },
   "donijeti": {
     "base_language": "bring"
   },
@@ -3630,7 +3588,7 @@
     "base_language": "easier"
   },
   "ionako": {
-    "base_language": "already"
+    "base_language": "anyway; in any case"
   },
   "pivo": {
     "base_language": "beer"
@@ -3662,14 +3620,11 @@
   "dvojica": {
     "base_language": "two"
   },
-  "ajde": {
-    "base_language": "come on"
-  },
   "čestitam": {
     "base_language": "congratulations"
   },
   "pričam": {
-    "base_language": "i'm talking"
+    "base_language": "I'm talking"
   },
   "luda": {
     "base_language": "crazy"
@@ -3678,7 +3633,7 @@
     "base_language": "called"
   },
   "pomognem": {
-    "base_language": "i will help"
+    "base_language": "I will help"
   },
   "dogovor": {
     "base_language": "agreement"
@@ -3690,7 +3645,7 @@
     "base_language": "to everything"
   },
   "slažem": {
-    "base_language": "i agree"
+    "base_language": "I agree"
   },
   "ručak": {
     "base_language": "lunch"
@@ -3708,7 +3663,7 @@
     "base_language": "interesting"
   },
   "gledam": {
-    "base_language": "i'm looking"
+    "base_language": "I'm looking"
   },
   "račun": {
     "base_language": "account"
@@ -3723,10 +3678,7 @@
     "base_language": "finished"
   },
   "svojom": {
-    "base_language": "my own"
-  },
-  "gosp": {
-    "base_language": "mr"
+    "base_language": "one's own"
   },
   "psa": {
     "base_language": "a dog"
@@ -3843,7 +3795,7 @@
     "base_language": "call"
   },
   "živim": {
-    "base_language": "i live"
+    "base_language": "I live"
   },
   "trebat": {
     "base_language": "need"
@@ -3876,7 +3828,7 @@
     "base_language": "head"
   },
   "smiješ": {
-    "base_language": "you laugh"
+    "base_language": "you may; you laugh"
   },
   "idete": {
     "base_language": "you are going"
@@ -3978,13 +3930,13 @@
     "base_language": "need"
   },
   "ista": {
-    "base_language": "any"
+    "base_language": "same"
   },
   "našoj": {
     "base_language": "ours"
   },
   "sustav": {
-    "base_language": "rustling"
+    "base_language": "system"
   },
   "pomalo": {
     "base_language": "a little bit"
@@ -4256,9 +4208,6 @@
   "mnogi": {
     "base_language": "many"
   },
-  "gdine": {
-    "base_language": "mr"
-  },
   "dečka": {
     "base_language": "boyfriend"
   },
@@ -4331,9 +4280,6 @@
   "novog": {
     "base_language": "the new one"
   },
-  "zasto": {
-    "base_language": "why"
-  },
   "shvaćaš": {
     "base_language": "you get it"
   },
@@ -4341,7 +4287,7 @@
     "base_language": "damn"
   },
   "sumnjam": {
-    "base_language": "i doubt it"
+    "base_language": "I doubt it"
   },
   "uradi": {
     "base_language": "do it"
@@ -4508,9 +4454,6 @@
   "vlada": {
     "base_language": "government"
   },
-  "čovek": {
-    "base_language": "man"
-  },
   "osiguranje": {
     "base_language": "insurance"
   },
@@ -4530,7 +4473,7 @@
     "base_language": "come in"
   },
   "svoja": {
-    "base_language": "their own"
+    "base_language": "one's own"
   },
   "pokušala": {
     "base_language": "tried"
@@ -4604,14 +4547,8 @@
   "uzela": {
     "base_language": "took"
   },
-  "nesto": {
-    "base_language": "something"
-  },
   "gluposti": {
     "base_language": "nonsense"
-  },
-  "lepo": {
-    "base_language": "nice"
   },
   "snage": {
     "base_language": "strength"
@@ -4626,7 +4563,7 @@
     "base_language": "possibilities"
   },
   "odlazim": {
-    "base_language": "i'm leaving"
+    "base_language": "I'm leaving"
   },
   "ničega": {
     "base_language": "nothing"
@@ -4641,7 +4578,7 @@
     "base_language": "sick"
   },
   "nazvat": {
-    "base_language": "the name"
+    "base_language": "call"
   },
   "voditi": {
     "base_language": "lead"
@@ -4713,7 +4650,7 @@
     "base_language": "persons"
   },
   "moga": {
-    "base_language": "i can"
+    "base_language": "my; mine"
   },
   "seksi": {
     "base_language": "sexy"
@@ -4776,7 +4713,7 @@
     "base_language": "old"
   },
   "cijenim": {
-    "base_language": "i appreciate it"
+    "base_language": "I appreciate it"
   },
   "nekada": {
     "base_language": "sometimes"
@@ -4811,8 +4748,8 @@
   "onom": {
     "base_language": "that one"
   },
-  "dupe": {
-    "base_language": "ass"
+  "stražnjica": {
+    "base_language": "buttocks; bottom"
   },
   "najmanje": {
     "base_language": "at least"
@@ -4821,7 +4758,7 @@
     "base_language": "fool"
   },
   "nađem": {
-    "base_language": "i find"
+    "base_language": "I find"
   },
   "nikako": {
     "base_language": "not at all"
@@ -4896,7 +4833,7 @@
     "base_language": "discovered"
   },
   "težak": {
-    "base_language": "trying"
+    "base_language": "heavy; difficult"
   },
   "budete": {
     "base_language": "you will be"
@@ -4923,7 +4860,7 @@
     "base_language": "returns"
   },
   "dajem": {
-    "base_language": "i give"
+    "base_language": "I give"
   },
   "osobu": {
     "base_language": "person"
@@ -4944,7 +4881,7 @@
     "base_language": "lieutenant"
   },
   "ruka": {
-    "base_language": "hand"
+    "base_language": "hand; arm"
   },
   "pjesmu": {
     "base_language": "a song"
@@ -4989,7 +4926,7 @@
     "base_language": "understood"
   },
   "dam": {
-    "base_language": "i give"
+    "base_language": "I give"
   },
   "dopustite": {
     "base_language": "allow"
@@ -5025,7 +4962,7 @@
     "base_language": "crazy"
   },
   "izgledam": {
-    "base_language": "i look"
+    "base_language": "I look"
   },
   "mojom": {
     "base_language": "mine"
@@ -5040,13 +4977,10 @@
     "base_language": "lights"
   },
   "dođem": {
-    "base_language": "i'm coming"
+    "base_language": "I'm coming"
   },
   "zaboravila": {
     "base_language": "forgot"
-  },
-  "mesto": {
-    "base_language": "place"
   },
   "prodati": {
     "base_language": "sell"
@@ -5058,10 +4992,10 @@
     "base_language": "happiness"
   },
   "uradim": {
-    "base_language": "i do"
+    "base_language": "I do"
   },
   "vise": {
-    "base_language": "more"
+    "base_language": "they hang"
   },
   "stoga": {
     "base_language": "therefore"
@@ -5142,7 +5076,7 @@
     "base_language": "the rest"
   },
   "dobijem": {
-    "base_language": "i get it"
+    "base_language": "I get it"
   },
   "tatu": {
     "base_language": "dad"
@@ -5280,7 +5214,7 @@
     "base_language": "army"
   },
   "udarac": {
-    "base_language": "striker"
+    "base_language": "blow; hit"
   },
   "pokret": {
     "base_language": "movement"
@@ -5294,17 +5228,11 @@
   "posljednje": {
     "base_language": "the last"
   },
-  "posle": {
-    "base_language": "after"
-  },
   "pukovniče": {
     "base_language": "colonel"
   },
   "dođeš": {
     "base_language": "you come"
-  },
-  "hteo": {
-    "base_language": "wanted"
   },
   "tad": {
     "base_language": "then"
@@ -5364,7 +5292,7 @@
     "base_language": "find it"
   },
   "razmišljam": {
-    "base_language": "i'm thinking"
+    "base_language": "I'm thinking"
   },
   "rečeno": {
     "base_language": "said"
@@ -5394,7 +5322,7 @@
     "base_language": "changed"
   },
   "držim": {
-    "base_language": "i hold"
+    "base_language": "I hold"
   },
   "popis": {
     "base_language": "list"
@@ -5418,7 +5346,7 @@
     "base_language": "of the future"
   },
   "nosim": {
-    "base_language": "i wear"
+    "base_language": "I wear"
   },
   "zločin": {
     "base_language": "crime"
@@ -5431,9 +5359,6 @@
   },
   "razumijete": {
     "base_language": "you understand"
-  },
-  "znas": {
-    "base_language": "you know"
   },
   "sjećate": {
     "base_language": "you remember"
@@ -5457,7 +5382,7 @@
     "base_language": "you hear"
   },
   "pol": {
-    "base_language": "gender"
+    "base_language": "pole; half"
   },
   "nesreća": {
     "base_language": "accident"
@@ -5496,16 +5421,13 @@
     "base_language": "species"
   },
   "brinem": {
-    "base_language": "i worry"
-  },
-  "tačno": {
-    "base_language": "exactly"
+    "base_language": "I worry"
   },
   "prošla": {
     "base_language": "passed"
   },
   "vodim": {
-    "base_language": "i lead"
+    "base_language": "I lead"
   },
   "odluku": {
     "base_language": "the decision"
@@ -5523,7 +5445,7 @@
     "base_language": "tried"
   },
   "znaci": {
-    "base_language": "means"
+    "base_language": "signs"
   },
   "djed": {
     "base_language": "grandfather"
@@ -5576,9 +5498,6 @@
   "tajni": {
     "base_language": "secret"
   },
-  "verujem": {
-    "base_language": "i believe"
-  },
   "pijan": {
     "base_language": "drunk"
   },
@@ -5625,7 +5544,7 @@
     "base_language": "sit"
   },
   "kasnim": {
-    "base_language": "i'm late"
+    "base_language": "I'm late"
   },
   "sudu": {
     "base_language": "to the court"
@@ -5727,7 +5646,7 @@
     "base_language": "calls"
   },
   "razgovaram": {
-    "base_language": "i'm talking"
+    "base_language": "I'm talking"
   },
   "vruće": {
     "base_language": "hot"
@@ -5742,7 +5661,7 @@
     "base_language": "they are waiting"
   },
   "obožavam": {
-    "base_language": "i love it"
+    "base_language": "I love it"
   },
   "situaciju": {
     "base_language": "the situation"
@@ -5751,7 +5670,7 @@
     "base_language": "the first"
   },
   "svoga": {
-    "base_language": "of his own"
+    "base_language": "one's own"
   },
   "odnos": {
     "base_language": "relationship"
@@ -5844,7 +5763,7 @@
     "base_language": "one"
   },
   "love": {
-    "base_language": "hunting"
+    "base_language": "they hunt; money"
   },
   "djeluje": {
     "base_language": "it works"
@@ -5853,13 +5772,13 @@
     "base_language": "found"
   },
   "rekoh": {
-    "base_language": "i said"
+    "base_language": "I said"
   },
   "pokazat": {
     "base_language": "show"
   },
   "napravim": {
-    "base_language": "i do"
+    "base_language": "I do"
   },
   "braku": {
     "base_language": "marriage"
@@ -5895,7 +5814,7 @@
     "base_language": "finished"
   },
   "veličanstvo": {
-    "base_language": "splendor"
+    "base_language": "majesty; splendour"
   },
   "pucao": {
     "base_language": "shot"
@@ -5945,9 +5864,6 @@
   "dvaput": {
     "base_language": "twice"
   },
-  "če": {
-    "base_language": "what"
-  },
   "poruke": {
     "base_language": "messages"
   },
@@ -5955,13 +5871,13 @@
     "base_language": "one"
   },
   "slušam": {
-    "base_language": "i'm listening"
+    "base_language": "I'm listening"
   },
   "nosio": {
     "base_language": "wore"
   },
   "lovu": {
-    "base_language": "i'm hunting"
+    "base_language": "hunt; money"
   },
   "zgrade": {
     "base_language": "buildings"
@@ -5994,7 +5910,7 @@
     "base_language": "lasts"
   },
   "ču": {
-    "base_language": "i will hear"
+    "base_language": "heard"
   },
   "meta": {
     "base_language": "target"
@@ -6022,9 +5938,6 @@
   },
   "oprostiti": {
     "base_language": "forgive"
-  },
-  "reči": {
-    "base_language": "say"
   },
   "potez": {
     "base_language": "move"
@@ -6063,7 +5976,7 @@
     "base_language": "million"
   },
   "učinim": {
-    "base_language": "i do"
+    "base_language": "I do"
   },
   "slijedi": {
     "base_language": "follows"
@@ -6075,7 +5988,7 @@
     "base_language": "the keys"
   },
   "gori": {
-    "base_language": "worse"
+    "base_language": "burns; worse"
   },
   "tišina": {
     "base_language": "stillness"
@@ -6132,7 +6045,7 @@
     "base_language": "old"
   },
   "razmišljati": {
-    "base_language": "meditate"
+    "base_language": "think; consider"
   },
   "položaj": {
     "base_language": "position"
@@ -6141,7 +6054,7 @@
     "base_language": "hears"
   },
   "kompa": {
-    "base_language": "comp"
+    "base_language": "buddy; computer"
   },
   "mijenja": {
     "base_language": "changes"
@@ -6260,9 +6173,6 @@
   "osjećati": {
     "base_language": "feel"
   },
-  "čoveče": {
-    "base_language": "man"
-  },
   "pridružiti": {
     "base_language": "to join"
   },
@@ -6287,9 +6197,6 @@
   "trenutka": {
     "base_language": "moment"
   },
-  "takođe": {
-    "base_language": "also"
-  },
   "zadnjih": {
     "base_language": "the last ones"
   },
@@ -6300,7 +6207,7 @@
     "base_language": "ray"
   },
   "šalim": {
-    "base_language": "i'm kidding"
+    "base_language": "I'm kidding"
   },
   "nevolje": {
     "base_language": "trouble"
@@ -6384,7 +6291,7 @@
     "base_language": "attention"
   },
   "žalim": {
-    "base_language": "i regret"
+    "base_language": "I regret"
   },
   "generale": {
     "base_language": "general"
@@ -6433,9 +6340,6 @@
   },
   "uradiš": {
     "base_language": "you do"
-  },
-  "nista": {
-    "base_language": "nothing"
   },
   "razumio": {
     "base_language": "understood"
@@ -6507,7 +6411,7 @@
     "base_language": "prevent"
   },
   "dugujem": {
-    "base_language": "i owe"
+    "base_language": "I owe"
   },
   "snaga": {
     "base_language": "force"
@@ -6538,9 +6442,6 @@
   },
   "izvukao": {
     "base_language": "pulled out"
-  },
-  "vjerovatno": {
-    "base_language": "probably"
   },
   "bomba": {
     "base_language": "bomb"
@@ -6600,7 +6501,7 @@
     "base_language": "cute"
   },
   "pisati": {
-    "base_language": "piss"
+    "base_language": "write"
   },
   "tragove": {
     "base_language": "traces"
@@ -6716,9 +6617,6 @@
   "duše": {
     "base_language": "souls"
   },
-  "dve": {
-    "base_language": "two"
-  },
   "najgore": {
     "base_language": "worst"
   },
@@ -6824,17 +6722,11 @@
   "vozio": {
     "base_language": "drove"
   },
-  "verovatno": {
-    "base_language": "probably"
-  },
   "poštovanje": {
     "base_language": "respect"
   },
   "vozilo": {
     "base_language": "vehicle"
-  },
-  "deo": {
-    "base_language": "part"
   },
   "napravit": {
     "base_language": "make"
@@ -6886,9 +6778,6 @@
   },
   "pogriješio": {
     "base_language": "made a mistake"
-  },
-  "samnom": {
-    "base_language": "with me"
   },
   "vrhu": {
     "base_language": "the top"
@@ -6987,7 +6876,7 @@
     "base_language": "honorable"
   },
   "uzmem": {
-    "base_language": "i take it"
+    "base_language": "I take it"
   },
   "velikom": {
     "base_language": "big"
@@ -7023,7 +6912,7 @@
     "base_language": "you are coming"
   },
   "los": {
-    "base_language": "bad"
+    "base_language": "moose; elk"
   },
   "opasan": {
     "base_language": "dangerous"
@@ -7035,10 +6924,10 @@
     "base_language": "they become"
   },
   "vau": {
-    "base_language": "woof"
+    "base_language": "wow; woof"
   },
   "nađe": {
-    "base_language": "found"
+    "base_language": "finds; found"
   },
   "poseban": {
     "base_language": "special"
@@ -7119,19 +7008,13 @@
     "base_language": "investigation"
   },
   "ubijem": {
-    "base_language": "i kill"
+    "base_language": "I kill"
   },
   "gledala": {
     "base_language": "watched"
   },
   "roditelje": {
     "base_language": "parents"
-  },
-  "moze": {
-    "base_language": "he can"
-  },
-  "ijudi": {
-    "base_language": "people"
   },
   "rak": {
     "base_language": "cancer"
@@ -7158,7 +7041,7 @@
     "base_language": "meanwhile"
   },
   "sviđaš": {
-    "base_language": "i like you"
+    "base_language": "you are appealing"
   },
   "pacijent": {
     "base_language": "patient"
@@ -7189,9 +7072,6 @@
   },
   "tomu": {
     "base_language": "to that"
-  },
-  "dete": {
-    "base_language": "child"
   },
   "fantastično": {
     "base_language": "fantastic"
@@ -7224,7 +7104,7 @@
     "base_language": "operations"
   },
   "čista": {
-    "base_language": "cyst"
+    "base_language": "clean"
   },
   "slobodu": {
     "base_language": "freedom"
@@ -7239,7 +7119,7 @@
     "base_language": "wait"
   },
   "pogledam": {
-    "base_language": "i look"
+    "base_language": "I look"
   },
   "zadrži": {
     "base_language": "keep"
@@ -7266,7 +7146,7 @@
     "base_language": "fair"
   },
   "predlažem": {
-    "base_language": "i suggest"
+    "base_language": "I suggest"
   },
   "pogodio": {
     "base_language": "guessed"
@@ -7308,7 +7188,7 @@
     "base_language": "from within"
   },
   "nek": {
-    "base_language": "some"
+    "base_language": "let"
   },
   "vjetar": {
     "base_language": "wind"
@@ -7326,7 +7206,7 @@
     "base_language": "sky"
   },
   "carter": {
-    "base_language": "charter"
+    "base_language": "Carter"
   },
   "daš": {
     "base_language": "you give"
@@ -7350,7 +7230,7 @@
     "base_language": "instant"
   },
   "pravim": {
-    "base_language": "i'm making"
+    "base_language": "I'm making"
   },
   "čujemo": {
     "base_language": "we hear"
@@ -7367,9 +7247,6 @@
   "dosje": {
     "base_language": "file"
   },
-  "razumem": {
-    "base_language": "i understand"
-  },
   "ukoliko": {
     "base_language": "if"
   },
@@ -7377,7 +7254,7 @@
     "base_language": "bridge"
   },
   "rješenje": {
-    "base_language": "decision"
+    "base_language": "solution; decision"
   },
   "krenuli": {
     "base_language": "set off"
@@ -7434,16 +7311,13 @@
     "base_language": "fish"
   },
   "jo": {
-    "base_language": "yes"
+    "base_language": "Jo"
   },
   "kriste": {
     "base_language": "christ"
   },
   "izabrao": {
     "base_language": "chose"
-  },
-  "ceš": {
-    "base_language": "you will"
   },
   "leži": {
     "base_language": "lies down"
@@ -7464,7 +7338,7 @@
     "base_language": "put"
   },
   "očekujem": {
-    "base_language": "i expect"
+    "base_language": "I expect"
   },
   "promjene": {
     "base_language": "changes"
@@ -7524,7 +7398,7 @@
     "base_language": "driver"
   },
   "agente": {
-    "base_language": "agents"
+    "base_language": "agent"
   },
   "pokušavamo": {
     "base_language": "we are trying"
@@ -7572,7 +7446,7 @@
     "base_language": "lead"
   },
   "ostanem": {
-    "base_language": "i stay"
+    "base_language": "I stay"
   },
   "zahtjev": {
     "base_language": "claim"
@@ -7596,7 +7470,7 @@
     "base_language": "hers"
   },
   "pokažem": {
-    "base_language": "i show"
+    "base_language": "I show"
   },
   "selo": {
     "base_language": "village"
@@ -7633,9 +7507,6 @@
   },
   "mrtvih": {
     "base_language": "the dead"
-  },
-  "uopšte": {
-    "base_language": "at all"
   },
   "sakriti": {
     "base_language": "hide"
@@ -7682,14 +7553,11 @@
   "bića": {
     "base_language": "beings"
   },
-  "svo": {
-    "base_language": "everything"
-  },
   "prokleta": {
     "base_language": "cursed"
   },
   "krivim": {
-    "base_language": "i blame"
+    "base_language": "I blame"
   },
   "rane": {
     "base_language": "wounds"
@@ -7727,9 +7595,6 @@
   "zgradu": {
     "base_language": "the building"
   },
-  "videla": {
-    "base_language": "she saw"
-  },
   "narednik": {
     "base_language": "sergeant"
   },
@@ -7762,9 +7627,6 @@
   },
   "razgovora": {
     "base_language": "conversations"
-  },
-  "napolje": {
-    "base_language": "out"
   },
   "javio": {
     "base_language": "reported"
@@ -7902,10 +7764,10 @@
     "base_language": "make"
   },
   "spavam": {
-    "base_language": "i'm sleeping"
+    "base_language": "I'm sleeping"
   },
   "kurvin": {
-    "base_language": "whore"
+    "base_language": "whore's"
   },
   "gad": {
     "base_language": "bastard"
@@ -7917,7 +7779,7 @@
     "base_language": "they talk"
   },
   "vozim": {
-    "base_language": "i drive"
+    "base_language": "I drive"
   },
   "novim": {
     "base_language": "new"
@@ -7956,7 +7818,7 @@
     "base_language": "in the past"
   },
   "završim": {
-    "base_language": "i finish"
+    "base_language": "I finish"
   },
   "jeo": {
     "base_language": "ate"
@@ -8070,7 +7932,7 @@
     "base_language": "she lived"
   },
   "posto": {
-    "base_language": "since"
+    "base_language": "percent"
   },
   "jedanput": {
     "base_language": "once"
@@ -8142,7 +8004,7 @@
     "base_language": "expression"
   },
   "ted": {
-    "base_language": "week"
+    "base_language": "Ted"
   },
   "djeda": {
     "base_language": "grandfather"
@@ -8169,16 +8031,13 @@
     "base_language": "army"
   },
   "igram": {
-    "base_language": "i'm playing"
+    "base_language": "I'm playing"
   },
   "dane": {
     "base_language": "days"
   },
   "slučajnost": {
     "base_language": "coincidence"
-  },
-  "pomoci": {
-    "base_language": "help"
   },
   "vjenčanja": {
     "base_language": "weddings"
@@ -8187,7 +8046,7 @@
     "base_language": "the movie"
   },
   "kužim": {
-    "base_language": "i'm at home"
+    "base_language": "I understand"
   },
   "zovete": {
     "base_language": "you call"
@@ -8258,9 +8117,6 @@
   "miran": {
     "base_language": "quiet"
   },
-  "voleo": {
-    "base_language": "loved"
-  },
   "kupi": {
     "base_language": "buy"
   },
@@ -8275,9 +8131,6 @@
   },
   "malom": {
     "base_language": "small"
-  },
-  "mac": {
-    "base_language": "sword"
   },
   "pomogla": {
     "base_language": "helped"
@@ -8340,7 +8193,7 @@
     "base_language": "start"
   },
   "muškaraca": {
-    "base_language": "tomboy"
+    "base_language": "men"
   },
   "razmišljaš": {
     "base_language": "you think"
@@ -8378,9 +8231,6 @@
   "stoje": {
     "base_language": "they stand"
   },
-  "veče": {
-    "base_language": "evening"
-  },
   "saznala": {
     "base_language": "found out"
   },
@@ -8397,7 +8247,7 @@
     "base_language": "toilet"
   },
   "čas": {
-    "base_language": "hour"
+    "base_language": "moment; time; hour"
   },
   "znanje": {
     "base_language": "knowledge"
@@ -8439,7 +8289,7 @@
     "base_language": "mother"
   },
   "priznajem": {
-    "base_language": "i admit it"
+    "base_language": "I admit it"
   },
   "oblik": {
     "base_language": "form"
@@ -8507,9 +8357,6 @@
   "dvadeset": {
     "base_language": "twenty"
   },
-  "videti": {
-    "base_language": "to see"
-  },
   "nose": {
     "base_language": "they carry"
   },
@@ -8518,9 +8365,6 @@
   },
   "rijeke": {
     "base_language": "rivers"
-  },
-  "ces": {
-    "base_language": "you will"
   },
   "maknuti": {
     "base_language": "remove"
@@ -8594,8 +8438,8 @@
   "želja": {
     "base_language": "desire"
   },
-  "obećajem": {
-    "base_language": "i promise"
+  "obećam": {
+    "base_language": "I promise"
   },
   "pratio": {
     "base_language": "followed"
@@ -8619,7 +8463,7 @@
     "base_language": "horses"
   },
   "umrem": {
-    "base_language": "i die"
+    "base_language": "I die"
   },
   "prijevoz": {
     "base_language": "transport"
@@ -8663,9 +8507,6 @@
   "dopustio": {
     "base_language": "allowed"
   },
-  "cekaj": {
-    "base_language": "wait"
-  },
   "prijaviti": {
     "base_language": "to report"
   },
@@ -8694,7 +8535,7 @@
     "base_language": "brings"
   },
   "uzimam": {
-    "base_language": "i take"
+    "base_language": "I take"
   },
   "profesore": {
     "base_language": "professor"
@@ -8745,7 +8586,7 @@
     "base_language": "waited"
   },
   "pijem": {
-    "base_language": "i drink"
+    "base_language": "I drink"
   },
   "direktor": {
     "base_language": "director"
@@ -8757,7 +8598,7 @@
     "base_language": "fool"
   },
   "smiju": {
-    "base_language": "they laugh"
+    "base_language": "they may; they laugh"
   },
   "smisliti": {
     "base_language": "come up with"
@@ -8802,7 +8643,7 @@
     "base_language": "medium"
   },
   "donijet": {
-    "base_language": "brought"
+    "base_language": "bring"
   },
   "puni": {
     "base_language": "full"
@@ -8835,7 +8676,7 @@
     "base_language": "disappeared"
   },
   "gade": {
-    "base_language": "they suck"
+    "base_language": "bastard; disgust"
   },
   "kamp": {
     "base_language": "camp"
@@ -8856,7 +8697,7 @@
     "base_language": "cry"
   },
   "počinjem": {
-    "base_language": "i'm starting"
+    "base_language": "I'm starting"
   },
   "točka": {
     "base_language": "dot"
@@ -8913,7 +8754,7 @@
     "base_language": "bastard"
   },
   "doslovno": {
-    "base_language": "verbatim"
+    "base_language": "literally; verbatim"
   },
   "članak": {
     "base_language": "article"
@@ -8994,16 +8835,13 @@
     "base_language": "earn"
   },
   "umirem": {
-    "base_language": "i'm dying"
+    "base_language": "I'm dying"
   },
   "dobrim": {
     "base_language": "good"
   },
   "energiju": {
     "base_language": "energy"
-  },
-  "neznam": {
-    "base_language": "i don't know"
   },
   "ljeto": {
     "base_language": "summer"
@@ -9056,9 +8894,6 @@
   "aviona": {
     "base_language": "airplane"
   },
-  "devojka": {
-    "base_language": "a girl"
-  },
   "nevin": {
     "base_language": "innocent"
   },
@@ -9087,13 +8922,13 @@
     "base_language": "brought"
   },
   "jedem": {
-    "base_language": "i eat"
+    "base_language": "I eat"
   },
   "princ": {
     "base_language": "prince"
   },
   "sviđaju": {
-    "base_language": "like them"
+    "base_language": "are appealing"
   },
   "razgovara": {
     "base_language": "talks"
@@ -9138,7 +8973,7 @@
     "base_language": "believe"
   },
   "jamie": {
-    "base_language": "pits"
+    "base_language": "Jamie"
   },
   "poslušaj": {
     "base_language": "listen"
@@ -9157,9 +8992,6 @@
   },
   "knjizi": {
     "base_language": "the book"
-  },
-  "osećam": {
-    "base_language": "i feel"
   },
   "stao": {
     "base_language": "stopped"
@@ -9258,7 +9090,7 @@
     "base_language": "coach"
   },
   "ponavljam": {
-    "base_language": "i repeat"
+    "base_language": "I repeat"
   },
   "priznao": {
     "base_language": "admitted"
@@ -9287,9 +9119,6 @@
   "utakmicu": {
     "base_language": "match"
   },
-  "htela": {
-    "base_language": "wanted"
-  },
   "takvi": {
     "base_language": "such"
   },
@@ -9306,13 +9135,13 @@
     "base_language": "roads"
   },
   "minut": {
-    "base_language": "a minute"
+    "base_language": "pass; elapse"
   },
   "djevojkom": {
     "base_language": "a girl"
   },
   "noga": {
-    "base_language": "foot"
+    "base_language": "leg; foot"
   },
   "volje": {
     "base_language": "will"
@@ -9339,7 +9168,7 @@
     "base_language": "hair"
   },
   "stav": {
-    "base_language": "paragraph"
+    "base_language": "attitude; stance"
   },
   "zraku": {
     "base_language": "the air"
@@ -9411,7 +9240,7 @@
     "base_language": "the bank"
   },
   "br": {
-    "base_language": "no"
+    "base_language": "number (abbr.)"
   },
   "uživaj": {
     "base_language": "enjoy it"
@@ -9464,9 +9293,6 @@
   "slijedeći": {
     "base_language": "following"
   },
-  "želeo": {
-    "base_language": "wanted"
-  },
   "podršku": {
     "base_language": "support"
   },
@@ -9477,13 +9303,10 @@
     "base_language": "car"
   },
   "doc": {
-    "base_language": "assoc"
+    "base_language": "docent; Doc"
   },
   "pariz": {
     "base_language": "paris"
-  },
-  "desiti": {
-    "base_language": "happen"
   },
   "zezaš": {
     "base_language": "you're kidding"
@@ -9648,16 +9471,13 @@
     "base_language": "they find"
   },
   "činim": {
-    "base_language": "i do"
+    "base_language": "I do"
   },
   "sendvič": {
     "base_language": "sandwich"
   },
   "bogat": {
     "base_language": "rich"
-  },
-  "porodica": {
-    "base_language": "family"
   },
   "tragova": {
     "base_language": "traces"
@@ -9687,7 +9507,7 @@
     "base_language": "after all"
   },
   "štogod": {
-    "base_language": "whatever"
+    "base_language": "something"
   },
   "pobrinut": {
     "base_language": "taken care of"
@@ -9699,7 +9519,7 @@
     "base_language": "to last"
   },
   "liz": {
-    "base_language": "lick"
+    "base_language": "Liz"
   },
   "odrasla": {
     "base_language": "adult"
@@ -9726,10 +9546,10 @@
     "base_language": "fingers"
   },
   "jay": {
-    "base_language": "yay"
+    "base_language": "Jay"
   },
   "želje": {
-    "base_language": "greens"
+    "base_language": "wishes"
   },
   "inspektor": {
     "base_language": "inspector"
@@ -9764,12 +9584,6 @@
   "sastanku": {
     "base_language": "meeting"
   },
-  "čoveka": {
-    "base_language": "man"
-  },
-  "cete": {
-    "base_language": "you will"
-  },
   "prigovor": {
     "base_language": "complaint"
   },
@@ -9789,7 +9603,7 @@
     "base_language": "it smells"
   },
   "smatram": {
-    "base_language": "i think"
+    "base_language": "I think"
   },
   "klinci": {
     "base_language": "kids"
@@ -9807,7 +9621,7 @@
     "base_language": "kidnapped"
   },
   "stižem": {
-    "base_language": "i'm arriving"
+    "base_language": "I'm arriving"
   },
   "oženiti": {
     "base_language": "marry"
@@ -10020,16 +9834,13 @@
     "base_language": "refuse"
   },
   "pišem": {
-    "base_language": "i'm writing"
+    "base_language": "I'm writing"
   },
   "uči": {
-    "base_language": "enter"
+    "base_language": "learns; teaches; learn!"
   },
   "okrenuo": {
     "base_language": "turned"
-  },
-  "ajmo": {
-    "base_language": "let's go"
   },
   "poznati": {
     "base_language": "known"
@@ -10175,9 +9986,6 @@
   "otoku": {
     "base_language": "the island"
   },
-  "negde": {
-    "base_language": "somewhere"
-  },
   "granica": {
     "base_language": "border"
   },
@@ -10203,7 +10011,7 @@
     "base_language": "driving"
   },
   "liči": {
-    "base_language": "looks like"
+    "base_language": "paints; whitewashes"
   },
   "štiti": {
     "base_language": "protects"
@@ -10263,7 +10071,7 @@
     "base_language": "until"
   },
   "lažem": {
-    "base_language": "i'm lying"
+    "base_language": "I'm lying"
   },
   "reče": {
     "base_language": "he said"
@@ -10275,7 +10083,7 @@
     "base_language": "lend"
   },
   "kime": {
-    "base_language": "to whom"
+    "base_language": "with whom"
   },
   "haljina": {
     "base_language": "dress"
@@ -10332,7 +10140,7 @@
     "base_language": "secondary"
   },
   "kučkin": {
-    "base_language": "bitch"
+    "base_language": "bitch’s"
   },
   "košta": {
     "base_language": "it costs"
@@ -10359,7 +10167,7 @@
     "base_language": "make"
   },
   "koristim": {
-    "base_language": "i use"
+    "base_language": "I use"
   },
   "postići": {
     "base_language": "achieve"
@@ -10415,7 +10223,7 @@
   "promjenu": {
     "base_language": "change"
   },
-  "ceo": {
+  "cijel": {
     "base_language": "whole"
   },
   "takvih": {
@@ -10439,9 +10247,6 @@
   "bogovi": {
     "base_language": "the gods"
   },
-  "videli": {
-    "base_language": "saw"
-  },
   "nadajmo": {
     "base_language": "let's hope"
   },
@@ -10461,10 +10266,7 @@
     "base_language": "damned"
   },
   "objasnim": {
-    "base_language": "i explain"
-  },
-  "nedelje": {
-    "base_language": "sunday"
+    "base_language": "I explain"
   },
   "svakoj": {
     "base_language": "to each"
@@ -10491,7 +10293,7 @@
     "base_language": "in advance"
   },
   "trudim": {
-    "base_language": "i'm trying"
+    "base_language": "I'm trying"
   },
   "sustava": {
     "base_language": "system"
@@ -10509,7 +10311,7 @@
     "base_language": "they show"
   },
   "ajme": {
-    "base_language": "come on"
+    "base_language": "oh!; alas!"
   },
   "bogati": {
     "base_language": "the rich"
@@ -10680,7 +10482,7 @@
     "base_language": "color"
   },
   "biću": {
-    "base_language": "i will be"
+    "base_language": "being; creature"
   },
   "odveli": {
     "base_language": "took away"
@@ -10695,7 +10497,7 @@
     "base_language": "add"
   },
   "nedostaješ": {
-    "base_language": "i miss you"
+    "base_language": "I miss you"
   },
   "pobjedu": {
     "base_language": "victory"
@@ -10710,7 +10512,7 @@
     "base_language": "form"
   },
   "bruce": {
-    "base_language": "freshman"
+    "base_language": "Bruce"
   },
   "pad": {
     "base_language": "drop"
@@ -10779,7 +10581,7 @@
     "base_language": "hers"
   },
   "stavim": {
-    "base_language": "i put"
+    "base_language": "I put"
   },
   "pratite": {
     "base_language": "follow"
@@ -10805,14 +10607,8 @@
   "muka": {
     "base_language": "torment"
   },
-  "reč": {
-    "base_language": "word"
-  },
   "zamoliti": {
     "base_language": "ask"
-  },
-  "čemo": {
-    "base_language": "we will"
   },
   "iskoristio": {
     "base_language": "used"
@@ -10877,9 +10673,6 @@
   "planirao": {
     "base_language": "planned"
   },
-  "covjece": {
-    "base_language": "man"
-  },
   "poljubiti": {
     "base_language": "kiss"
   },
@@ -10896,7 +10689,7 @@
     "base_language": "prints"
   },
   "plaćam": {
-    "base_language": "i pay"
+    "base_language": "I pay"
   },
   "osobni": {
     "base_language": "personal"
@@ -10929,7 +10722,7 @@
     "base_language": "hurt"
   },
   "čitam": {
-    "base_language": "i'm reading"
+    "base_language": "I'm reading"
   },
   "krvarenje": {
     "base_language": "bleeding"
@@ -10968,7 +10761,7 @@
     "base_language": "put"
   },
   "pratim": {
-    "base_language": "i follow"
+    "base_language": "I follow"
   },
   "nadu": {
     "base_language": "hope"
@@ -10980,7 +10773,7 @@
     "base_language": "photo"
   },
   "saznam": {
-    "base_language": "i find out"
+    "base_language": "I find out"
   },
   "službe": {
     "base_language": "services"
@@ -11043,7 +10836,7 @@
     "base_language": "two of them"
   },
   "svome": {
-    "base_language": "to his own"
+    "base_language": "one's own"
   },
   "sposobnosti": {
     "base_language": "abilities"
@@ -11052,7 +10845,7 @@
     "base_language": "ordered"
   },
   "izlazim": {
-    "base_language": "i'm going out"
+    "base_language": "I'm going out"
   },
   "dođete": {
     "base_language": "you come"
@@ -11068,9 +10861,6 @@
   },
   "slab": {
     "base_language": "weak"
-  },
-  "prevod": {
-    "base_language": "translation"
   },
   "poslovni": {
     "base_language": "business"
@@ -11088,7 +10878,7 @@
     "base_language": "creature"
   },
   "jess": {
-    "base_language": "yes"
+    "base_language": "Jess"
   },
   "plače": {
     "base_language": "is crying"
@@ -11112,7 +10902,7 @@
     "base_language": "material"
   },
   "znat": {
-    "base_language": "known"
+    "base_language": "know"
   },
   "dah": {
     "base_language": "breath"
@@ -11151,13 +10941,13 @@
     "base_language": "promised"
   },
   "leta": {
-    "base_language": "summer"
+    "base_language": "flight"
   },
   "iznenađenja": {
     "base_language": "surprises"
   },
   "uvjeravam": {
-    "base_language": "i assure you"
+    "base_language": "I assure you"
   },
   "rodila": {
     "base_language": "gave birth"
@@ -11208,7 +10998,7 @@
     "base_language": "to whom"
   },
   "ostajem": {
-    "base_language": "i'm staying"
+    "base_language": "I'm staying"
   },
   "mrtvo": {
     "base_language": "dead"
@@ -11217,7 +11007,7 @@
     "base_language": "nocturnal"
   },
   "skladište": {
-    "base_language": "stock"
+    "base_language": "warehouse; storage"
   },
   "dopada": {
     "base_language": "likes it"
@@ -11268,7 +11058,7 @@
     "base_language": "asshole"
   },
   "lova": {
-    "base_language": "hunting"
+    "base_language": "money; hunt"
   },
   "bijes": {
     "base_language": "anger"
@@ -11280,7 +11070,7 @@
     "base_language": "data"
   },
   "počet": {
-    "base_language": "beginning"
+    "base_language": "begin; begun"
   },
   "stvarnost": {
     "base_language": "reality"
@@ -11337,7 +11127,7 @@
     "base_language": "answered"
   },
   "angela": {
-    "base_language": "angel"
+    "base_language": "Angela"
   },
   "bavi": {
     "base_language": "deals with"
@@ -11370,7 +11160,7 @@
     "base_language": "level"
   },
   "stojim": {
-    "base_language": "i'm standing"
+    "base_language": "I'm standing"
   },
   "grupu": {
     "base_language": "group"
@@ -11382,7 +11172,7 @@
     "base_language": "of course"
   },
   "upoznam": {
-    "base_language": "i meet"
+    "base_language": "I meet"
   },
   "ponosna": {
     "base_language": "proud"
@@ -11462,9 +11252,6 @@
   "novčanik": {
     "base_language": "wallet"
   },
-  "naci": {
-    "base_language": "find"
-  },
   "fin": {
     "base_language": "exquisite"
   },
@@ -11529,7 +11316,7 @@
     "base_language": "cinema"
   },
   "pozvat": {
-    "base_language": "an invitation"
+    "base_language": "call; invite"
   },
   "vraćaj": {
     "base_language": "return it"
@@ -11550,7 +11337,7 @@
     "base_language": "relations"
   },
   "počnem": {
-    "base_language": "i'll start"
+    "base_language": "I'll start"
   },
   "nadala": {
     "base_language": "she hoped"
@@ -11565,16 +11352,13 @@
     "base_language": "control"
   },
   "sestri": {
-    "base_language": "sisters"
+    "base_language": "sister"
   },
   "potom": {
     "base_language": "then"
   },
   "vijestima": {
     "base_language": "news"
-  },
-  "nebi": {
-    "base_language": "i wouldn't"
   },
   "smislu": {
     "base_language": "meaning"
@@ -11634,7 +11418,7 @@
     "base_language": "played"
   },
   "postaji": {
-    "base_language": "becomes"
+    "base_language": "station"
   },
   "štetu": {
     "base_language": "damage"
@@ -11769,7 +11553,7 @@
     "base_language": "the streets"
   },
   "osjetila": {
-    "base_language": "the senses"
+    "base_language": "felt; sense organs"
   },
   "prljavi": {
     "base_language": "dirty"
@@ -11787,7 +11571,7 @@
     "base_language": "you use"
   },
   "pogodim": {
-    "base_language": "i guess"
+    "base_language": "I guess"
   },
   "prijem": {
     "base_language": "reception"
@@ -11809,9 +11593,6 @@
   },
   "položaju": {
     "base_language": "position"
-  },
-  "mesta": {
-    "base_language": "places"
   },
   "volja": {
     "base_language": "will"
@@ -11847,7 +11628,7 @@
     "base_language": "publish"
   },
   "sjedim": {
-    "base_language": "i'm sitting"
+    "base_language": "I'm sitting"
   },
   "uhvate": {
     "base_language": "they catch"
@@ -11856,7 +11637,7 @@
     "base_language": "studied"
   },
   "razmislim": {
-    "base_language": "i think"
+    "base_language": "I think"
   },
   "dolar": {
     "base_language": "dollar"
@@ -11883,7 +11664,7 @@
     "base_language": "this much"
   },
   "gubim": {
-    "base_language": "i'm losing"
+    "base_language": "I'm losing"
   },
   "časti": {
     "base_language": "of honor"
@@ -11898,7 +11679,7 @@
     "base_language": "aide"
   },
   "pozovem": {
-    "base_language": "i invite"
+    "base_language": "I invite"
   },
   "dvorištu": {
     "base_language": "yard"
@@ -11918,9 +11699,6 @@
   "družiti": {
     "base_language": "hang out"
   },
-  "zelis": {
-    "base_language": "you want"
-  },
   "razvod": {
     "base_language": "divorce"
   },
@@ -11938,9 +11716,6 @@
   },
   "drugome": {
     "base_language": "to another"
-  },
-  "poslednji": {
-    "base_language": "the last one"
   },
   "ogroman": {
     "base_language": "huge"
@@ -11965,9 +11740,6 @@
   },
   "podalje": {
     "base_language": "away"
-  },
-  "lmam": {
-    "base_language": "i have"
   },
   "osnovi": {
     "base_language": "basically"
@@ -12005,9 +11777,6 @@
   "bijele": {
     "base_language": "white"
   },
-  "hocu": {
-    "base_language": "i will"
-  },
   "postupak": {
     "base_language": "procedure"
   },
@@ -12015,10 +11784,7 @@
     "base_language": "blue"
   },
   "preklinjem": {
-    "base_language": "i'm begging you"
-  },
-  "telo": {
-    "base_language": "the body"
+    "base_language": "I'm begging you"
   },
   "saznamo": {
     "base_language": "we find out"
@@ -12099,7 +11865,7 @@
     "base_language": "clothes"
   },
   "kužiš": {
-    "base_language": "you are at home"
+    "base_language": "you understand"
   },
   "dobrom": {
     "base_language": "a good one"
@@ -12117,7 +11883,7 @@
     "base_language": "fought"
   },
   "pronađem": {
-    "base_language": "i find"
+    "base_language": "I find"
   },
   "crvene": {
     "base_language": "red"
@@ -12132,7 +11898,7 @@
     "base_language": "wrong"
   },
   "kolač": {
-    "base_language": "stake"
+    "base_language": "cake; pastry"
   },
   "otraga": {
     "base_language": "the back"
@@ -12222,7 +11988,7 @@
     "base_language": "detention"
   },
   "ostavim": {
-    "base_language": "i leave it"
+    "base_language": "I leave it"
   },
   "isključiti": {
     "base_language": "turn off"
@@ -12240,7 +12006,7 @@
     "base_language": "small ones"
   },
   "sv": {
-    "base_language": "st"
+    "base_language": "St. (abbr.)"
   },
   "obrane": {
     "base_language": "defense"
@@ -12250,9 +12016,6 @@
   },
   "bratom": {
     "base_language": "brother"
-  },
-  "napolju": {
-    "base_language": "outside"
   },
   "kladiti": {
     "base_language": "to bet"
@@ -12311,9 +12074,6 @@
   "ušuti": {
     "base_language": "shut up"
   },
-  "devojke": {
-    "base_language": "girls"
-  },
   "zabaviti": {
     "base_language": "entertain"
   },
@@ -12327,7 +12087,7 @@
     "base_language": "once"
   },
   "uživam": {
-    "base_language": "i enjoy it"
+    "base_language": "I enjoy it"
   },
   "dolazak": {
     "base_language": "arrival"
@@ -12414,7 +12174,7 @@
     "base_language": "healthy"
   },
   "izađem": {
-    "base_language": "i go out"
+    "base_language": "I go out"
   },
   "nervozna": {
     "base_language": "nervous"
@@ -12456,7 +12216,7 @@
     "base_language": "relax"
   },
   "sad-a": {
-    "base_language": "now"
+    "base_language": "USA"
   },
   "odbija": {
     "base_language": "refuses"
@@ -12468,16 +12228,10 @@
     "base_language": "shirt"
   },
   "donesem": {
-    "base_language": "i bring"
-  },
-  "snimak": {
-    "base_language": "recording"
+    "base_language": "I bring"
   },
   "sile": {
     "base_language": "forces"
-  },
-  "srećan": {
-    "base_language": "happy"
   },
   "eksplozije": {
     "base_language": "explosions"
@@ -12501,7 +12255,7 @@
     "base_language": "mouth"
   },
   "kuca": {
-    "base_language": "house"
+    "base_language": "knocks; beats"
   },
   "zadržao": {
     "base_language": "kept"
@@ -12566,9 +12320,6 @@
   "ludost": {
     "base_language": "craziness"
   },
-  "mestu": {
-    "base_language": "place"
-  },
   "jacka": {
     "base_language": "jack"
   },
@@ -12591,7 +12342,7 @@
     "base_language": "converted"
   },
   "kom": {
-    "base_language": "com"
+    "base_language": "to whom; which"
   },
   "izlazite": {
     "base_language": "you are going out"
@@ -12675,7 +12426,7 @@
     "base_language": "of the island"
   },
   "sviđam": {
-    "base_language": "i like it"
+    "base_language": "I am appealing"
   },
   "strašan": {
     "base_language": "terrible"
@@ -12729,7 +12480,7 @@
     "base_language": "of return"
   },
   "prekidam": {
-    "base_language": "i'm interrupting"
+    "base_language": "I'm interrupting"
   },
   "oslobodi": {
     "base_language": "release"
@@ -12774,7 +12525,7 @@
     "base_language": "adam"
   },
   "poštujem": {
-    "base_language": "i respect"
+    "base_language": "I respect"
   },
   "crnu": {
     "base_language": "black"
@@ -12842,9 +12593,6 @@
   "sjećanje": {
     "base_language": "memory"
   },
-  "sećaš": {
-    "base_language": "you remember"
-  },
   "isusa": {
     "base_language": "jesus"
   },
@@ -12867,7 +12615,7 @@
     "base_language": "extract"
   },
   "buraz": {
-    "base_language": "brother in law"
+    "base_language": "brother; mate"
   },
   "zanimljiv": {
     "base_language": "interesting"
@@ -12913,9 +12661,6 @@
   },
   "ponos": {
     "base_language": "pride"
-  },
-  "deca": {
-    "base_language": "children"
   },
   "treća": {
     "base_language": "the third"
@@ -12978,10 +12723,10 @@
     "base_language": "gangs"
   },
   "božje": {
-    "base_language": "god"
+    "base_language": "God’s; divine"
   },
   "pomislim": {
-    "base_language": "i think"
+    "base_language": "I think"
   },
   "upucati": {
     "base_language": "to shoot"
@@ -13029,7 +12774,7 @@
     "base_language": "enemies"
   },
   "šaljem": {
-    "base_language": "i send"
+    "base_language": "I send"
   },
   "trčati": {
     "base_language": "run"
@@ -13074,7 +12819,7 @@
     "base_language": "at speed"
   },
   "izgubim": {
-    "base_language": "i lose"
+    "base_language": "I lose"
   },
   "uobičajeno": {
     "base_language": "commonly"
@@ -13139,9 +12884,6 @@
   "šalicu": {
     "base_language": "a cup"
   },
-  "sedi": {
-    "base_language": "sit down"
-  },
   "planete": {
     "base_language": "planets"
   },
@@ -13164,7 +12906,7 @@
     "base_language": "the best"
   },
   "prihvaćam": {
-    "base_language": "i accept"
+    "base_language": "I accept"
   },
   "tekst": {
     "base_language": "text"
@@ -13182,7 +12924,7 @@
     "base_language": "real"
   },
   "smetam": {
-    "base_language": "i'm bothering you"
+    "base_language": "I'm bothering you"
   },
   "lisice": {
     "base_language": "handcuffs"
@@ -13209,7 +12951,7 @@
     "base_language": "knew"
   },
   "nazovem": {
-    "base_language": "i call"
+    "base_language": "I call"
   },
   "nesreći": {
     "base_language": "accidents"
@@ -13231,9 +12973,6 @@
   },
   "kamiona": {
     "base_language": "truck"
-  },
-  "napred": {
-    "base_language": "forward"
   },
   "žalost": {
     "base_language": "mourning"
@@ -13284,7 +13023,7 @@
     "base_language": "looking for"
   },
   "budimo": {
-    "base_language": "let's be"
+    "base_language": "let us be; we wake"
   },
   "rusi": {
     "base_language": "russian"
@@ -13308,13 +13047,13 @@
     "base_language": "answer"
   },
   "pomažem": {
-    "base_language": "i help"
+    "base_language": "I help"
   },
   "roba": {
     "base_language": "goods"
   },
   "odoh": {
-    "base_language": "i leave"
+    "base_language": "I leave"
   },
   "tjednima": {
     "base_language": "for weeks"
@@ -13324,9 +13063,6 @@
   },
   "gubitka": {
     "base_language": "loss"
-  },
-  "shvatam": {
-    "base_language": "i understand"
   },
   "jadan": {
     "base_language": "poor"
@@ -13341,16 +13077,13 @@
     "base_language": "throw it away"
   },
   "gđe": {
-    "base_language": "where"
+    "base_language": "Mrs"
   },
   "planira": {
     "base_language": "plans"
   },
   "tjera": {
     "base_language": "forces"
-  },
-  "decu": {
-    "base_language": "children"
   },
   "dijeliti": {
     "base_language": "share"
@@ -13362,10 +13095,10 @@
     "base_language": "agree"
   },
   "čuvam": {
-    "base_language": "i keep"
+    "base_language": "I keep"
   },
   "gol": {
-    "base_language": "bare"
+    "base_language": "naked; goal"
   },
   "pobijedili": {
     "base_language": "won"
@@ -13380,7 +13113,7 @@
     "base_language": "move"
   },
   "uđem": {
-    "base_language": "i enter"
+    "base_language": "I enter"
   },
   "stranice": {
     "base_language": "pages"
@@ -13611,7 +13344,7 @@
     "base_language": "threw"
   },
   "rijeci": {
-    "base_language": "words"
+    "base_language": "river"
   },
   "posjetu": {
     "base_language": "visit"
@@ -13638,7 +13371,7 @@
     "base_language": "stranger"
   },
   "pustim": {
-    "base_language": "i let go"
+    "base_language": "I let go"
   },
   "francuske": {
     "base_language": "french"
@@ -13685,9 +13418,6 @@
   "kopiju": {
     "base_language": "a copy"
   },
-  "dа": {
-    "base_language": "that"
-  },
   "richarde": {
     "base_language": "richard"
   },
@@ -13701,7 +13431,7 @@
     "base_language": "cases"
   },
   "kupim": {
-    "base_language": "i buy"
+    "base_language": "I buy"
   },
   "anđela": {
     "base_language": "angel"
@@ -13714,9 +13444,6 @@
   },
   "ramena": {
     "base_language": "shoulders"
-  },
-  "g-dine": {
-    "base_language": "mr"
   },
   "ispitati": {
     "base_language": "examine"
@@ -13785,7 +13512,7 @@
     "base_language": "run away"
   },
   "zaboravim": {
-    "base_language": "i forget"
+    "base_language": "I forget"
   },
   "desna": {
     "base_language": "right"
@@ -13805,9 +13532,6 @@
   "razmišljanje": {
     "base_language": "reflections"
   },
-  "sećam": {
-    "base_language": "i remember"
-  },
   "vlast": {
     "base_language": "power"
   },
@@ -13816,9 +13540,6 @@
   },
   "pljačke": {
     "base_language": "robberies"
-  },
-  "radis": {
-    "base_language": "you work"
   },
   "broja": {
     "base_language": "number"
@@ -13830,19 +13551,16 @@
     "base_language": "position"
   },
   "pojas": {
-    "base_language": "girdle"
+    "base_language": "belt; zone"
   },
   "kaos": {
     "base_language": "chaos"
-  },
-  "gdin": {
-    "base_language": "mr"
   },
   "vrtu": {
     "base_language": "garden"
   },
   "namjeravam": {
-    "base_language": "i intend to"
+    "base_language": "I intend to"
   },
   "restorana": {
     "base_language": "restaurants"
@@ -13863,10 +13581,10 @@
     "base_language": "to the law"
   },
   "bille": {
-    "base_language": "was"
+    "base_language": "Bill"
   },
   "ručka": {
-    "base_language": "handle"
+    "base_language": "lunch; handle"
   },
   "pauzu": {
     "base_language": "a break"
@@ -13888,9 +13606,6 @@
   },
   "koristimo": {
     "base_language": "we use"
-  },
-  "moras": {
-    "base_language": "you have to"
   },
   "pogledajmo": {
     "base_language": "let's see"
@@ -13941,7 +13656,7 @@
     "base_language": "stay"
   },
   "priči": {
-    "base_language": "approach"
+    "base_language": "story"
   },
   "alane": {
     "base_language": "alan"
@@ -13979,9 +13694,6 @@
   "zahod": {
     "base_language": "toilet"
   },
-  "ldemo": {
-    "base_language": "let's go"
-  },
   "plave": {
     "base_language": "blue"
   },
@@ -14013,7 +13725,7 @@
     "base_language": "fucking"
   },
   "miloga": {
-    "base_language": "please"
+    "base_language": "dear; kind"
   },
   "novčić": {
     "base_language": "coin"
@@ -14025,7 +13737,7 @@
     "base_language": "technology"
   },
   "garaži": {
-    "base_language": "garages"
+    "base_language": "garage"
   },
   "razumijemo": {
     "base_language": "we understand"
@@ -14046,7 +13758,7 @@
     "base_language": "queens"
   },
   "visi": {
-    "base_language": "higher"
+    "base_language": "hangs"
   },
   "naređenja": {
     "base_language": "orders"
@@ -14087,14 +13799,11 @@
   "razum": {
     "base_language": "reason"
   },
-  "volela": {
-    "base_language": "loved"
-  },
   "pametni": {
     "base_language": "smart"
   },
   "ostavljam": {
-    "base_language": "i leave"
+    "base_language": "I leave"
   },
   "motora": {
     "base_language": "engine"
@@ -14151,7 +13860,7 @@
     "base_language": "need"
   },
   "rosie": {
-    "base_language": "dew"
+    "base_language": "Rosie"
   },
   "ukusno": {
     "base_language": "delicious"
@@ -14178,7 +13887,7 @@
     "base_language": "temple"
   },
   "postanem": {
-    "base_language": "i become"
+    "base_language": "I become"
   },
   "kamenje": {
     "base_language": "stones"
@@ -14241,7 +13950,7 @@
     "base_language": "receive"
   },
   "borim": {
-    "base_language": "i'm fighting"
+    "base_language": "I'm fighting"
   },
   "ponoći": {
     "base_language": "at midnight"
@@ -14295,7 +14004,7 @@
     "base_language": "take out"
   },
   "smjela": {
-    "base_language": "bold"
+    "base_language": "dared; bold"
   },
   "nudi": {
     "base_language": "offers"
@@ -14331,7 +14040,7 @@
     "base_language": "for god's sake"
   },
   "zaslužujem": {
-    "base_language": "i deserve it"
+    "base_language": "I deserve it"
   },
   "vjenčanju": {
     "base_language": "the wedding"
@@ -14347,9 +14056,6 @@
   },
   "izazvati": {
     "base_language": "cause"
-  },
-  "zivot": {
-    "base_language": "life"
   },
   "prilikom": {
     "base_language": "on occasion"
@@ -14406,13 +14112,13 @@
     "base_language": "of art"
   },
   "skladu": {
-    "base_language": "according to"
+    "base_language": "harmony; agreement"
   },
   "televiziji": {
     "base_language": "television"
   },
   "provjerim": {
-    "base_language": "i'll check"
+    "base_language": "I'll check"
   },
   "gladni": {
     "base_language": "hungry"
@@ -14433,7 +14139,7 @@
     "base_language": "targets"
   },
   "ethan": {
-    "base_language": "ethane"
+    "base_language": "Ethan"
   },
   "pomisli": {
     "base_language": "think"
@@ -14487,13 +14193,10 @@
     "base_language": "excited"
   },
   "alat": {
-    "base_language": "tools"
+    "base_language": "tool; equipment"
   },
   "vampir": {
     "base_language": "vampire"
-  },
-  "razumeš": {
-    "base_language": "you understand"
   },
   "namjeravao": {
     "base_language": "intended"
@@ -14562,7 +14265,7 @@
     "base_language": "neighborhood"
   },
   "pasa": {
-    "base_language": "pasha"
+    "base_language": "dogs"
   },
   "dozvoljeno": {
     "base_language": "allowed"
@@ -14615,9 +14318,6 @@
   "gola": {
     "base_language": "naked"
   },
-  "lepa": {
-    "base_language": "beautiful"
-  },
   "svijesti": {
     "base_language": "consciousness"
   },
@@ -14658,7 +14358,7 @@
     "base_language": "fire"
   },
   "sredim": {
-    "base_language": "i'll fix it"
+    "base_language": "I'll fix it"
   },
   "ružno": {
     "base_language": "ugly"
@@ -14677,9 +14377,6 @@
   },
   "grijeh": {
     "base_language": "sin"
-  },
-  "smešno": {
-    "base_language": "funny"
   },
   "odmora": {
     "base_language": "vacation"
@@ -14741,9 +14438,6 @@
   "dovelo": {
     "base_language": "brought"
   },
-  "lično": {
-    "base_language": "personally"
-  },
   "skup": {
     "base_language": "expensive"
   },
@@ -14763,7 +14457,7 @@
     "base_language": "by the police"
   },
   "ponosim": {
-    "base_language": "i'm proud"
+    "base_language": "I'm proud"
   },
   "kut": {
     "base_language": "angle"
@@ -14788,9 +14482,6 @@
   },
   "odbora": {
     "base_language": "of the board"
-  },
-  "kuce": {
-    "base_language": "houses"
   },
   "starija": {
     "base_language": "older"
@@ -14820,7 +14511,7 @@
     "base_language": "error"
   },
   "farmi": {
-    "base_language": "farms"
+    "base_language": "farm"
   },
   "donese": {
     "base_language": "bring"
@@ -14858,11 +14549,8 @@
   "osuđen": {
     "base_language": "convicted"
   },
-  "kazem": {
-    "base_language": "i say"
-  },
   "daisy": {
-    "base_language": "daisies"
+    "base_language": "Daisy"
   },
   "mnogih": {
     "base_language": "many"
@@ -14949,7 +14637,7 @@
     "base_language": "wonderful"
   },
   "crnac": {
-    "base_language": "black"
+    "base_language": "Black man"
   },
   "pizzu": {
     "base_language": "pizza"
@@ -15068,11 +14756,8 @@
   "bijelo": {
     "base_language": "white"
   },
-  "celu": {
-    "base_language": "the whole"
-  },
   "krenem": {
-    "base_language": "i'm going"
+    "base_language": "I'm going"
   },
   "rodio": {
     "base_language": "gave birth"
@@ -15081,7 +14766,7 @@
     "base_language": "answer"
   },
   "krista": {
-    "base_language": "crystal"
+    "base_language": "Christ"
   },
   "uključiti": {
     "base_language": "include"
@@ -15110,9 +14795,6 @@
   "nalik": {
     "base_language": "like"
   },
-  "meseci": {
-    "base_language": "months"
-  },
   "postanu": {
     "base_language": "become"
   },
@@ -15132,7 +14814,7 @@
     "base_language": "approval"
   },
   "ser": {
-    "base_language": "sir"
+    "base_language": "Sir"
   },
   "mamice": {
     "base_language": "mommy"
@@ -15245,9 +14927,6 @@
   "žice": {
     "base_language": "wires"
   },
-  "juče": {
-    "base_language": "yesterday"
-  },
   "martine": {
     "base_language": "martin"
   },
@@ -15293,9 +14972,6 @@
   "lažno": {
     "base_language": "falsely"
   },
-  "hoceš": {
-    "base_language": "you want"
-  },
   "upalilo": {
     "base_language": "it worked"
   },
@@ -15320,9 +14996,6 @@
   "ratni": {
     "base_language": "war"
   },
-  "vesti": {
-    "base_language": "news"
-  },
   "poglavlje": {
     "base_language": "chapter"
   },
@@ -15345,7 +15018,7 @@
     "base_language": "promise"
   },
   "shvatim": {
-    "base_language": "i understand"
+    "base_language": "I understand"
   },
   "sumnjivo": {
     "base_language": "suspiciously"
@@ -15363,7 +15036,7 @@
     "base_language": "visited"
   },
   "dobivam": {
-    "base_language": "i get"
+    "base_language": "I get"
   },
   "dogodio": {
     "base_language": "happened"
@@ -15396,7 +15069,7 @@
     "base_language": "jump"
   },
   "pokušam": {
-    "base_language": "i try"
+    "base_language": "I try"
   },
   "iskoristi": {
     "base_language": "use it"
@@ -15426,7 +15099,7 @@
     "base_language": "to many"
   },
   "upozoravam": {
-    "base_language": "i warn"
+    "base_language": "I warn"
   },
   "romantično": {
     "base_language": "romantic"
@@ -15450,7 +15123,7 @@
     "base_language": "guard"
   },
   "von": {
-    "base_language": "out"
+    "base_language": "von (name particle)"
   },
   "ubojstava": {
     "base_language": "murders"
@@ -15492,7 +15165,7 @@
     "base_language": "the government"
   },
   "rimu": {
-    "base_language": "rhyme"
+    "base_language": "Rome; rhyme"
   },
   "silazi": {
     "base_language": "is coming down"
@@ -15500,11 +15173,8 @@
   "nakratko": {
     "base_language": "briefly"
   },
-  "spisak": {
-    "base_language": "list"
-  },
   "spasim": {
-    "base_language": "i save"
+    "base_language": "I save"
   },
   "zadnjeg": {
     "base_language": "the last one"
@@ -15540,7 +15210,7 @@
     "base_language": "moments"
   },
   "europi": {
-    "base_language": "europeans"
+    "base_language": "Europe"
   },
   "sekunda": {
     "base_language": "second"
@@ -15624,13 +15294,13 @@
     "base_language": "sea"
   },
   "učim": {
-    "base_language": "i'm studying"
+    "base_language": "I'm studying"
   },
   "djevojkama": {
     "base_language": "girls"
   },
   "viđam": {
-    "base_language": "i see"
+    "base_language": "I see"
   },
   "zadužen": {
     "base_language": "in charge"
@@ -15723,7 +15393,7 @@
     "base_language": "we follow"
   },
   "desetak": {
-    "base_language": "a dozen"
+    "base_language": "about ten"
   },
   "zelena": {
     "base_language": "green"
@@ -15752,12 +15422,6 @@
   "očekuju": {
     "base_language": "they expect"
   },
-  "dodji": {
-    "base_language": "come"
-  },
-  "jebo": {
-    "base_language": "fuck"
-  },
   "nedostaju": {
     "base_language": "are missing"
   },
@@ -15783,7 +15447,7 @@
     "base_language": "board"
   },
   "ulazim": {
-    "base_language": "i'm entering"
+    "base_language": "I'm entering"
   },
   "optuženi": {
     "base_language": "the accused"
@@ -15954,10 +15618,10 @@
     "base_language": "move away"
   },
   "pam": {
-    "base_language": "remember"
+    "base_language": "Pam"
   },
   "spominjem": {
-    "base_language": "i mention"
+    "base_language": "I mention"
   },
   "nađimo": {
     "base_language": "let's find"
@@ -16059,7 +15723,7 @@
     "base_language": "doctor"
   },
   "zapadu": {
-    "base_language": "they fall"
+    "base_language": "west"
   },
   "budalu": {
     "base_language": "a fool"
@@ -16124,9 +15788,6 @@
   "smjestiti": {
     "base_language": "accommodate"
   },
-  "umesto": {
-    "base_language": "instead"
-  },
   "obalu": {
     "base_language": "coast"
   },
@@ -16149,13 +15810,13 @@
     "base_language": "washington"
   },
   "brad": {
-    "base_language": "beard"
+    "base_language": "Brad"
   },
   "troškove": {
     "base_language": "expenses"
   },
   "krećem": {
-    "base_language": "i'm leaving"
+    "base_language": "I'm leaving"
   },
   "neprestano": {
     "base_language": "continuously"
@@ -16227,10 +15888,10 @@
     "base_language": "order"
   },
   "odustajem": {
-    "base_language": "i give up"
+    "base_language": "I give up"
   },
   "bavim": {
-    "base_language": "i deal"
+    "base_language": "I deal"
   },
   "ritam": {
     "base_language": "rhythm"
@@ -16239,7 +15900,7 @@
     "base_language": "some kind"
   },
   "riješit": {
-    "base_language": "solved"
+    "base_language": "solve"
   },
   "uzrujan": {
     "base_language": "upset"
@@ -16254,7 +15915,7 @@
     "base_language": "fell in love"
   },
   "plijen": {
-    "base_language": "spoil"
+    "base_language": "prey; loot"
   },
   "novinari": {
     "base_language": "journalists"
@@ -16288,9 +15949,6 @@
   },
   "složio": {
     "base_language": "arranged"
-  },
-  "devojku": {
-    "base_language": "a girl"
   },
   "prljava": {
     "base_language": "dirty"
@@ -16490,12 +16148,6 @@
   "govna": {
     "base_language": "shit"
   },
-  "nevjerovatno": {
-    "base_language": "unbelievable"
-  },
-  "sledeći": {
-    "base_language": "next"
-  },
   "namjeru": {
     "base_language": "intention"
   },
@@ -16563,13 +16215,10 @@
     "base_language": "you enjoy it"
   },
   "ll": {
-    "base_language": "ii"
+    "base_language": "LL"
   },
   "putnika": {
     "base_language": "passengers"
-  },
-  "ubistva": {
-    "base_language": "murders"
   },
   "lažu": {
     "base_language": "they lie"
@@ -16578,7 +16227,7 @@
     "base_language": "sheet"
   },
   "nudim": {
-    "base_language": "i offer"
+    "base_language": "I offer"
   },
   "predaj": {
     "base_language": "surrender"
@@ -16615,9 +16264,6 @@
   },
   "sredstvo": {
     "base_language": "medium"
-  },
-  "izvinjavam": {
-    "base_language": "i'm sorry"
   },
   "popila": {
     "base_language": "drank"
@@ -16659,7 +16305,7 @@
     "base_language": "arthur"
   },
   "stone": {
-    "base_language": "stones"
+    "base_language": "Stone"
   },
   "trajalo": {
     "base_language": "lasted"
@@ -16734,13 +16380,10 @@
     "base_language": "bag"
   },
   "bros": {
-    "base_language": "brooch"
+    "base_language": "Bros. (brothers)"
   },
   "svakome": {
     "base_language": "to everyone"
-  },
-  "nemogu": {
-    "base_language": "i can't"
   },
   "vojnike": {
     "base_language": "soldiers"
@@ -16872,7 +16515,7 @@
     "base_language": "cover"
   },
   "platim": {
-    "base_language": "i pay"
+    "base_language": "I pay"
   },
   "praćenje": {
     "base_language": "tracking"
@@ -16983,7 +16626,7 @@
     "base_language": "interested"
   },
   "provjeravam": {
-    "base_language": "i'm checking"
+    "base_language": "I'm checking"
   },
   "upravlja": {
     "base_language": "manages"
@@ -16998,7 +16641,7 @@
     "base_language": "major"
   },
   "tajnosti": {
-    "base_language": "secrets"
+    "base_language": "secrecy"
   },
   "franka": {
     "base_language": "francs"
@@ -17037,7 +16680,7 @@
     "base_language": "do it"
   },
   "sanjam": {
-    "base_language": "i'm dreaming"
+    "base_language": "I'm dreaming"
   },
   "razgovarate": {
     "base_language": "you talk"
@@ -17055,7 +16698,7 @@
     "base_language": "lost"
   },
   "častim": {
-    "base_language": "i honor"
+    "base_language": "I treat; I honour"
   },
   "dopušta": {
     "base_language": "allows"
@@ -17090,14 +16733,11 @@
   "skoči": {
     "base_language": "jump"
   },
-  "meseca": {
-    "base_language": "month"
-  },
   "pridružio": {
     "base_language": "joined"
   },
   "poželim": {
-    "base_language": "i wish"
+    "base_language": "I wish"
   },
   "jasna": {
     "base_language": "clear"
@@ -17178,7 +16818,7 @@
     "base_language": "circle"
   },
   "pisalo": {
-    "base_language": "pen"
+    "base_language": "wrote; writing implement"
   },
   "radiju": {
     "base_language": "the radio"
@@ -17241,7 +16881,7 @@
     "base_language": "childhood"
   },
   "pošao": {
-    "base_language": "job"
+    "base_language": "went; set off"
   },
   "ponašao": {
     "base_language": "behaved"
@@ -17268,7 +16908,7 @@
     "base_language": "attracts"
   },
   "predajem": {
-    "base_language": "i'm teaching"
+    "base_language": "I'm teaching"
   },
   "hladan": {
     "base_language": "cold"
@@ -17282,11 +16922,8 @@
   "snažno": {
     "base_language": "strongly"
   },
-  "neverovatno": {
-    "base_language": "unbelievable"
-  },
   "hodam": {
-    "base_language": "i'm walking"
+    "base_language": "I'm walking"
   },
   "toku": {
     "base_language": "flow"
@@ -17302,9 +16939,6 @@
   },
   "ljubavnik": {
     "base_language": "lover"
-  },
-  "želela": {
-    "base_language": "wanted"
   },
   "okrenite": {
     "base_language": "turn it over"
@@ -17373,7 +17007,7 @@
     "base_language": "surfaces"
   },
   "divim": {
-    "base_language": "i admire"
+    "base_language": "I admire"
   },
   "gradonačelnika": {
     "base_language": "the mayor"
@@ -17409,7 +17043,7 @@
     "base_language": "fifty"
   },
   "stignem": {
-    "base_language": "i will arrive"
+    "base_language": "I will arrive"
   },
   "plažu": {
     "base_language": "the beach"
@@ -17439,7 +17073,7 @@
     "base_language": "like this"
   },
   "trenutačno": {
-    "base_language": "momentarily"
+    "base_language": "currently; at this moment"
   },
   "robe": {
     "base_language": "goods"
@@ -17457,7 +17091,7 @@
     "base_language": "tower"
   },
   "otvorim": {
-    "base_language": "i open"
+    "base_language": "I open"
   },
   "neophodno": {
     "base_language": "necessary"
@@ -17507,9 +17141,6 @@
   "snima": {
     "base_language": "records"
   },
-  "zena": {
-    "base_language": "woman"
-  },
   "slomila": {
     "base_language": "broke"
   },
@@ -17553,10 +17184,10 @@
     "base_language": "honey"
   },
   "oprost": {
-    "base_language": "sorry"
+    "base_language": "forgiveness"
   },
   "medeni": {
-    "base_language": "honey"
+    "base_language": "honey; sweet"
   },
   "prizor": {
     "base_language": "scene"
@@ -17568,7 +17199,7 @@
     "base_language": "congratulations"
   },
   "tona": {
-    "base_language": "tons"
+    "base_language": "tonne"
   },
   "stresom": {
     "base_language": "stress"
@@ -17670,7 +17301,7 @@
     "base_language": "look for"
   },
   "predstavljam": {
-    "base_language": "i present"
+    "base_language": "I present"
   },
   "vojne": {
     "base_language": "military"
@@ -17808,7 +17439,7 @@
     "base_language": "let's stop it"
   },
   "javim": {
-    "base_language": "i'll let you know"
+    "base_language": "I'll let you know"
   },
   "sjeme": {
     "base_language": "seed"
@@ -17820,7 +17451,7 @@
     "base_language": "turns"
   },
   "odvedem": {
-    "base_language": "i'll take you"
+    "base_language": "I'll take you"
   },
   "prvak": {
     "base_language": "champion"
@@ -17836,9 +17467,6 @@
   },
   "planovi": {
     "base_language": "plans"
-  },
-  "uvjek": {
-    "base_language": "always"
   },
   "krivom": {
     "base_language": "the wrong one"
@@ -17859,7 +17487,7 @@
     "base_language": "player"
   },
   "smjeli": {
-    "base_language": "bold"
+    "base_language": "dared; bold"
   },
   "nadi": {
     "base_language": "hope"
@@ -17929,9 +17557,6 @@
   },
   "bake": {
     "base_language": "grandmothers"
-  },
-  "kaj": {
-    "base_language": "what"
   },
   "bacili": {
     "base_language": "threw"
@@ -18056,9 +17681,6 @@
   "vuče": {
     "base_language": "pulls"
   },
-  "veruj": {
-    "base_language": "believe"
-  },
   "indijanci": {
     "base_language": "indians"
   },
@@ -18096,7 +17718,7 @@
     "base_language": "thoughts"
   },
   "planiram": {
-    "base_language": "i'm planning"
+    "base_language": "I'm planning"
   },
   "ludnica": {
     "base_language": "madhouse"
@@ -18110,11 +17732,8 @@
   "salatu": {
     "base_language": "salad"
   },
-  "stomak": {
+  "želudac": {
     "base_language": "stomach"
-  },
-  "lmaš": {
-    "base_language": "you have"
   },
   "teče": {
     "base_language": "flows"
@@ -18132,10 +17751,7 @@
     "base_language": "promises"
   },
   "nalazim": {
-    "base_language": "i find"
-  },
-  "ujutru": {
-    "base_language": "in the morning"
+    "base_language": "I find"
   },
   "umru": {
     "base_language": "they die"
@@ -18147,7 +17763,7 @@
     "base_language": "you stay"
   },
   "učenik": {
-    "base_language": "disciple"
+    "base_language": "pupil; student; disciple"
   },
   "molitve": {
     "base_language": "prayers"
@@ -18171,7 +17787,7 @@
     "base_language": "do it"
   },
   "prodajem": {
-    "base_language": "i am selling"
+    "base_language": "I am selling"
   },
   "šalio": {
     "base_language": "joking"
@@ -18224,14 +17840,11 @@
   "poznate": {
     "base_language": "known"
   },
-  "osećaj": {
-    "base_language": "feeling"
-  },
   "skladišta": {
     "base_language": "warehouses"
   },
   "pošaljem": {
-    "base_language": "i send"
+    "base_language": "I send"
   },
   "vuci": {
     "base_language": "pull"
@@ -18281,9 +17894,6 @@
   "skinite": {
     "base_language": "take it off"
   },
-  "deda": {
-    "base_language": "grandfather"
-  },
   "island": {
     "base_language": "iceland"
   },
@@ -18303,13 +17913,10 @@
     "base_language": "foreigners"
   },
   "faksu": {
-    "base_language": "fax"
+    "base_language": "college; fax"
   },
   "praktično": {
     "base_language": "practically"
-  },
-  "uspeo": {
-    "base_language": "succeeded"
   },
   "brži": {
     "base_language": "faster"
@@ -18318,7 +17925,7 @@
     "base_language": "fame"
   },
   "wille": {
-    "base_language": "villas"
+    "base_language": "Will"
   },
   "stajala": {
     "base_language": "stood"
@@ -18353,9 +17960,6 @@
   "usporiti": {
     "base_language": "slow"
   },
-  "mesec": {
-    "base_language": "month"
-  },
   "sudbine": {
     "base_language": "fate"
   },
@@ -18366,7 +17970,7 @@
     "base_language": "leaves"
   },
   "baker": {
-    "base_language": "copper"
+    "base_language": "Baker"
   },
   "sporazum": {
     "base_language": "agreement"
@@ -18378,7 +17982,7 @@
     "base_language": "whore"
   },
   "nastavim": {
-    "base_language": "i will continue"
+    "base_language": "I will continue"
   },
   "sigurnije": {
     "base_language": "safer"
@@ -18395,9 +17999,6 @@
   "vjenčali": {
     "base_language": "got married"
   },
-  "milion": {
-    "base_language": "million"
-  },
   "nazivaju": {
     "base_language": "are called"
   },
@@ -18408,7 +18009,7 @@
     "base_language": "unit"
   },
   "ćeliji": {
-    "base_language": "cells"
+    "base_language": "cell"
   },
   "svađati": {
     "base_language": "argue"
@@ -18439,9 +18040,6 @@
   },
   "zakleo": {
     "base_language": "swore"
-  },
-  "veruješ": {
-    "base_language": "you believe"
   },
   "jamesa": {
     "base_language": "james"
@@ -18494,14 +18092,11 @@
   "mladog": {
     "base_language": "young"
   },
-  "vera": {
-    "base_language": "faith"
-  },
   "prepoznajem": {
-    "base_language": "i recognize"
+    "base_language": "I recognize"
   },
   "smješka": {
-    "base_language": "a smile"
+    "base_language": "smiles"
   },
   "krađe": {
     "base_language": "theft"
@@ -18594,7 +18189,7 @@
     "base_language": "intention"
   },
   "mučenje": {
-    "base_language": "whipping"
+    "base_language": "torture"
   },
   "zamijenio": {
     "base_language": "replaced"
@@ -18759,7 +18354,7 @@
     "base_language": "stay"
   },
   "pijesak": {
-    "base_language": "sands"
+    "base_language": "sand"
   },
   "izvadio": {
     "base_language": "took out"
@@ -18786,7 +18381,7 @@
     "base_language": "surprised"
   },
   "stark": {
-    "base_language": "strong"
+    "base_language": "Stark"
   },
   "kamionet": {
     "base_language": "pickup truck"
@@ -18807,7 +18402,7 @@
     "base_language": "by hand"
   },
   "prolazu": {
-    "base_language": "they pass"
+    "base_language": "passage"
   },
   "rudnik": {
     "base_language": "mine"
@@ -18876,7 +18471,7 @@
     "base_language": "disappoint"
   },
   "griješim": {
-    "base_language": "i'm wrong"
+    "base_language": "I'm wrong"
   },
   "kakvoj": {
     "base_language": "what kind"
@@ -18978,7 +18573,7 @@
     "base_language": "you listen"
   },
   "ispričam": {
-    "base_language": "i'll tell you"
+    "base_language": "I'll tell you"
   },
   "upozorenja": {
     "base_language": "warnings"
@@ -19016,9 +18611,6 @@
   "uspješno": {
     "base_language": "successfully"
   },
-  "ijude": {
-    "base_language": "people"
-  },
   "putovao": {
     "base_language": "traveled"
   },
@@ -19047,7 +18639,7 @@
     "base_language": "races"
   },
   "svojem": {
-    "base_language": "own"
+    "base_language": "one's own"
   },
   "potres": {
     "base_language": "earthquake"
@@ -19076,9 +18668,6 @@
   "silno": {
     "base_language": "very much"
   },
-  "osećaš": {
-    "base_language": "you feel"
-  },
   "terapija": {
     "base_language": "therapy"
   },
@@ -19087,9 +18676,6 @@
   },
   "ryane": {
     "base_language": "ryan"
-  },
-  "lep": {
-    "base_language": "nice"
   },
   "sređeno": {
     "base_language": "arranged"
@@ -19116,7 +18702,7 @@
     "base_language": "they understand"
   },
   "izluđuje": {
-    "base_language": "it's crazy"
+    "base_language": "drives crazy"
   },
   "spaliti": {
     "base_language": "burn"
@@ -19226,9 +18812,6 @@
   "količinu": {
     "base_language": "quantity"
   },
-  "cao": {
-    "base_language": "bye"
-  },
   "narator": {
     "base_language": "narrator"
   },
@@ -19314,7 +18897,7 @@
     "base_language": "thought"
   },
   "uspijem": {
-    "base_language": "i succeed"
+    "base_language": "I succeed"
   },
   "pozvani": {
     "base_language": "invited"
@@ -19335,19 +18918,16 @@
     "base_language": "run it"
   },
   "koliki": {
-    "base_language": "colic"
+    "base_language": "how big; how many"
   },
   "krađu": {
     "base_language": "theft"
-  },
-  "bićeš": {
-    "base_language": "you will be"
   },
   "smatraš": {
     "base_language": "you consider"
   },
   "fuj": {
-    "base_language": "phew"
+    "base_language": "yuck!"
   },
   "kazni": {
     "base_language": "punish"
@@ -19390,9 +18970,6 @@
   },
   "ljutiš": {
     "base_language": "you are angry"
-  },
-  "primjetio": {
-    "base_language": "noticed"
   },
   "strasti": {
     "base_language": "passions"
@@ -19479,7 +19056,7 @@
     "base_language": "you start"
   },
   "radujem": {
-    "base_language": "i'm looking forward to it"
+    "base_language": "I'm looking forward to it"
   },
   "knjigama": {
     "base_language": "books"
@@ -19491,10 +19068,10 @@
     "base_language": "study"
   },
   "spavaćoj": {
-    "base_language": "bedroom"
+    "base_language": "sleeping; bedroom"
   },
   "kupaonici": {
-    "base_language": "bathrooms"
+    "base_language": "bathroom"
   },
   "preseliti": {
     "base_language": "move"
@@ -19512,7 +19089,7 @@
     "base_language": "sagittarius"
   },
   "proba": {
-    "base_language": "probe"
+    "base_language": "rehearsal; trial"
   },
   "vodič": {
     "base_language": "guide"
@@ -19614,7 +19191,7 @@
     "base_language": "put down"
   },
   "ručku": {
-    "base_language": "the handle"
+    "base_language": "lunch; handle"
   },
   "danom": {
     "base_language": "by day"
@@ -19624,9 +19201,6 @@
   },
   "dobivanje": {
     "base_language": "getting"
-  },
-  "vidis": {
-    "base_language": "you see"
   },
   "teški": {
     "base_language": "heavy"
@@ -19668,13 +19242,10 @@
     "base_language": "let's save"
   },
   "emisija": {
-    "base_language": "emission"
-  },
-  "neče": {
-    "base_language": "won't"
+    "base_language": "programme; emission"
   },
   "por": {
-    "base_language": "lt"
+    "base_language": "lieutenant (abbr.)"
   },
   "zaljubila": {
     "base_language": "fell in love"
@@ -19693,9 +19264,6 @@
   },
   "tame": {
     "base_language": "darkness"
-  },
-  "svidja": {
-    "base_language": "likes it"
   },
   "ponestaje": {
     "base_language": "is running out"
@@ -19799,7 +19367,7 @@
   "ohladi": {
     "base_language": "cool down"
   },
-  "ortak": {
+  "partner": {
     "base_language": "partner"
   },
   "palačinke": {
@@ -19813,9 +19381,6 @@
   },
   "interesantno": {
     "base_language": "interesting"
-  },
-  "mašina": {
-    "base_language": "machine"
   },
   "dirajte": {
     "base_language": "touch it"
@@ -19831,9 +19396,6 @@
   },
   "jahati": {
     "base_language": "ride"
-  },
-  "kafu": {
-    "base_language": "coffee"
   },
   "vraćati": {
     "base_language": "return"
@@ -19856,9 +19418,6 @@
   "ispala": {
     "base_language": "turned out"
   },
-  "umreti": {
-    "base_language": "to die"
-  },
   "pokušavati": {
     "base_language": "attempt"
   },
@@ -19875,7 +19434,7 @@
     "base_language": "the bathroom"
   },
   "šuma": {
-    "base_language": "sum"
+    "base_language": "forest; noise"
   },
   "šefu": {
     "base_language": "boss"
@@ -19929,7 +19488,7 @@
     "base_language": "sunday"
   },
   "uhvatim": {
-    "base_language": "i catch"
+    "base_language": "I catch"
   },
   "fbi-a": {
     "base_language": "fbi"
@@ -19954,9 +19513,6 @@
   },
   "suđenju": {
     "base_language": "trial"
-  },
-  "kancelariji": {
-    "base_language": "the office"
   },
   "raketa": {
     "base_language": "rocket"
@@ -20103,10 +19659,10 @@
     "base_language": "the crew"
   },
   "pozivam": {
-    "base_language": "i invite"
+    "base_language": "I invite"
   },
   "odbijam": {
-    "base_language": "i refuse"
+    "base_language": "I refuse"
   },
   "bazena": {
     "base_language": "pool"
@@ -20157,7 +19713,7 @@
     "base_language": "sold"
   },
   "pripadam": {
-    "base_language": "i belong"
+    "base_language": "I belong"
   },
   "malen": {
     "base_language": "small"
@@ -20217,7 +19773,7 @@
     "base_language": "complete"
   },
   "predstavim": {
-    "base_language": "i present"
+    "base_language": "I present"
   },
   "varalica": {
     "base_language": "impostor"
@@ -20310,13 +19866,13 @@
     "base_language": "went out"
   },
   "viče": {
-    "base_language": "vice"
+    "base_language": "shouts"
   },
   "pronađite": {
     "base_language": "find"
   },
   "ned": {
-    "base_language": "sun"
+    "base_language": "Ned; Sun. (abbr.)"
   },
   "eura": {
     "base_language": "euros"
@@ -20360,9 +19916,6 @@
   "cijelim": {
     "base_language": "whole"
   },
-  "slijedeće": {
-    "base_language": "next"
-  },
   "dolazila": {
     "base_language": "was coming"
   },
@@ -20400,7 +19953,7 @@
     "base_language": "beat"
   },
   "daću": {
-    "base_language": "i will give"
+    "base_language": "levy; tax"
   },
   "službeni": {
     "base_language": "official"
@@ -20420,14 +19973,11 @@
   "različiti": {
     "base_language": "different"
   },
-  "primer": {
-    "base_language": "example"
-  },
   "sjetim": {
-    "base_language": "i remember"
+    "base_language": "I remember"
   },
   "riješim": {
-    "base_language": "i solve it"
+    "base_language": "I solve it"
   },
   "nevini": {
     "base_language": "innocent"
@@ -20469,7 +20019,7 @@
     "base_language": "accessories"
   },
   "glupan": {
-    "base_language": "nerd"
+    "base_language": "fool; idiot"
   },
   "dodatak": {
     "base_language": "addition"
@@ -20517,7 +20067,7 @@
     "base_language": "let go"
   },
   "marš": {
-    "base_language": "mars"
+    "base_language": "march; get out!"
   },
   "proteklih": {
     "base_language": "the past"
@@ -20565,7 +20115,7 @@
     "base_language": "shift"
   },
   "ludim": {
-    "base_language": "i'm crazy"
+    "base_language": "I'm crazy"
   },
   "porodici": {
     "base_language": "to the family"
@@ -20590,9 +20140,6 @@
   },
   "odvjetnica": {
     "base_language": "lawyer"
-  },
-  "jebemti": {
-    "base_language": "to fuck"
   },
   "paljbu": {
     "base_language": "firing"
@@ -20624,9 +20171,6 @@
   "braću": {
     "base_language": "brothers"
   },
-  "hteli": {
-    "base_language": "wanted"
-  },
   "jedinu": {
     "base_language": "the only one"
   },
@@ -20654,14 +20198,11 @@
   "životni": {
     "base_language": "of life"
   },
-  "shvataš": {
-    "base_language": "you get it"
-  },
   "prijavili": {
     "base_language": "reported"
   },
   "toni": {
-    "base_language": "tons"
+    "base_language": "Toni; sink!"
   },
   "pokušamo": {
     "base_language": "let's try"
@@ -20676,13 +20217,10 @@
     "base_language": "with a finger"
   },
   "biram": {
-    "base_language": "i choose"
+    "base_language": "I choose"
   },
   "šefica": {
     "base_language": "the boss"
-  },
-  "uopce": {
-    "base_language": "at all"
   },
   "štakora": {
     "base_language": "rats"
@@ -20694,7 +20232,7 @@
     "base_language": "a piece"
   },
   "svojeg": {
-    "base_language": "his own"
+    "base_language": "one's own"
   },
   "obuku": {
     "base_language": "training"
@@ -20733,7 +20271,7 @@
     "base_language": "dead man"
   },
   "emisije": {
-    "base_language": "emissions"
+    "base_language": "programmes; emissions"
   },
   "neuspjeh": {
     "base_language": "failure"
@@ -20751,7 +20289,7 @@
     "base_language": "saturday"
   },
   "visočanstvo": {
-    "base_language": "majesty"
+    "base_language": "Highness"
   },
   "opasne": {
     "base_language": "dangerous"
@@ -20760,7 +20298,7 @@
     "base_language": "the dawn"
   },
   "nozi": {
-    "base_language": "legs"
+    "base_language": "leg; foot"
   },
   "tužitelja": {
     "base_language": "prosecutor"
@@ -20817,7 +20355,7 @@
     "base_language": "plate"
   },
   "kolika": {
-    "base_language": "colic"
+    "base_language": "how big; how much"
   },
   "udaljenost": {
     "base_language": "distance"
@@ -20835,7 +20373,7 @@
     "base_language": "rejected"
   },
   "skinem": {
-    "base_language": "i take off"
+    "base_language": "I take off"
   },
   "kadi": {
     "base_language": "bath"
@@ -20892,7 +20430,7 @@
     "base_language": "passengers"
   },
   "meri": {
-    "base_language": "measures"
+    "base_language": "Meri"
   },
   "nijednu": {
     "base_language": "none"
@@ -20904,10 +20442,7 @@
     "base_language": "funeral"
   },
   "pazim": {
-    "base_language": "i am careful"
-  },
-  "zelite": {
-    "base_language": "you want"
+    "base_language": "I am careful"
   },
   "sirena": {
     "base_language": "siren"
@@ -20920,9 +20455,6 @@
   },
   "sačuvaj": {
     "base_language": "save it"
-  },
-  "srećna": {
-    "base_language": "happy"
   },
   "provjere": {
     "base_language": "checks"
@@ -20955,10 +20487,7 @@
     "base_language": "change"
   },
   "izvučem": {
-    "base_language": "i pull out"
-  },
-  "sledeće": {
-    "base_language": "next"
+    "base_language": "I pull out"
   },
   "desnu": {
     "base_language": "the right"
@@ -20970,7 +20499,7 @@
     "base_language": "advice"
   },
   "primam": {
-    "base_language": "i receive"
+    "base_language": "I receive"
   },
   "planinama": {
     "base_language": "mountains"
@@ -21084,7 +20613,7 @@
     "base_language": "jason"
   },
   "čudim": {
-    "base_language": "i wonder"
+    "base_language": "I wonder"
   },
   "upravu": {
     "base_language": "administration"
@@ -21110,17 +20639,11 @@
   "boljelo": {
     "base_language": "it hurt"
   },
-  "hočeš": {
-    "base_language": "you want"
-  },
   "trpjeti": {
     "base_language": "suffer"
   },
   "reputaciju": {
     "base_language": "reputation"
-  },
-  "nedelju": {
-    "base_language": "sunday"
   },
   "producent": {
     "base_language": "producer"
@@ -21156,7 +20679,7 @@
     "base_language": "green"
   },
   "sedmice": {
-    "base_language": "weeks"
+    "base_language": "sevens; number seven"
   },
   "proslavu": {
     "base_language": "celebration"
@@ -21179,9 +20702,6 @@
   "stvarnom": {
     "base_language": "the real one"
   },
-  "sinoc": {
-    "base_language": "last night"
-  },
   "razgovore": {
     "base_language": "conversations"
   },
@@ -21195,7 +20715,7 @@
     "base_language": "off"
   },
   "tvornici": {
-    "base_language": "factories"
+    "base_language": "factory"
   },
   "krilu": {
     "base_language": "wing"
@@ -21225,13 +20745,13 @@
     "base_language": "computer"
   },
   "probam": {
-    "base_language": "i try"
+    "base_language": "I try"
   },
   "pokupila": {
     "base_language": "picked up"
   },
   "povlačim": {
-    "base_language": "i withdraw"
+    "base_language": "I withdraw"
   },
   "planirala": {
     "base_language": "planned"
@@ -21240,7 +20760,7 @@
     "base_language": "may"
   },
   "mari": {
-    "base_language": "don't care"
+    "base_language": "cares; Mari"
   },
   "zapeo": {
     "base_language": "stuck"
@@ -21261,7 +20781,7 @@
     "base_language": "hear"
   },
   "zaustavim": {
-    "base_language": "i stop"
+    "base_language": "I stop"
   },
   "napuniti": {
     "base_language": "fill"
@@ -21378,7 +20898,7 @@
     "base_language": "performs"
   },
   "postajem": {
-    "base_language": "i am becoming"
+    "base_language": "I am becoming"
   },
   "gradski": {
     "base_language": "city"
@@ -21423,7 +20943,7 @@
     "base_language": "discussions"
   },
   "buke": {
-    "base_language": "bouquet"
+    "base_language": "noise"
   },
   "usredotočiti": {
     "base_language": "focus"
@@ -21458,20 +20978,17 @@
   "povezanost": {
     "base_language": "connection"
   },
-  "dosije": {
-    "base_language": "file"
-  },
   "uđu": {
     "base_language": "they come in"
   },
   "pušim": {
-    "base_language": "i smoke"
+    "base_language": "I smoke"
   },
   "namjeravaš": {
     "base_language": "you intend to"
   },
   "donosim": {
-    "base_language": "i bring"
+    "base_language": "I bring"
   },
   "oblak": {
     "base_language": "cloud"
@@ -21488,11 +21005,8 @@
   "objasnite": {
     "base_language": "explain"
   },
-  "lažov": {
-    "base_language": "liar"
-  },
   "probudim": {
-    "base_language": "i wake up"
+    "base_language": "I wake up"
   },
   "miš": {
     "base_language": "mouse"
@@ -21508,9 +21022,6 @@
   },
   "seriju": {
     "base_language": "series"
-  },
-  "utisak": {
-    "base_language": "impression"
   },
   "vrećicu": {
     "base_language": "bag"
@@ -21585,7 +21096,7 @@
     "base_language": "captured"
   },
   "bud": {
-    "base_language": "awake"
+    "base_language": "Bud"
   },
   "pođe": {
     "base_language": "go"
@@ -21719,11 +21230,8 @@
   "guvernera": {
     "base_language": "the governor"
   },
-  "verovati": {
-    "base_language": "to believe"
-  },
   "prestanem": {
-    "base_language": "i stop"
+    "base_language": "I stop"
   },
   "smatrate": {
     "base_language": "you consider"
@@ -21732,7 +21240,7 @@
     "base_language": "activity"
   },
   "sirom": {
-    "base_language": "throughout"
+    "base_language": "cheese"
   },
   "doušnik": {
     "base_language": "sneak"
@@ -21756,13 +21264,13 @@
     "base_language": "invested"
   },
   "kupujem": {
-    "base_language": "i'm buying"
+    "base_language": "I'm buying"
   },
   "slušali": {
     "base_language": "listened"
   },
   "otkrijem": {
-    "base_language": "i discover"
+    "base_language": "I discover"
   },
   "obrati": {
     "base_language": "turn"
@@ -21789,7 +21297,7 @@
     "base_language": "rent"
   },
   "preci": {
-    "base_language": "cross"
+    "base_language": "ancestors"
   },
   "užasne": {
     "base_language": "horrible"
@@ -21853,9 +21361,6 @@
   },
   "krajem": {
     "base_language": "at the end"
-  },
-  "beži": {
-    "base_language": "run away"
   },
   "dobrobit": {
     "base_language": "welfare"
@@ -22056,7 +21561,7 @@
     "base_language": "excitement"
   },
   "dvorani": {
-    "base_language": "halls"
+    "base_language": "hall"
   },
   "doktoru": {
     "base_language": "to the doctor"
@@ -22068,10 +21573,10 @@
     "base_language": "hostages"
   },
   "večerati": {
-    "base_language": "dinner"
+    "base_language": "have dinner"
   },
   "opraštam": {
-    "base_language": "i forgive"
+    "base_language": "I forgive"
   },
   "otkrića": {
     "base_language": "discoveries"
@@ -22080,7 +21585,7 @@
     "base_language": "students"
   },
   "dovedem": {
-    "base_language": "i bring"
+    "base_language": "I bring"
   },
   "nahraniti": {
     "base_language": "feed"
@@ -22157,14 +21662,14 @@
   "teškim": {
     "base_language": "difficult"
   },
-  "kupatilo": {
+  "kupaonica": {
     "base_language": "bathroom"
   },
   "izvučemo": {
     "base_language": "let's get out"
   },
   "stolici": {
-    "base_language": "chairs"
+    "base_language": "chair"
   },
   "znatiželjan": {
     "base_language": "curious"
@@ -22211,9 +21716,6 @@
   "okružen": {
     "base_language": "surrounded"
   },
-  "jebemu": {
-    "base_language": "fuck it"
-  },
   "pištolje": {
     "base_language": "pistols"
   },
@@ -22236,7 +21738,7 @@
     "base_language": "keep"
   },
   "sad-u": {
-    "base_language": "now"
+    "base_language": "USA"
   },
   "misterija": {
     "base_language": "mystery"
@@ -22344,7 +21846,7 @@
     "base_language": "ribs"
   },
   "reid": {
-    "base_language": "raid"
+    "base_language": "Reid"
   },
   "nastave": {
     "base_language": "classes"
@@ -22365,7 +21867,7 @@
     "base_language": "were thinking"
   },
   "angelesu": {
-    "base_language": "angelus"
+    "base_language": "Angeles"
   },
   "trećem": {
     "base_language": "the third"
@@ -22410,7 +21912,7 @@
     "base_language": "along"
   },
   "plačem": {
-    "base_language": "i'm crying"
+    "base_language": "I'm crying"
   },
   "gledanje": {
     "base_language": "watching"
@@ -22449,10 +21951,10 @@
     "base_language": "fight"
   },
   "gospod": {
-    "base_language": "sir"
+    "base_language": "the Lord"
   },
   "pale": {
-    "base_language": "on"
+    "base_language": "fell; light; burn"
   },
   "nadalje": {
     "base_language": "further"
@@ -22539,7 +22041,7 @@
     "base_language": "fishing"
   },
   "moore": {
-    "base_language": "the moors"
+    "base_language": "Moore"
   },
   "izdaju": {
     "base_language": "betrayal"
@@ -22561,9 +22063,6 @@
   },
   "apsurdno": {
     "base_language": "absurdly"
-  },
-  "doneo": {
-    "base_language": "brought"
   },
   "slični": {
     "base_language": "similar"
@@ -22599,7 +22098,7 @@
     "base_language": "tissues"
   },
   "prolazim": {
-    "base_language": "i'm passing"
+    "base_language": "I'm passing"
   },
   "zapada": {
     "base_language": "the west"
@@ -22646,14 +22145,11 @@
   "poginula": {
     "base_language": "killed"
   },
-  "prijatno": {
-    "base_language": "pleasant"
-  },
   "pojam": {
     "base_language": "term"
   },
   "naučim": {
-    "base_language": "i learn"
+    "base_language": "I learn"
   },
   "pukla": {
     "base_language": "broke"
@@ -22734,7 +22230,7 @@
     "base_language": "cover"
   },
   "blizanci": {
-    "base_language": "gemini"
+    "base_language": "twins; Gemini"
   },
   "desnoj": {
     "base_language": "on the right"
@@ -22775,7 +22271,7 @@
   "sjedimo": {
     "base_language": "let's sit"
   },
-  "đavo": {
+  "đavao": {
     "base_language": "devil"
   },
   "divnu": {
@@ -22803,7 +22299,7 @@
     "base_language": "of the world"
   },
   "zašuti": {
-    "base_language": "overwhelm"
+    "base_language": "be quiet!"
   },
   "akciji": {
     "base_language": "action"
@@ -22818,7 +22314,7 @@
     "base_language": "doubt"
   },
   "rudy": {
-    "base_language": "ore"
+    "base_language": "Rudy"
   },
   "slavni": {
     "base_language": "famous"
@@ -22881,7 +22377,7 @@
     "base_language": "guard"
   },
   "guzici": {
-    "base_language": "asses"
+    "base_language": "ass; backside"
   },
   "frede": {
     "base_language": "fred"
@@ -22894,9 +22390,6 @@
   },
   "onesvijestio": {
     "base_language": "passed out"
-  },
-  "drugar": {
-    "base_language": "buddy"
   },
   "iraku": {
     "base_language": "iraq"
@@ -22917,10 +22410,10 @@
     "base_language": "looked at"
   },
   "belle": {
-    "base_language": "bella"
+    "base_language": "Belle"
   },
   "marco": {
-    "base_language": "march"
+    "base_language": "Marco"
   },
   "lakši": {
     "base_language": "easier"
@@ -22929,7 +22422,7 @@
     "base_language": "went"
   },
   "osjetim": {
-    "base_language": "i feel it"
+    "base_language": "I feel it"
   },
   "napade": {
     "base_language": "attacks"
@@ -22938,7 +22431,7 @@
     "base_language": "cooperation"
   },
   "vod": {
-    "base_language": "line"
+    "base_language": "platoon; conduit"
   },
   "osjećajima": {
     "base_language": "feelings"
@@ -22983,7 +22476,7 @@
     "base_language": "locked"
   },
   "poznam": {
-    "base_language": "i know"
+    "base_language": "I know"
   },
   "ravnatelj": {
     "base_language": "director"
@@ -23006,14 +22499,11 @@
   "nacije": {
     "base_language": "nations"
   },
-  "poslednja": {
-    "base_language": "the last one"
-  },
   "kreteni": {
     "base_language": "jerks"
   },
   "negoli": {
-    "base_language": "rather"
+    "base_language": "than"
   },
   "spoju": {
     "base_language": "connection"
@@ -23037,7 +22527,7 @@
     "base_language": "croatian"
   },
   "računam": {
-    "base_language": "i count"
+    "base_language": "I count"
   },
   "izađu": {
     "base_language": "they come out"
@@ -23064,7 +22554,7 @@
     "base_language": "started"
   },
   "preuzimam": {
-    "base_language": "i take over"
+    "base_language": "I take over"
   },
   "grijeha": {
     "base_language": "sin"
@@ -23073,7 +22563,7 @@
     "base_language": "a cent"
   },
   "dokažem": {
-    "base_language": "i'll prove it"
+    "base_language": "I'll prove it"
   },
   "uzmimo": {
     "base_language": "let's take it"
@@ -23083,9 +22573,6 @@
   },
   "planova": {
     "base_language": "plans"
-  },
-  "đubre": {
-    "base_language": "garbage"
   },
   "princezu": {
     "base_language": "princess"
@@ -23106,7 +22593,7 @@
     "base_language": "a moment"
   },
   "pucam": {
-    "base_language": "i'm shooting"
+    "base_language": "I'm shooting"
   },
   "kasniti": {
     "base_language": "to be late"
@@ -23165,9 +22652,6 @@
   "spali": {
     "base_language": "burn"
   },
-  "lmamo": {
-    "base_language": "we have"
-  },
   "zločesti": {
     "base_language": "bad guys"
   },
@@ -23218,9 +22702,6 @@
   },
   "napisano": {
     "base_language": "written"
-  },
-  "srećno": {
-    "base_language": "good luck"
   },
   "zastavu": {
     "base_language": "the flag"
@@ -23280,7 +22761,7 @@
     "base_language": "the audience"
   },
   "odnosno": {
-    "base_language": "respectively"
+    "base_language": "or rather; respectively"
   },
   "asistent": {
     "base_language": "assistant"
@@ -23373,10 +22854,10 @@
     "base_language": "letter"
   },
   "popričam": {
-    "base_language": "i'll talk"
+    "base_language": "I'll talk"
   },
   "letim": {
-    "base_language": "i fly"
+    "base_language": "I fly"
   },
   "galaksije": {
     "base_language": "galaxies"
@@ -23435,9 +22916,6 @@
   "baba": {
     "base_language": "grandma"
   },
-  "biio": {
-    "base_language": "was"
-  },
   "ulovio": {
     "base_language": "caught"
   },
@@ -23490,7 +22968,7 @@
     "base_language": "cocaine"
   },
   "podnosim": {
-    "base_language": "i can stand it"
+    "base_language": "I can stand it"
   },
   "marta": {
     "base_language": "march"
@@ -23524,9 +23002,6 @@
   },
   "autobusu": {
     "base_language": "the bus"
-  },
-  "oduvek": {
-    "base_language": "forever"
   },
   "židova": {
     "base_language": "jews"
@@ -23582,7 +23057,7 @@
   "razuman": {
     "base_language": "reasonable"
   },
-  "obaveza": {
+  "obveza": {
     "base_language": "obligation"
   },
   "podnio": {
@@ -23744,9 +23219,6 @@
   "procjenu": {
     "base_language": "assessment"
   },
-  "trebaće": {
-    "base_language": "will need"
-  },
   "ulaska": {
     "base_language": "entry"
   },
@@ -23827,9 +23299,6 @@
   },
   "grah": {
     "base_language": "bean"
-  },
-  "nedelja": {
-    "base_language": "sunday"
   },
   "policijsku": {
     "base_language": "police"
@@ -23916,7 +23385,7 @@
     "base_language": "in a good mood"
   },
   "savjetujem": {
-    "base_language": "i advise"
+    "base_language": "I advise"
   },
   "požaliti": {
     "base_language": "to regret"
@@ -23949,7 +23418,7 @@
     "base_language": "huge"
   },
   "gubicu": {
-    "base_language": "i will lose"
+    "base_language": "muzzle; mouth"
   },
   "uzgred": {
     "base_language": "by the way"
@@ -23961,7 +23430,7 @@
     "base_language": "jobs"
   },
   "pjevam": {
-    "base_language": "i sing"
+    "base_language": "I sing"
   },
   "grozne": {
     "base_language": "terrible"
@@ -23987,9 +23456,6 @@
   "siromašni": {
     "base_language": "the poor"
   },
-  "preći": {
-    "base_language": "cross"
-  },
   "gube": {
     "base_language": "lose"
   },
@@ -24009,7 +23475,7 @@
     "base_language": "daily"
   },
   "sidney": {
-    "base_language": "sydney"
+    "base_language": "Sidney"
   },
   "prevelika": {
     "base_language": "too big"
@@ -24018,7 +23484,7 @@
     "base_language": "events"
   },
   "ubijam": {
-    "base_language": "i kill"
+    "base_language": "I kill"
   },
   "oprostio": {
     "base_language": "sorry"
@@ -24138,7 +23604,7 @@
     "base_language": "students"
   },
   "bacim": {
-    "base_language": "i throw"
+    "base_language": "I throw"
   },
   "upotrijebio": {
     "base_language": "used"
@@ -24153,7 +23619,7 @@
     "base_language": "television"
   },
   "majk": {
-    "base_language": "mother"
+    "base_language": "Mike"
   },
   "jamese": {
     "base_language": "james"
@@ -24191,11 +23657,8 @@
   "opisu": {
     "base_language": "description"
   },
-  "hiljada": {
-    "base_language": "thousand"
-  },
   "tatin": {
-    "base_language": "dad"
+    "base_language": "Dad’s"
   },
   "reakcije": {
     "base_language": "reactions"
@@ -24204,7 +23667,7 @@
     "base_language": "unit"
   },
   "kupac": {
-    "base_language": "bather"
+    "base_language": "buyer; customer"
   },
   "papiru": {
     "base_language": "paper"
@@ -24218,9 +23681,6 @@
   "osnovne": {
     "base_language": "basic"
   },
-  "čovjeće": {
-    "base_language": "man"
-  },
   "kriješ": {
     "base_language": "you are hiding"
   },
@@ -24232,9 +23692,6 @@
   },
   "odvratna": {
     "base_language": "disgusting"
-  },
-  "svida": {
-    "base_language": "likes it"
   },
   "oglas": {
     "base_language": "ad"
@@ -24269,14 +23726,11 @@
   "nabavit": {
     "base_language": "get"
   },
-  "nigde": {
-    "base_language": "nowhere"
-  },
   "farma": {
     "base_language": "farm"
   },
   "napišem": {
-    "base_language": "i write"
+    "base_language": "I write"
   },
   "izlazila": {
     "base_language": "went out"
@@ -24297,7 +23751,7 @@
     "base_language": "poison"
   },
   "bome": {
-    "base_language": "bom"
+    "base_language": "indeed!"
   },
   "zrakoplova": {
     "base_language": "aircraft"
@@ -24315,7 +23769,7 @@
     "base_language": "cloak"
   },
   "lester": {
-    "base_language": "leicester"
+    "base_language": "Lester"
   },
   "smiješni": {
     "base_language": "funny"
@@ -24413,8 +23867,8 @@
   "nipošto": {
     "base_language": "by no means"
   },
-  "a-ha": {
-    "base_language": "ah-ha"
+  "aha": {
+    "base_language": "aha!; I see"
   },
   "skinula": {
     "base_language": "took off"
@@ -24450,7 +23904,7 @@
     "base_language": "hard"
   },
   "zbilo": {
-    "base_language": "really"
+    "base_language": "happened"
   },
   "korake": {
     "base_language": "steps"
@@ -24463,9 +23917,6 @@
   },
   "razmotriti": {
     "base_language": "consider"
-  },
-  "neprijatno": {
-    "base_language": "unpleasant"
   },
   "ponešto": {
     "base_language": "something"
@@ -24497,9 +23948,6 @@
   "japanci": {
     "base_language": "japanese people"
   },
-  "sekund": {
-    "base_language": "a second"
-  },
   "prilagoditi": {
     "base_language": "adapt"
   },
@@ -24510,7 +23958,7 @@
     "base_language": "white"
   },
   "pokupim": {
-    "base_language": "i pick up"
+    "base_language": "I pick up"
   },
   "kultura": {
     "base_language": "culture"
@@ -24520,9 +23968,6 @@
   },
   "lijevoj": {
     "base_language": "the left"
-  },
-  "neču": {
-    "base_language": "i won't"
   },
   "teoriji": {
     "base_language": "theory"
@@ -24552,7 +23997,7 @@
     "base_language": "shit"
   },
   "bree": {
-    "base_language": "bro"
+    "base_language": "Bree"
   },
   "vrisak": {
     "base_language": "scream"
@@ -24564,7 +24009,7 @@
     "base_language": "rear"
   },
   "paru": {
-    "base_language": "steam"
+    "base_language": "pair; steam"
   },
   "smrtnu": {
     "base_language": "mortal"
@@ -24582,7 +24027,7 @@
     "base_language": "discovered"
   },
   "ministre": {
-    "base_language": "ministers"
+    "base_language": "minister"
   },
   "groba": {
     "base_language": "grave"
@@ -24675,7 +24120,7 @@
     "base_language": "cost"
   },
   "zadržim": {
-    "base_language": "i keep"
+    "base_language": "I keep"
   },
   "bal": {
     "base_language": "ball"
@@ -24717,7 +24162,7 @@
     "base_language": "visitors"
   },
   "tede": {
-    "base_language": "there"
+    "base_language": "Ted"
   },
   "pate": {
     "base_language": "suffer"
@@ -24771,13 +24216,10 @@
     "base_language": "you give"
   },
   "gabe": {
-    "base_language": "fungus"
+    "base_language": "Gabe"
   },
   "incidenta": {
     "base_language": "incident"
-  },
-  "bice": {
-    "base_language": "being"
   },
   "oznaka": {
     "base_language": "label"
@@ -24816,7 +24258,7 @@
     "base_language": "cell"
   },
   "bik": {
-    "base_language": "taurus"
+    "base_language": "bull; Taurus"
   },
   "izraziti": {
     "base_language": "express"
@@ -24875,9 +24317,6 @@
   "dućana": {
     "base_language": "shops"
   },
-  "nase": {
-    "base_language": "our"
-  },
   "iskoristila": {
     "base_language": "used"
   },
@@ -24907,9 +24346,6 @@
   },
   "kamenja": {
     "base_language": "stones"
-  },
-  "hocete": {
-    "base_language": "you will"
   },
   "ljubavni": {
     "base_language": "love"
@@ -24946,9 +24382,6 @@
   },
   "slavlje": {
     "base_language": "celebration"
-  },
-  "dodi": {
-    "base_language": "come"
   },
   "ikakvih": {
     "base_language": "any"
@@ -25044,13 +24477,10 @@
     "base_language": "natural"
   },
   "pođem": {
-    "base_language": "i'll go"
+    "base_language": "I'll go"
   },
   "putovali": {
     "base_language": "traveled"
-  },
-  "zvezda": {
-    "base_language": "star"
   },
   "trenera": {
     "base_language": "coach"
@@ -25098,7 +24528,7 @@
     "base_language": "telephones"
   },
   "provodim": {
-    "base_language": "i spend"
+    "base_language": "I spend"
   },
   "gradom": {
     "base_language": "the city"
@@ -25155,7 +24585,7 @@
     "base_language": "drag away"
   },
   "isaac": {
-    "base_language": "exit"
+    "base_language": "Isaac"
   },
   "probamo": {
     "base_language": "let's try"
@@ -25197,7 +24627,7 @@
     "base_language": "destroyed"
   },
   "sviram": {
-    "base_language": "i play"
+    "base_language": "I play"
   },
   "zlostavljanje": {
     "base_language": "abuse"
@@ -25307,9 +24737,6 @@
   "silovana": {
     "base_language": "raped"
   },
-  "dogadja": {
-    "base_language": "happening"
-  },
   "smatraj": {
     "base_language": "consider"
   },
@@ -25337,9 +24764,6 @@
   "prijateljicom": {
     "base_language": "a friend"
   },
-  "mašinu": {
-    "base_language": "the machine"
-  },
   "kradu": {
     "base_language": "they are stealing"
   },
@@ -25347,10 +24771,10 @@
     "base_language": "round"
   },
   "usrani": {
-    "base_language": "crap"
+    "base_language": "shitty; soiled"
   },
   "spremam": {
-    "base_language": "i'm preparing"
+    "base_language": "I'm preparing"
   },
   "diplomu": {
     "base_language": "diploma"
@@ -25371,7 +24795,7 @@
     "base_language": "chips"
   },
   "spavaću": {
-    "base_language": "i will sleep"
+    "base_language": "sleeping"
   },
   "primirje": {
     "base_language": "truce"
@@ -25385,9 +24809,6 @@
   "cvijeća": {
     "base_language": "flowers"
   },
-  "dečak": {
-    "base_language": "boy"
-  },
   "testova": {
     "base_language": "tests"
   },
@@ -25395,10 +24816,10 @@
     "base_language": "the left"
   },
   "dobijam": {
-    "base_language": "i get"
+    "base_language": "I get"
   },
   "mimi": {
-    "base_language": "mime"
+    "base_language": "Mimi"
   },
   "paziš": {
     "base_language": "you watch out"
@@ -25435,9 +24856,6 @@
   },
   "dobivamo": {
     "base_language": "we get"
-  },
-  "vratiću": {
-    "base_language": "i will return"
   },
   "posebnim": {
     "base_language": "special"
@@ -25491,7 +24909,7 @@
     "base_language": "yellow"
   },
   "odgovorim": {
-    "base_language": "i answer"
+    "base_language": "I answer"
   },
   "turneju": {
     "base_language": "tour"
@@ -25512,7 +24930,7 @@
     "base_language": "authority"
   },
   "pristajem": {
-    "base_language": "i agree"
+    "base_language": "I agree"
   },
   "lijepom": {
     "base_language": "beautiful"
@@ -25530,7 +24948,7 @@
     "base_language": "they let go"
   },
   "putujem": {
-    "base_language": "i travel"
+    "base_language": "I travel"
   },
   "krajeva": {
     "base_language": "ends"
@@ -25548,7 +24966,7 @@
     "base_language": "offended"
   },
   "popravim": {
-    "base_language": "i'll fix it"
+    "base_language": "I'll fix it"
   },
   "sramiti": {
     "base_language": "to be ashamed"
@@ -25596,7 +25014,7 @@
     "base_language": "tense"
   },
   "priznam": {
-    "base_language": "i admit"
+    "base_language": "I admit"
   },
   "probat": {
     "base_language": "try it"
@@ -25608,13 +25026,13 @@
     "base_language": "heals"
   },
   "pamtim": {
-    "base_language": "i remember"
+    "base_language": "I remember"
   },
   "naglas": {
     "base_language": "aloud"
   },
   "zezam": {
-    "base_language": "i'm kidding"
+    "base_language": "I'm kidding"
   },
   "tami": {
     "base_language": "darkness"
@@ -25650,7 +25068,7 @@
     "base_language": "cheek"
   },
   "nećaka": {
-    "base_language": "niece"
+    "base_language": "nephew; niece"
   },
   "ruba": {
     "base_language": "edge"
@@ -25665,7 +25083,7 @@
     "base_language": "october"
   },
   "naređujem": {
-    "base_language": "i am ordering"
+    "base_language": "I am ordering"
   },
   "plaše": {
     "base_language": "they are afraid"

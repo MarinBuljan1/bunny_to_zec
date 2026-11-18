@@ -6,6 +6,7 @@ use crate::model::{LearningContent, SavedProgress, ScoreData};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt;
+use std::sync::LazyLock;
 
 const CONTENT_KEY: &str = "learning_content_v1";
 // Reuse the key, but make old readers reject content without sentence references.
@@ -13,10 +14,25 @@ const CONTENT_VERSION: u32 = 2;
 // Keep the existing key so version-1 clients refuse to overwrite wider progress.
 const PROGRESS_KEY: &str = "learning_progress_v1";
 
-// Reviewed spelling corrections; the asset manifest is checked against this list.
-// These aliases name the same word, not different grammatical forms.
-const VOCABULARY_CORRECTIONS: [(&str, &str); 3] =
-    [("covek", "čovjek"), ("pomoči", "pomoći"), ("o.k.", "okej")];
+#[derive(Deserialize)]
+struct VocabularyCorrection {
+    original: String,
+    corrected: String,
+}
+
+#[derive(Deserialize)]
+struct VocabularyCorrections {
+    corrections: Vec<VocabularyCorrection>,
+}
+
+// Share the reviewed content manifest instead of maintaining a second alias list.
+// Split phrases deliberately have no score alias: choosing one constituent would
+// award credit for a different review target. Unmatched legacy scores are retained.
+static VOCABULARY_CORRECTIONS: LazyLock<VocabularyCorrections> = LazyLock::new(|| {
+    serde_json::from_str(include_str!("../assets/vocabulary_corrections.json")).expect(
+        "The bundled vocabulary correction manifest must be valid; content tests validate it",
+    )
+});
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) enum StorageError {
@@ -167,15 +183,20 @@ pub(crate) struct LoadedProgress {
 /// Keep the latest actual review when two former spellings have separate scores.
 /// Equal review times use the higher score; summing would invent learning credit.
 fn correct_progress_spellings(progress: &mut SavedProgress) {
-    for (original, corrected) in VOCABULARY_CORRECTIONS {
-        let Some(previous) = progress.scores.remove(original) else {
+    for correction in &VOCABULARY_CORRECTIONS.corrections {
+        let Some(previous) = progress.scores.remove(&correction.original) else {
             continue;
         };
-        let keep_previous = progress.scores.get(corrected).is_none_or(|existing| {
-            (previous.last_review, previous.score) > (existing.last_review, existing.score)
-        });
+        let keep_previous = progress
+            .scores
+            .get(&correction.corrected)
+            .is_none_or(|existing| {
+                (previous.last_review, previous.score) > (existing.last_review, existing.score)
+            });
         if keep_previous {
-            progress.scores.insert(corrected.to_owned(), previous);
+            progress
+                .scores
+                .insert(correction.corrected.clone(), previous);
         }
     }
 }
@@ -234,8 +255,9 @@ pub(crate) fn write_progress(
     validate_progress(progress)?;
     read_progress(store, progress.last_data_update)?;
     if VOCABULARY_CORRECTIONS
+        .corrections
         .iter()
-        .any(|(original, _)| progress.scores.contains_key(*original))
+        .any(|correction| progress.scores.contains_key(&correction.original))
     {
         let mut corrected = SavedProgress {
             scores: progress.scores.clone(),

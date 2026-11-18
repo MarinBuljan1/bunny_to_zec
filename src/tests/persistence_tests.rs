@@ -108,19 +108,42 @@ fn spelling_corrections_also_apply_to_snapshots_and_stale_saves() {
 }
 
 #[test]
-fn spelling_manifest_matches_progress_aliases_and_corrected_content() {
-    let manifest: serde_json::Value =
-        serde_json::from_str(include_str!("../../assets/vocabulary_corrections.json")).unwrap();
+fn every_reviewed_alias_migrates_to_a_current_word_without_changing_credit() {
     let cards: HashMap<String, serde_json::Value> =
         serde_json::from_str(include_str!("../../assets/croatian.json")).unwrap();
-    let entries = manifest["corrections"].as_array().unwrap();
-    assert_eq!(entries.len(), VOCABULARY_CORRECTIONS.len());
-    for ((original, corrected), entry) in VOCABULARY_CORRECTIONS.iter().zip(entries) {
-        assert_eq!(entry["original"].as_str(), Some(*original));
-        assert_eq!(entry["corrected"].as_str(), Some(*corrected));
-        assert!(!cards.contains_key(*original));
-        assert!(cards.contains_key(*corrected));
+    for correction in &VOCABULARY_CORRECTIONS.corrections {
+        assert!(!cards.contains_key(&correction.original));
+        assert!(cards.contains_key(&correction.corrected));
+        let mut progress = progress();
+        let reviewed = ScoreData {
+            score: 456,
+            last_review: 1234,
+        };
+        progress
+            .scores
+            .insert(correction.original.clone(), reviewed.clone());
+        correct_progress_spellings(&mut progress);
+        assert!(!progress.scores.contains_key(&correction.original));
+        assert_eq!(progress.scores[&correction.corrected], reviewed);
     }
+}
+
+#[test]
+fn valid_homographs_and_split_phrase_history_are_not_reassigned() {
+    let mut progress = progress();
+    let original_words = ["sef", "vise", "biću", "biće", "bille", "nemogu", "samnom"];
+    for word in original_words {
+        progress.scores.insert(
+            word.into(),
+            ScoreData {
+                score: 456,
+                last_review: 1234,
+            },
+        );
+    }
+    let expected = progress.clone();
+    correct_progress_spellings(&mut progress);
+    assert_eq!(progress, expected);
 }
 
 #[test]

@@ -6989,7 +6989,7 @@
         },
         {
           "partner": {
-            "hr": "Imaš li previše obaveza?",
+            "hr": "Imaš li previše obveza?",
             "en": "Do you have too many commitments?"
           },
           "learner": {
@@ -8525,7 +8525,7 @@
             "en": "I could come at least for lunch on Sunday."
           },
           "learner": {
-            "hr": "To bi bilo lijepo, ali nemoj zbog nas zanemariti svoje obaveze.",
+            "hr": "To bi bilo lijepo, ali nemoj zbog nas zanemariti svoje obveze.",
             "en": "That would be lovely, but don't neglect your commitments because of us."
           }
         },
@@ -11271,7 +11271,7 @@
             "en": "The building has entrances on both streets."
           },
           "learner": {
-            "hr": "A-ha, sad razumijem. Ima li stan vlastito spremište ili svi koristimo isti prostor?",
+            "hr": "Aha, sad razumijem. Ima li stan vlastito spremište ili svi koristimo isti prostor?",
             "en": "Aha, now I understand. Does the flat have its own storage room, or does everyone use the same space?"
           }
         },
@@ -12239,7 +12239,7 @@
             "en": "I'll send them a message and ask."
           },
           "learner": {
-            "hr": "Super. Napiši da nema obaveze odgovarati odmah i da ćemo se prilagoditi njihovom rasporedu.",
+            "hr": "Super. Napiši da nema obveze odgovarati odmah i da ćemo se prilagoditi njihovom rasporedu.",
             "en": "Great. Say there's no pressure to reply straight away and that we'll fit around their schedule."
           }
         }
@@ -13257,7 +13257,7 @@
       "exchanges": [
         {
           "partner": {
-            "hr": "Jesi li vidio koliko obaveza imamo u svibnju?",
+            "hr": "Jesi li vidio koliko obveza imamo u svibnju?",
             "en": "Have you seen how many commitments we have in May?"
           },
           "learner": {
@@ -13281,7 +13281,7 @@
             "en": "The wedding is on the fifteenth of May."
           },
           "learner": {
-            "hr": "A rođendan je petnaestog lipnja. Eto, jedna obaveza već je nestala iz tog vikenda.",
+            "hr": "A rođendan je petnaestog lipnja. Eto, jedna obveza već je nestala iz tog vikenda.",
             "en": "And the birthday is on the fifteenth of June. There, one commitment has already disappeared from that weekend."
           }
         },
@@ -13358,7 +13358,7 @@
             "en": "Like this: two steps forward, then one to the side."
           },
           "learner": {
-            "hr": "A-ha, sad vidim. Težinu trebam prebaciti na drugu nogu prije okreta.",
+            "hr": "Aha, sad vidim. Težinu trebam prebaciti na drugu nogu prije okreta.",
             "en": "Aha, now I see. I need to shift my weight onto the other foot before turning."
           }
         },
@@ -25878,7 +25878,7 @@
             "en": "When do you answer?"
           },
           "learner": {
-            "hr": "Sutra. Dotad ću pripremiti potpunu sliku svojih obaveza.",
+            "hr": "Sutra. Dotad ću pripremiti potpunu sliku svojih obveza.",
             "en": "Tomorrow. By then I'll prepare a complete picture of my commitments."
           }
         }
@@ -26961,7 +26961,7 @@
             "en": "Is that a relief?"
           },
           "learner": {
-            "hr": "Jest. Pristajem pomagati, ne pristajem nestati pod obavezama.",
+            "hr": "Jest. Pristajem pomagati, ne pristajem nestati pod obvezama.",
             "en": "Yes. I agree to help, not to disappear under obligations."
           }
         }
@@ -60072,16 +60072,6 @@
         "hits": 2
       }
     ],
-    "a-ha": [
-      {
-        "c_id": "0179",
-        "hits": 1
-      },
-      {
-        "c_id": "0210",
-        "hits": 1
-      }
-    ],
     "adame": [
       {
         "c_id": "0313",
@@ -60237,6 +60227,40 @@
     "agentice": [
       {
         "c_id": "0363",
+        "hits": 1
+      }
+    ],
+    "aha": [
+      {
+        "c_id": "0107",
+        "hits": 1
+      },
+      {
+        "c_id": "0179",
+        "hits": 1
+      },
+      {
+        "c_id": "0210",
+        "hits": 1
+      },
+      {
+        "c_id": "0233",
+        "hits": 1
+      },
+      {
+        "c_id": "0266",
+        "hits": 1
+      },
+      {
+        "c_id": "0511",
+        "hits": 1
+      },
+      {
+        "c_id": "0525",
+        "hits": 1
+      },
+      {
+        "c_id": "0534",
         "hits": 1
       }
     ],
@@ -144552,16 +144576,6 @@
         "hits": 1
       }
     ],
-    "obaveza": [
-      {
-        "c_id": "0209",
-        "hits": 1
-      },
-      {
-        "c_id": "0420",
-        "hits": 1
-      }
-    ],
     "obavi": [
       {
         "c_id": "0901",
@@ -145447,6 +145461,20 @@
     "obući": [
       {
         "c_id": "0720",
+        "hits": 1
+      }
+    ],
+    "obveza": [
+      {
+        "c_id": "0209",
+        "hits": 1
+      },
+      {
+        "c_id": "0420",
+        "hits": 1
+      },
+      {
+        "c_id": "0670",
         "hits": 1
       }
     ],
@@ -155819,6 +155847,16 @@
     "parku": [
       {
         "c_id": "0086",
+        "hits": 1
+      }
+    ],
+    "partner": [
+      {
+        "c_id": "0914",
+        "hits": 1
+      },
+      {
+        "c_id": "0983",
         "hits": 1
       }
     ],
@@ -228578,12 +228616,6 @@
         "hits": 1
       }
     ],
-    "šta": [
-      {
-        "c_id": "0145",
-        "hits": 1
-      }
-    ],
     "štap": [
       {
         "c_id": "0850",
@@ -231723,9 +231755,9 @@
   },
   "coverage": {
     "conversation_count": 1000,
-    "vocabulary_count": 8574,
+    "vocabulary_count": 8380,
     "covered_vocabulary_count": 5673,
-    "missing_vocabulary_count": 2901,
+    "missing_vocabulary_count": 2707,
     "coverage_complete": false
   }
 }
