@@ -41,7 +41,9 @@ $focus: #a34b00;
     &.rated-correct { outline-color: #369567; }
     &.rated-incorrect { outline-color: #c75c5c; }
 }
-.message-text { display: block; width: 100%; padding: 0; border: 0; color: inherit; background: transparent; text-align: left; font-size: 1.1rem !important; line-height: 1.65; }
+// Safari's button tap overlay can stay at the original position during a card drag.
+// Keep focus-visible styling; suppress only the browser's touch highlight.
+.message-text { -webkit-tap-highlight-color: transparent; display: block; width: 100%; padding: 0; border: 0; color: inherit; background: transparent; text-align: left; font-size: 1.1rem !important; line-height: 1.65; }
 .message-translation { display: block; border-top: 1px solid #536b7a33; margin-top: 10px; padding-top: 8px; font-size: .95rem; color: #354e5c; }
 .review-word { display: inline-flex; flex-direction: column; vertical-align: bottom; align-items: center; margin: 0 3px; line-height: 1.2; color: #111; }
 .word-hint { font-size: .68rem; max-width: 13rem; }

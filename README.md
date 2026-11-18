@@ -146,16 +146,16 @@ remain unchanged.
 
 ## Saved-data formats and recovery
 
-Browser local storage uses two snapshots with a `version` and `value` envelope:
+Browser local storage keeps progress and can still read historical content
+snapshots. Both formats have a `version` and `value` envelope:
 
-- `learning_content_v1`: version 2; ordered vocabulary and explanations together.
+- `learning_content_v1`: historical versions 1 and 2; ordered vocabulary and explanations together.
   Downloads must have successful HTTP responses, parse correctly, and pass content
-  and conversation-index validation before a cache write. Any failed vocabulary or
-  explanation resource falls back to a whole saved dataset. A valid download remains
-  usable if its cache write fails, with a warning. Readers also accept version 1,
-  ignoring obsolete sentence arrays/indexes. After validation, a successful atomic
-  cache write migrates either downloaded or fallback content to version 2. Old clients
-  reject version 2 rather than using vocabulary without their required sentence indexes.
+  and conversation-index validation before old content copies are removed. Any failed vocabulary or
+  explanation resource falls back to a whole historical dataset, if one exists,
+  without rewriting or deleting it. Obsolete sentence arrays/indexes are ignored.
+  New downloads are not copied into localStorage; production offline content uses
+  the service worker's versioned Cache Storage, freeing localStorage for progress.
 - `learning_progress_v1`: version 4; i64 per-word scores, last-review timestamps,
   decay-update timestamp, completed conversation read counts, English visibility,
   and the current conversation cursor/masked words/completed replies in one atomic
@@ -174,11 +174,13 @@ and completed conversation counts are kept. Conversation IDs must remain stable
 now that persistent counts refer to them.
 
 The legacy `cards` and `explanations` content keys remain readable; the obsolete
-`sentences` key is no longer required. Once a complete new content snapshot is saved
-successfully, all three old content copies
-are removed to free storage space. They are retained if the new write fails.
-Migration can temporarily require space for both copies; quota failures are reported
-without deleting the good cache. Offline service-worker caching remains separate.
+`sentences` key is no longer required. After a complete download and conversation
+validation succeed, those three keys and `learning_content_v1` are removed to free
+storage space. No additional localStorage space is required for cleanup. Failed or
+cancelled loads keep historical copies. Cleanup failures leave downloaded content
+usable and report a warning. Progress keys and unrelated same-origin keys are never
+removed. Offline use requires a successful production service-worker installation;
+local development deliberately disables that worker.
 
 Legacy `card_scores` and `last_data_update` progress keys are read until a new progress
 snapshot exists. The first successful save migrates them, leaving the old progress
