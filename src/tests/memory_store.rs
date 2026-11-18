@@ -11,6 +11,14 @@ pub(crate) struct MemoryStore {
 }
 
 impl MemoryStore {
+    /// Fixture for content cached by older app versions; production no longer writes it.
+    pub fn cache_content(&mut self, content: &crate::model::LearningContent) {
+        self.insert_json(
+            "learning_content_v1",
+            &serde_json::json!({"version": 2, "value": content}),
+        );
+    }
+
     pub fn insert_json(&mut self, key: &str, value: &impl serde::Serialize) {
         self.values
             .insert(key.into(), serde_json::to_string(value).unwrap());

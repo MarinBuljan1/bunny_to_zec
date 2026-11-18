@@ -1,5 +1,6 @@
-//! Browser networking and storage access. Downloads never write caches; the UI
-//! commits validated content only after checking that its load is still current.
+//! Browser networking and storage access. PWA caches serve learning files offline;
+//! localStorage holds progress and, during migration, read-only historical content.
+//! Only current, validated downloads may retire those older content copies.
 
 use crate::model::{LearningContent, SavedProgress};
 use crate::persistence::{self, LoadedProgress, StorageError, Store};
@@ -61,9 +62,16 @@ impl fmt::Display for DownloadError {
 }
 
 #[derive(PartialEq)]
+enum ContentSource {
+    Downloaded,
+    Saved,
+}
+
+#[derive(PartialEq)]
 pub(crate) struct LoadedContent {
     pub content: LearningContent,
     pub notice: Option<String>,
+    source: ContentSource,
 }
 
 /// Shared transport, status, and JSON checks for each content resource.
@@ -118,10 +126,12 @@ fn choose_content(
         Ok(content) => Ok(LoadedContent {
             content,
             notice: None,
+            source: ContentSource::Downloaded,
         }),
         Err(error) => match persistence::read_content(store) {
             Ok(content) => Ok(LoadedContent {
                 content,
+                source: ContentSource::Saved,
                 notice: Some(
                     "Using saved learning content because the latest files could not be loaded."
                         .into(),
@@ -151,17 +161,15 @@ fn commit_content_load_to_store(
     if cancelled.get() {
         return None;
     }
-    // Also migrate older fallback snapshots after conversation validation succeeds.
-    let warning = match persistence::write_content(store, &loaded.content) {
-        Ok(warning) => warning,
-        Err(error) => Some(format!("{error} You can keep learning, but a local fallback copy of these learning files could not be saved.")),
-    };
-    if let Some(warning) = warning {
-        let notice = loaded.notice.get_or_insert_with(String::new);
-        if !notice.is_empty() {
-            notice.push(' ');
+    // The production service worker caches these assets, including conversations.
+    // Do not duplicate large content in the quota shared with learning progress.
+    // A failed download must keep its legacy fallback intact for the next retry.
+    if loaded.source == ContentSource::Downloaded {
+        if let Err(error) = persistence::remove_legacy_content(store) {
+            loaded.notice = Some(format!(
+                "{error} Learning files loaded, but older local content copies could not be removed."
+            ));
         }
-        notice.push_str(&warning);
     }
     Some(loaded)
 }

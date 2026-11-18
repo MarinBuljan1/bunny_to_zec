@@ -1,6 +1,6 @@
 //! Versioned snapshots and legacy readers, independent of browser APIs.
-//! A snapshot is committed with one storage write. Legacy progress is retained;
-//! legacy content copies are removed only after the new snapshot is committed.
+//! Progress snapshots are committed with one storage write. Historical content
+//! remains readable until validated downloads replace it; new assets use PWA caching.
 
 use crate::model::{LearningContent, SavedProgress, ScoreData};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -9,7 +9,7 @@ use std::fmt;
 use std::sync::LazyLock;
 
 const CONTENT_KEY: &str = "learning_content_v1";
-// Reuse the key, but make old readers reject content without sentence references.
+// Last localStorage content schema; new content is cached by the service worker.
 const CONTENT_VERSION: u32 = 2;
 // Keep the existing key so version-1 clients refuse to overwrite wider progress.
 const PROGRESS_KEY: &str = "learning_progress_v1";
@@ -160,19 +160,13 @@ pub(crate) fn read_content(store: &impl Store) -> Result<LearningContent, Storag
     Ok(content)
 }
 
-pub(crate) fn write_content(
-    store: &mut impl Store,
-    content: &LearningContent,
-) -> Result<Option<String>, StorageError> {
-    validate_content(content).map_err(|_| StorageError::Invalid("learning content"))?;
-    write_snapshot(store, CONTENT_KEY, CONTENT_VERSION, content)?;
-    // Free duplicate content space for progress, but only after an atomic commit.
-    for key in ["cards", "sentences", "explanations"] {
-        if store.remove(key).is_err() {
-            return Ok(Some("Learning files were saved, but older cached copies could not be removed. Browser storage may fill sooner.".into()));
-        }
+/// Retire only obsolete learning files, after a complete download has been validated.
+/// Progress, conversation history and unrelated same-origin keys are never removed.
+pub(crate) fn remove_legacy_content(store: &mut impl Store) -> Result<(), StorageError> {
+    for key in [CONTENT_KEY, "cards", "sentences", "explanations"] {
+        store.remove(key)?;
     }
-    Ok(None)
+    Ok(())
 }
 
 pub(crate) struct LoadedProgress {
