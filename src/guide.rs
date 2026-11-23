@@ -89,7 +89,7 @@ pub(super) fn guide(props: &GuideProps) -> Html {
                             <p>{"Tab to a control and press Enter or Space. Focus the conversation area: Left/Right reveals or flips, Up rates correct or advances at the bottom, and Down rates incorrect. Arrows inside long explanations scroll them. Escape closes this guide."}</p>
                         })}
                         {instruction_row("philosophy", "M4 4v16h16 M7 15l4-5 4 3 5-7", "Learn for real conversations", html!{
-                            <p>{"Your score blends time since the last review, recall speed, and whether you were correct. Scores decrease over time. Quick recall after longer breaks counts towards learning, and the header bar fills as you approach the next level."}</p>
+                            <p>{"Your score blends time since the last review, recall speed, and whether you were correct. Scores decrease over time. Quick recall after longer breaks counts towards learning, and the header bar fills as you approach the next level. Conversations start simple; more demanding conversations unlock as your level rises."}</p>
                         })}
                         {instruction_row("app-install", "M7 2h10v20H7z M10 5h4 M11 19h2", "Install the app", html!{
                             <>

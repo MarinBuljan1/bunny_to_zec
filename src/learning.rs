@@ -11,6 +11,32 @@ use crate::model::{Card, SavedProgress, ScoreData};
 pub(crate) const LEARNED_INTERVAL_SECONDS: i64 = 10 * 86_400;
 const REVIEW_PRIORITY_INTERVAL_SECONDS: i64 = LEARNED_INTERVAL_SECONDS + 120;
 
+/// Displayed status and conversation eligibility share the same score thresholds.
+pub(crate) struct LearningLevel {
+    pub name: &'static str,
+    pub next_threshold: f64,
+    pub maximum_conversation_band: u8,
+}
+
+pub(crate) fn learning_level(learned_words: f64) -> LearningLevel {
+    let (next_threshold, name, maximum_conversation_band) = [
+        (100.0, "Beginner", 1),
+        (300.0, "Novice", 2),
+        (1000.0, "Conversational", 3),
+        (4000.0, "Intermediate", 4),
+        (10000.0, "Advanced", 4),
+        (100000.0, "Fluent", 4),
+    ]
+    .into_iter()
+    .find(|(threshold, _, _)| learned_words < *threshold)
+    .unwrap_or((100000.0, "Fluent", 4));
+    LearningLevel {
+        name,
+        next_threshold,
+        maximum_conversation_band,
+    }
+}
+
 pub(crate) enum ReviewOutcome {
     Correct,
     Incorrect,

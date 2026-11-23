@@ -8,7 +8,7 @@ use crate::message_bubble::MessageBubble;
 use crate::model::{LearningContent, SavedProgress};
 use crate::storage;
 use gloo_timers::callback::Timeout;
-use js_sys::{Date, Math};
+use js_sys::Date;
 use std::cell::Cell;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -88,7 +88,6 @@ impl Reducible for Screen {
                     &ready.content.conversations,
                     &ready.content.vocabulary,
                     Date::now() as i64,
-                    Math::random(),
                 ) {
                     return self;
                 }
@@ -495,17 +494,8 @@ fn learner_message_class(rating: Option<Rating>) -> Classes {
 }
 
 fn score_bar(learned_words: f64) -> Html {
-    let (next_level, skill_level) = [
-        (100.0, "Beginner"),
-        (300.0, "Novice"),
-        (1000.0, "Conversational"),
-        (4000.0, "Intermediate"),
-        (10000.0, "Advanced"),
-        (100000.0, "Fluent"),
-    ]
-    .into_iter()
-    .find(|(threshold, _)| learned_words < *threshold)
-    .unwrap_or((100000.0, "Fluent"));
+    let level = crate::learning::learning_level(learned_words);
+    let (next_level, skill_level) = (level.next_threshold, level.name);
     let progress_percent = (learned_words / next_level * 100.0).clamp(0.0, 100.0);
     html! {
         <div class="chat-score" role="progressbar" aria-label="Progress towards the next learning level"

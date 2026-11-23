@@ -1,7 +1,8 @@
 //! Conversation selection, masking and session transitions, independent of the browser.
 
 use crate::learning::{
-    apply_review, calculate_final_score, ReviewAttempt, ReviewOutcome, LEARNED_INTERVAL_SECONDS,
+    apply_review, calculate_final_score, calculate_progress_sum, learning_level, ReviewAttempt,
+    ReviewOutcome, LEARNED_INTERVAL_SECONDS,
 };
 use crate::model::{Card, LearningContent, SavedProgress, ScoreData};
 use crate::sentences::split_text;
@@ -23,6 +24,8 @@ pub(crate) struct Exchange {
 pub(crate) struct Conversation {
     pub id: String,
     pub title: String,
+    /// Editorial difficulty, validated as 1 (Starter) through 4 (Complex).
+    band: u8,
     pub exchanges: Vec<Exchange>,
 }
 #[derive(Clone, Debug, Deserialize, PartialEq)]
@@ -38,13 +41,19 @@ pub(crate) struct ConversationLibrary {
     pub conversations: Vec<Conversation>,
     word_index: HashMap<String, Vec<Hit>>,
     #[serde(skip)]
-    difficulties: HashMap<String, f64>,
+    difficulties: HashMap<String, ConversationDifficulty>,
+}
+
+#[derive(Debug, PartialEq)]
+struct ConversationDifficulty {
+    band: u8,
+    average_word_rank: f64,
 }
 
 impl ConversationLibrary {
-    /// Verify the supplied index against the actual learner text before using weights.
+    /// Verify bands and the supplied index before using them for selection.
     pub fn validate_and_rank(&mut self, vocabulary: &LearningContent) -> Result<(), String> {
-        if self.schema_version != 1
+        if self.schema_version != 2
             || self.source_language != "hr"
             || self.translation_language != "en"
         {
@@ -55,7 +64,14 @@ impl ConversationLibrary {
         }
         let mut ids = HashSet::new();
         let mut actual: HashMap<String, Vec<Hit>> = HashMap::new();
+        let mut starter_has_vocabulary = false;
         for conversation in &self.conversations {
+            if !(1..=4).contains(&conversation.band) {
+                return Err(format!(
+                    "Conversation {} has an invalid difficulty band.",
+                    conversation.id
+                ));
+            }
             if conversation.id.is_empty()
                 || !ids.insert(&conversation.id)
                 || conversation.title.trim().is_empty()
@@ -85,6 +101,7 @@ impl ConversationLibrary {
                     }
                 }
             }
+            starter_has_vocabulary |= conversation.band == 1 && !counts.is_empty();
             for (word, hits) in counts {
                 actual.entry(word).or_default().push(Hit {
                     c_id: conversation.id.clone(),
@@ -95,13 +112,22 @@ impl ConversationLibrary {
         if actual != self.word_index {
             return Err("Conversation selection index does not match the learner messages.".into());
         }
+        if !starter_has_vocabulary {
+            return Err(
+                "The conversation library has no Starter conversation with reviewable vocabulary."
+                    .into(),
+            );
+        }
         self.difficulties = self
             .conversations
             .iter()
             .map(|conversation| {
                 (
                     conversation.id.clone(),
-                    conversation_difficulty(conversation, vocabulary),
+                    ConversationDifficulty {
+                        band: conversation.band,
+                        average_word_rank: conversation_difficulty(conversation, vocabulary),
+                    },
                 )
             })
             .collect();
@@ -112,19 +138,26 @@ impl ConversationLibrary {
         self.conversations.iter().find(|c| c.id == id)
     }
 
+    /// Gate targets before read counts; harder-only words wait for an eligible level.
+    /// Equal-read matches use band, average vocabulary rank, then ID, without randomness.
     pub fn choose<'a>(
         &'a self,
         content: &LearningContent,
         progress: &SavedProgress,
         previous: &[Card],
         now_s: i64,
-        sample: f64,
     ) -> Option<&'a Conversation> {
+        let maximum_band = maximum_conversation_band(progress);
         let candidates = || {
-            content
-                .cards
-                .keys()
-                .filter(|key| self.word_index.contains_key(*key))
+            content.cards.keys().filter(|key| {
+                self.word_index.get(*key).is_some_and(|hits| {
+                    hits.iter().any(|hit| {
+                        self.difficulties
+                            .get(&hit.c_id)
+                            .is_some_and(|difficulty| difficulty.band <= maximum_band)
+                    })
+                })
+            })
         };
         let priority = |key: &&String| priority(progress.scores.get(*key), now_s);
         let target = candidates()
@@ -140,26 +173,33 @@ impl ConversationLibrary {
                 .copied()
                 .unwrap_or(0)
         };
-        let minimum = hits.iter().map(count).min()?;
-        let eligible: Vec<_> = hits.iter().filter(|hit| count(hit) == minimum).collect();
-        let weight = |hit: &Hit| {
-            f64::from(hit.hits) / self.difficulties.get(&hit.c_id).copied().unwrap_or(1.0)
-        };
-        let total: f64 = eligible.iter().map(|hit| weight(hit)).sum();
-        let sample = if sample.is_finite() {
-            sample.clamp(0.0, 1.0 - f64::EPSILON)
-        } else {
-            0.0
-        };
-        let mut choice = sample * total;
-        for hit in eligible {
-            if choice < weight(hit) {
-                return self.get(&hit.c_id);
-            }
-            choice -= weight(hit);
-        }
-        None
+        let (hit, _) = hits
+            .iter()
+            .filter_map(|hit| {
+                self.difficulties
+                    .get(&hit.c_id)
+                    .map(|difficulty| (hit, difficulty))
+            })
+            .filter(|(_, difficulty)| difficulty.band <= maximum_band)
+            .min_by(|(left, left_difficulty), (right, right_difficulty)| {
+                count(left)
+                    .cmp(&count(right))
+                    .then_with(|| left_difficulty.band.cmp(&right_difficulty.band))
+                    .then_with(|| {
+                        left_difficulty
+                            .average_word_rank
+                            .total_cmp(&right_difficulty.average_word_rank)
+                    })
+                    .then_with(|| left.c_id.cmp(&right.c_id))
+            })?;
+        self.get(&hit.c_id)
     }
+}
+
+fn maximum_conversation_band(progress: &SavedProgress) -> u8 {
+    let learned_words =
+        calculate_progress_sum(&progress.scores) as f64 / LEARNED_INTERVAL_SECONDS as f64;
+    learning_level(learned_words).maximum_conversation_band
 }
 
 /// Every Croatian word occurrence on either side contributes; punctuation and English do not.
@@ -336,11 +376,26 @@ impl ConversationReview {
                     })
                 });
         let notice = if !valid {
-            progress.conversations.session = None;
             Some("The saved conversation changed. Your word progress and completed conversation counts were kept.".into())
+        } else if progress
+            .conversations
+            .session
+            .as_ref()
+            .is_some_and(|session| {
+                library
+                    .get(&session.conversation_id)
+                    .is_some_and(|conversation| {
+                        conversation.band > maximum_conversation_band(&progress)
+                    })
+            })
+        {
+            Some("The saved conversation is above your current level. Your word progress and completed conversation counts were kept; the next conversation will match your level.".into())
         } else {
             None
         };
+        if notice.is_some() {
+            progress.conversations.session = None;
+        }
         let started_at_ms = progress
             .conversations
             .session
@@ -403,7 +458,6 @@ impl ConversationReview {
         library: &ConversationLibrary,
         content: &LearningContent,
         now_ms: i64,
-        sample: f64,
     ) -> bool {
         match action {
             ChatAction::ToggleEnglish => {
@@ -425,13 +479,9 @@ impl ConversationReview {
                 let (conversation, index) = match current {
                     Some((c, index)) if index < c.exchanges.len() => (c, index),
                     _ => {
-                        let Some(c) = library.choose(
-                            content,
-                            &self.progress,
-                            &previous,
-                            now_ms / 1000,
-                            sample,
-                        ) else {
+                        let Some(c) =
+                            library.choose(content, &self.progress, &previous, now_ms / 1000)
+                        else {
                             return false;
                         };
                         (c, 0)

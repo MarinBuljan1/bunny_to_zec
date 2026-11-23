@@ -123,17 +123,28 @@ state machine. A resumed question starts a fresh recall clock, excluding time
 away; a resumed answer keeps its already-frozen duration. Completed replies are
 never graded again on reload. The guide pauses a pending typing/feedback timeout.
 
-Conversation selection restricts candidates to forms in the learner index, then
-uses the existing vocabulary priorities. Among conversations containing the target,
-only those with the fewest completed reads are eligible. Their selection weight
-is `target occurrences / average vocabulary rank`. The average uses every Croatian
-word occurrence on both sides, lowercased with grammatical forms kept separate.
-Ranks start at 1 in vocabulary order; unknown words get the last rank, while
-punctuation and English do not contribute. Difficulty is computed once when the
-validated library loads. Equal occurrence counts and half the average rank mean
-twice the weight. This biases choices toward easier dialogue without overriding
-read-count fairness or vocabulary-review priorities. A conversation's read count increases only after its last
-learner reply is rated/read. No read count is awarded for starting or abandoning it.
+Conversation selection uses the displayed learning status to unlock difficulty
+bands: Beginner allows Band 1, Novice (100+) Bands 1–2, Conversational (300+)
+Bands 1–3, and Intermediate onward (1,000+) all four bands. These thresholds use
+the existing learned-word-equivalent score, rather than the number of forms seen.
+Targets with no unlocked conversation wait while other eligible targets follow
+the existing review priorities. Previous reply words are avoided when possible;
+if needed, eligible material repeats without opening a harder band.
+
+Among unlocked conversations containing the target, selection uses the fewest
+completed reads, then the lowest band, lowest average vocabulary rank, and ID.
+There is no random weighting. The average counts Croatian word occurrences on
+both sides, lowercased with grammatical forms kept separate. Ranks start at 1;
+unknown forms get the last rank; punctuation and English are excluded. These
+averages are computed once on load. A read count increases only after the last
+learner reply is rated/read, never for starting or abandoning a conversation.
+
+Conversation JSON schema 2 requires a reviewed `band` from 1 to 4 on every
+conversation. Missing/invalid bands and libraries with no reviewable Starter
+content fail validation. The existing progress schema is unchanged. A saved
+cursor above the current level is cleared on reload with an explanation; word
+scores, read counts and translation preference are preserved. A score decrease
+during an active conversation does not interrupt it; gates apply to the next one.
 
 For each learner reply, an already-introduced form below 864,000 raw score takes
 priority. Otherwise the next unseen form in the reply is introduced using existing
@@ -259,12 +270,14 @@ offline availability is not a backup of saved progress.
 - `cargo check --locked`
 - `cargo test --locked`
 - `cargo clippy --all-targets --all-features --locked`
+- `python -X utf8 tools/check_conversations.py`
+- `python -X utf8 tools/check_conversation_bands.py`
 - `node --test src/tests/service_worker.test.cjs src/tests/build_scripts.test.cjs`
   (offline-cache behavior and Windows build-script checks)
 - `build_and_sync.bat` (Sass, WASM, deployment synchronization)
 
 Unit tests live in `src/tests/`, attached to their owning modules so private
-functions remain testable. Tests use explicit times/random samples and production
+functions remain testable. Tests use explicit times, deterministic selection and production
 calculations; no browser-only test branch substitutes the learning formulas.
 See [BROWSER_CHECKLIST.md](BROWSER_CHECKLIST.md) for browser/device regression
 checks and [REFACTORING_ROADMAP.md](REFACTORING_ROADMAP.md) for implementation records.

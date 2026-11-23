@@ -5,6 +5,14 @@ and Node suites cover learning, persistence, interaction transitions, and cache
 policy. Browser layout, native focus, pointer capture, and installed-PWA behavior
 also need these checks in desktop and narrow/mobile layouts:
 
+- With separate saved-progress fixtures, confirm the score status and unlocked
+  conversation bands agree at 100, 300 and 1,000 learned-word equivalents. A
+  beginner must repeat eligible Starter material rather than receive an unread
+  higher-band conversation. Reload an older higher-band cursor at Beginner:
+  confirm the notice, fresh selection and preserved scores/read counts. Finish
+  an active conversation after progress falls below an unlock; only the next
+  selection should apply the lower level. Repeat selection tests offline after
+  the updated PWA has finished caching its schema-2 conversation asset.
 - Confirm the header has circular EN on the left, progress centred, and Guide on
   the right; no app/conversation heading, toolbar, or footer. Toggle EN and tap a
   message: translations and EN's strikethrough/pressed state must stay in sync.

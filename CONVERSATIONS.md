@@ -7,16 +7,27 @@ and the strict check are authoritative after edits. Reaching 100 conversations
 does not complete the task: every corrected vocabulary form must appear in a
 learner reply.
 
+The library now has **1,126 conversations**, covering **5,834 of 8,380 forms (69.6%)**.
+The latest [Conversational coverage expansion](CONVERSATION_DIFFICULTY_REVIEW.md)
+adds 21 Everyday and 20 Connected conversations. Together, Bands 1–3 now cover all
+first 1,500 forms in learner replies. This batch closes all 159 early-form gaps
+and adds 149 globally uncovered forms, including 19 beyond the first 1,500.
+
+The preceding beginner expansion added 67 Starter and 18 Everyday conversations,
+bringing Band 1 to 100 conversations. Band 1 learner replies still cover every one
+of the first 200 forms; Band 2 independently covers every one of the first 500.
+Runtime selection now enforces these editorial bands by learner status, choosing
+the easiest among least-read eligible conversations. Both expansions prioritize
+coverage in eligible bands over global
+first appearances. Run `python -X utf8 tools/check_conversation_bands.py` to verify
+these coverage goals after content or assignment changes.
+
 [CONVERSATION_EXPANSION_1000_REPORT.md](CONVERSATION_EXPANSION_1000_REPORT.md) records the
-latest expansion: 100 new conversations, each adding at least two uncovered forms.
-The library now has **1,000 conversations**, covering **5,673 of 8,380 forms (67.7%)**
-after the [standard Croatian vocabulary review](VOCABULARY_REVIEW.md). The expansion
-report preserves the vocabulary counts at the time that batch was authored.
-This batch adds **246 previously uncovered forms**. Existing dialogue and IDs were
-preserved. No conversation contributes
-fewer than two first appearances in ascending ID order. This is an authoring metric,
-not the runtime review order or a requirement that each form appear in only one
-conversation.
+earlier 900-to-1,000 expansion: 100 new conversations, each adding at least two
+uncovered forms, for 246 previously uncovered forms in that batch's vocabulary.
+The report preserves counts before the [standard Croatian vocabulary review](VOCABULARY_REVIEW.md).
+That two-form authoring goal applied to the global-coverage batches, rather than
+the later beginner expansion. Existing dialogue and IDs were preserved.
 
 [CONVERSATION_EXPANSION_900_REPORT.md](CONVERSATION_EXPANSION_900_REPORT.md) preserves
 the preceding 800-to-900 batch and its 261-form coverage gain.
@@ -34,7 +45,7 @@ cleanup audit, which removed 47 zero-contribution conversations and expanded all
 [CONVERSATION_BATCH_REPORT.md](CONVERSATION_BATCH_REPORT.md) preserves the historical
 audit of the preceding 100-conversation expansion, before pruning. The earlier
 repetitive 400-conversation draft was not published. The 1,000-conversation milestone
-is now reached. Full vocabulary coverage remains outstanding: 2,707 forms are missing.
+is now reached. Full vocabulary coverage remains outstanding: 2,546 forms are missing.
 
 The drafts cover food, shopping, directions, travel, home, social plans, work,
 study, health, leisure, family, and past experiences. The first authoring batch used
@@ -59,7 +70,7 @@ Source file: `assets/conversations.json`.
 
 ```json
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "source_language": "hr",
   "translation_language": "en",
   "content_status": "draft",
@@ -68,6 +79,7 @@ Source file: `assets/conversations.json`.
       "id": "0070",
       "title": "Meeting for coffee",
       "topic": "food_and_drink",
+      "band": 1,
       "exchanges": [
         {
           "partner": {"hr": "Što ćeš popiti?", "en": "What will you have to drink?"},
@@ -89,8 +101,10 @@ The snippet abbreviates the conversation and coverage fields. The actual file ha
 IDs are numeric strings, padded to at least four digits: `0001`, `0002`, and so on,
 continuing with `10000` after `9999`. At the user's request, the surviving 653
 conversations were renumbered consecutively and the new 47 appended. A subsequent
-series of 100-conversation batches preserves those IDs and adds `0701`–`1000`. The current
-IDs are **`0001`–`1000`**, matching their positions; the next new ID is **`1001`**.
+series of 100-conversation batches preserves those IDs and adds `0701`–`1000`.
+The beginner expansion appends `1001`–`1085`, and the Conversational coverage
+expansion adds `1086`–`1126`. The current IDs are **`0001`–`1126`**, matching
+their positions; the next new ID is **`1127`**.
 The earlier policy of leaving retired gaps was superseded by this compaction.
 
 Renumbering requires rebuilding every `c_id` in the word index and updating document
@@ -114,13 +128,19 @@ learner replies. Each compact entry has `c_id` (the conversation's `id`) and
 `hits` (the actual learner occurrence count). Keep these short keys when
 regenerating the index. Partner messages never
 contribute. For example, the approved `0070` has three learner occurrences of
-`kavu`; `0071` has one. This supplies the occurrence component of weighting after filtering to the
-lowest completed-read count. Runtime weight is `hits / average vocabulary rank`;
-3:1 remains the ratio when conversation difficulties are equal. The average
-counts every Croatian word occurrence in both speakers’ messages. Unknown forms
-use the final vocabulary rank; English and punctuation are excluded. The app
-computes these averages on load rather than adding redundant fields to the JSON. User read counts belong in progress storage, not in
-this shared content file.
+`kavu`; `0071` has one. Counts remain checked against learner text, but no longer
+weight selection probability. Each conversation's required `band` is an integer
+from 1 (Starter) to 4 (Complex), matching `CONVERSATION_DIFFICULTY_BANDS.json`.
+Beginner allows Band 1, Novice (100+) Bands 1–2, Conversational (300+) Bands 1–3,
+and Intermediate (1,000+) onward all bands. Thresholds use the displayed
+learned-word-equivalent score. Targets absent from unlocked bands are deferred.
+
+Only unlocked matches compete on completed-read counts. Ties choose the lowest
+band, then lowest average vocabulary rank, then ID. The average counts every
+Croatian word occurrence on both sides; unknown forms use the last rank;
+English and punctuation are excluded. The app computes averages on load rather
+than adding redundant fields to JSON. Read counts stay in progress storage.
+Conversation schema 2 requires bands; the saved progress schema is unchanged.
 
 Lookup lowercases Unicode text without changing display text. It does not remove
 diacritics or merge grammatical forms: `Kruh` maps to `kruh`, but `kruha` remains a
