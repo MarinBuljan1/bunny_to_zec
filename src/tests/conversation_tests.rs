@@ -334,7 +334,7 @@ fn actual_corpus_matches_the_runtime_tokenizer_and_vocabulary() {
             ..Default::default()
         })
         .unwrap();
-    assert_eq!(library.conversations.len(), 1000);
+    assert_eq!(library.conversations.len(), 1126);
 }
 
 #[test]
