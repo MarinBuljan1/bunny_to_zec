@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "status": "provisional_editorial_review_not_used_by_app",
+  "status": "editorial_assignments_used_by_runtime",
   "review_date": "2026-11-23",
   "source_file": "assets/conversations.json",
-  "source_sha256": "32ff9b66b110a82302de105bbe1447d43faeaaf91f3a4ae3953c242c6b5e6664",
+  "source_sha256": "0d27f24ce70db534d061fa7e8b5e64faecc60ae5a7c9c11b70ae44e60fd8e1ee",
   "rubric_file": "CONVERSATION_DIFFICULTY_REVIEW.md",
   "method": "Full English exchanges reviewed for meaning and discourse demands; all Croatian messages measured for length/vocabulary; all proposed Starter conversations and selected boundary cases re-read in Croatian. Editorial bands, not certified CEFR levels. Expansion: 67 short Starter and 18 Everyday conversations authored for early exact-form coverage; new bilingual exchanges reviewed against the same rubric. Conversational coverage expansion: 21 Everyday and 20 Connected conversations cover all 159 gaps among the first 1500 forms in bands 1-3; bilingual exchanges reviewed for wording and topic demands.",
   "bands": [

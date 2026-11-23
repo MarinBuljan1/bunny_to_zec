@@ -1,6 +1,32 @@
 use super::*;
 
 #[test]
+fn learning_status_and_conversation_gates_share_exact_boundaries() {
+    for (words, name, band, next_threshold) in [
+        (0.0, "Beginner", 1, 100.0),
+        (99.999, "Beginner", 1, 100.0),
+        (100.0, "Novice", 2, 300.0),
+        (299.999, "Novice", 2, 300.0),
+        (300.0, "Conversational", 3, 1000.0),
+        (999.999, "Conversational", 3, 1000.0),
+        (1000.0, "Intermediate", 4, 4000.0),
+        (4000.0, "Advanced", 4, 10000.0),
+        (10000.0, "Fluent", 4, 100000.0),
+        (100000.0, "Fluent", 4, 100000.0),
+    ] {
+        let level = learning_level(words);
+        assert_eq!(
+            (
+                level.name,
+                level.maximum_conversation_band,
+                level.next_threshold
+            ),
+            (name, band, next_threshold)
+        );
+    }
+}
+
+#[test]
 fn derived_progress_caps_each_word_and_accumulates_beyond_i32() {
     let scores = (0..3_000)
         .map(|index| {

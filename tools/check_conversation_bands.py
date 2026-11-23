@@ -1,6 +1,6 @@
 """Check editorial band assignments, summaries and learner-only coverage goals.
 
-Bands remain review metadata; this check does not change runtime selection.
+Runtime bands are embedded in conversations.json and must match the editorial assignments.
 Vocabulary positions follow JSON key order, with exact lowercase token matching.
 Run after check_conversations.py when changing conversations or their bands.
 """
@@ -23,6 +23,8 @@ def learner_coverage_by_band(library, assignments):
         raise ValueError("Every band must be an integer from 1 to 4")
     coverage = {band: set() for band in range(1, 5)}
     for conversation in library["conversations"]:
+        if conversation.get("band") != assignments[conversation["id"]]:
+            raise ValueError(f"Runtime band differs from editorial assignment for {conversation['id']}")
         words = coverage[assignments[conversation["id"]]]
         for exchange in conversation["exchanges"]:
             words.update(tokens(exchange["learner"]["hr"]))

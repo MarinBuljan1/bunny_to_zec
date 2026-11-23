@@ -25,7 +25,7 @@ def tokens(text):
 def inspect(library, vocabulary):
     if not isinstance(library, dict):
         raise ValueError("Conversation library must be an object")
-    if library.get("schema_version") != 1:
+    if library.get("schema_version") != 2:
         raise ValueError("Unsupported conversation schema version")
     if library.get("source_language") != "hr" or library.get("translation_language") != "en":
         raise ValueError("Expected Croatian messages and English translations")
@@ -52,6 +52,8 @@ def inspect(library, vocabulary):
         if identifier in identifiers:
             raise ValueError(f"Duplicate conversation ID: {identifier}")
         identifiers.add(identifier)
+        if type(conversation.get("band")) is not int or conversation["band"] not in range(1, 5):
+            raise ValueError(f"Invalid conversation difficulty band in {identifier}")
         if not all(isinstance(conversation.get(field), str) and conversation[field].strip() for field in ["title", "topic"]):
             raise ValueError(f"Missing title/topic in {identifier}")
         exchanges = conversation.get("exchanges")

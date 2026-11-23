@@ -3,7 +3,7 @@ use super::*;
 fn ready_screen() -> Rc<Screen> {
     let vocabulary = crate::memory_store::content();
     let conversations: ConversationLibrary = serde_json::from_str(
-        r#"{"schema_version":1,"source_language":"hr","translation_language":"en","conversations":[],"word_index":{}}"#,
+        r#"{"schema_version":2,"source_language":"hr","translation_language":"en","conversations":[],"word_index":{}}"#,
     )
     .unwrap();
     let progress = SavedProgress {
@@ -130,8 +130,8 @@ fn conversation_exit_is_only_requested_after_the_last_reply_has_settled() {
         "learner": { "hr": "Bok!", "en": "Hello!" },
     });
     let mut conversations: ConversationLibrary = serde_json::from_value(serde_json::json!({
-        "schema_version": 1, "source_language": "hr", "translation_language": "en",
-        "conversations": [{ "id": "0001", "title": "Hello", "exchanges": vec![exchange; 5] }],
+        "schema_version": 2, "source_language": "hr", "translation_language": "en",
+        "conversations": [{ "id": "0001", "title": "Hello", "band": 1, "exchanges": vec![exchange; 5] }],
         "word_index": { "bok": [{ "c_id": "0001", "hits": 5 }] },
     }))
     .unwrap();
@@ -156,8 +156,7 @@ fn conversation_exit_is_only_requested_after_the_last_reply_has_settled() {
                 action,
                 &ready.content.conversations,
                 &ready.content.vocabulary,
-                1000000 + index * 10000 + step as i64 * 1000,
-                0.0
+                1000000 + index * 10000 + step as i64 * 1000
             ));
         }
         assert!(!starts_new_conversation(&ready));
@@ -166,7 +165,6 @@ fn conversation_exit_is_only_requested_after_the_last_reply_has_settled() {
             &ready.content.conversations,
             &ready.content.vocabulary,
             1005000 + index * 10000,
-            0.0,
         );
         assert_eq!(starts_new_conversation(&ready), index == 4);
     }
@@ -176,7 +174,6 @@ fn conversation_exit_is_only_requested_after_the_last_reply_has_settled() {
         &ready.content.conversations,
         &ready.content.vocabulary,
         1060000,
-        0.0,
     );
     assert_eq!(ready.review.session().unwrap().conversation_id, "0001");
     assert_eq!(ready.review.session().unwrap().exchange_index, 0);

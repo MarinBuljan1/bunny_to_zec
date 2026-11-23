@@ -13,13 +13,20 @@ def library():
     conversations = []
     for number in range(100):
         conversations.append({
-            "id": f"{number + 1:04d}", "title": "Test", "topic": "test",
+            "id": f"{number + 1:04d}", "title": "Test", "topic": "test", "band": 1,
             "exchanges": [{"partner": {"hr": f"Pitanje {number}-{turn}?", "en": "A question."},
                            "learner": {"hr": "Kavu, kavu! Kruh i kruha.", "en": "Coffee, coffee! Bread and a form of bread."}} for turn in range(6)]})
-    return {"schema_version": 1, "source_language": "hr", "translation_language": "en", "conversations": conversations}
+    return {"schema_version": 2, "source_language": "hr", "translation_language": "en", "conversations": conversations}
 
 
 class ConversationTests(unittest.TestCase):
+    def test_runtime_bands_are_required_and_must_be_one_through_four(self):
+        for band in [None, True, 0, 5, "1"]:
+            candidate = library()
+            candidate["conversations"][0]["band"] = band
+            with self.subTest(band=band), self.assertRaisesRegex(ValueError, "difficulty band"):
+                inspect(candidate, {"kavu": {}})
+
     def test_lowercase_keeps_inflections_and_accents_distinct(self):
         self.assertEqual(tokens("ČAJ, čaj! Kruh i kruha?"), ["čaj", "čaj", "kruh", "i", "kruha"])
         self.assertNotEqual(tokens("caj"), tokens("čaj"))

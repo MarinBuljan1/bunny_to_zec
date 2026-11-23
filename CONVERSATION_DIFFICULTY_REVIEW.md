@@ -1,8 +1,43 @@
-# Conversation difficulty: review before implementation
+# Conversation difficulty and selection
 
-Started 18 November 2026. Bands remain provisional editorial metadata: the app
-does not yet enforce status gates. The expansion below changes conversation
-content, while preserving selection rules and saved progress.
+Started 18 November 2026. The editorial assignments now drive runtime status
+gates. Historical review and expansion snapshots below record how the content
+and rules were chosen; the following section describes current selection.
+
+## Runtime status gates: 23 November 2026
+
+| Displayed status | Learned-word-equivalent score | Allowed bands | Eligible conversations |
+| --- | --- | --- | ---: |
+| Beginner | Below 100 | 1 | 100 |
+| Novice | 100 to below 300 | 1–2 | 461 |
+| Conversational | 300 to below 1,000 | 1–3 | 1,005 |
+| Intermediate and above | 1,000+ | 1–4 | 1,126 |
+
+The display and selector share thresholds. This is the existing capped-score sum
+divided by 864,000, not a count of previously encountered forms. Gates are based
+on current progress rather than a permanently saved highest level.
+
+1. Keep review-priority targets only if they occur in an unlocked learner reply.
+   Avoid words from the previous reply when another eligible target exists.
+2. Among unlocked matches for that target, prefer the lowest completed-read count.
+3. Break ties by lowest band, lowest average vocabulary rank, then ID. Occurrence
+   counts remain validated, but selection is deterministic rather than weighted.
+
+Harder-only targets wait; the selector repeats eligible material rather than
+opening a locked band. Scores and review formulas are unchanged. A running
+conversation can finish after a score decrease. On reload, a saved cursor in a
+locked band is cleared with a notice, preserving scores, read counts and English
+preference. A new conversation then follows the current level.
+
+Conversation schema 2 embeds a required `band` on each runtime conversation, so
+offline selection needs no separate request. The review JSON retains the full
+editorial assignments and coverage requirements; the checker verifies embedded
+bands against it. Invalid bands and libraries without reviewable Starter content
+are rejected. There is no progress-schema migration or dialogue/ID change.
+
+The rubric remains an editorial judgement, not a certified proficiency rating.
+Average vocabulary rank orders conversations within equal bands, rather than
+claiming to measure all aspects of Croatian difficulty.
 
 ## Conversational coverage expansion: 23 November 2026
 
@@ -42,7 +77,8 @@ coverage goals. The Band 3 requirement explicitly includes earlier bands; Band 2
 500-form requirement remains independent. Tests verify that partner messages,
 different grammatical forms and later bands cannot fill an eligible coverage gap.
 The review JSON records current assignments, counts, requirements and source hashes.
-Runtime status gates remain a separate implementation task.
+At the time of this content expansion, runtime status gates were still pending;
+they are now implemented as described above.
 
 ## Beginner coverage expansion: 23 November 2026
 

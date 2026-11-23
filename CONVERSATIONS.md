@@ -16,8 +16,9 @@ and adds 149 globally uncovered forms, including 19 beyond the first 1,500.
 The preceding beginner expansion added 67 Starter and 18 Everyday conversations,
 bringing Band 1 to 100 conversations. Band 1 learner replies still cover every one
 of the first 200 forms; Band 2 independently covers every one of the first 500.
-These are editorial bands; runtime selection has not yet been restricted by
-learner status. Both expansions prioritize coverage in eligible bands over global
+Runtime selection now enforces these editorial bands by learner status, choosing
+the easiest among least-read eligible conversations. Both expansions prioritize
+coverage in eligible bands over global
 first appearances. Run `python -X utf8 tools/check_conversation_bands.py` to verify
 these coverage goals after content or assignment changes.
 
@@ -69,7 +70,7 @@ Source file: `assets/conversations.json`.
 
 ```json
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "source_language": "hr",
   "translation_language": "en",
   "content_status": "draft",
@@ -78,6 +79,7 @@ Source file: `assets/conversations.json`.
       "id": "0070",
       "title": "Meeting for coffee",
       "topic": "food_and_drink",
+      "band": 1,
       "exchanges": [
         {
           "partner": {"hr": "Što ćeš popiti?", "en": "What will you have to drink?"},
@@ -126,13 +128,19 @@ learner replies. Each compact entry has `c_id` (the conversation's `id`) and
 `hits` (the actual learner occurrence count). Keep these short keys when
 regenerating the index. Partner messages never
 contribute. For example, the approved `0070` has three learner occurrences of
-`kavu`; `0071` has one. This supplies the occurrence component of weighting after filtering to the
-lowest completed-read count. Runtime weight is `hits / average vocabulary rank`;
-3:1 remains the ratio when conversation difficulties are equal. The average
-counts every Croatian word occurrence in both speakers’ messages. Unknown forms
-use the final vocabulary rank; English and punctuation are excluded. The app
-computes these averages on load rather than adding redundant fields to the JSON. User read counts belong in progress storage, not in
-this shared content file.
+`kavu`; `0071` has one. Counts remain checked against learner text, but no longer
+weight selection probability. Each conversation's required `band` is an integer
+from 1 (Starter) to 4 (Complex), matching `CONVERSATION_DIFFICULTY_BANDS.json`.
+Beginner allows Band 1, Novice (100+) Bands 1–2, Conversational (300+) Bands 1–3,
+and Intermediate (1,000+) onward all bands. Thresholds use the displayed
+learned-word-equivalent score. Targets absent from unlocked bands are deferred.
+
+Only unlocked matches compete on completed-read counts. Ties choose the lowest
+band, then lowest average vocabulary rank, then ID. The average counts every
+Croatian word occurrence on both sides; unknown forms use the last rank;
+English and punctuation are excluded. The app computes averages on load rather
+than adding redundant fields to JSON. Read counts stay in progress storage.
+Conversation schema 2 requires bands; the saved progress schema is unchanged.
 
 Lookup lowercases Unicode text without changing display text. It does not remove
 diacritics or merge grammatical forms: `Kruh` maps to `kruh`, but `kruha` remains a
